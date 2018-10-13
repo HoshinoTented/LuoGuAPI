@@ -13,7 +13,10 @@ repositories {
 
 dependencies {
 	compile(kotlin("stdlib-jdk8"))
-	compile("org.apache.httpcomponents:httpclient:jar:4.5.6")
+	compile("org.apache.httpcomponents:httpclient:4.5.6")
+	compile("org.json", "json", "20180813")
+	compile("org.jsoup", "jsoup", "1.11.3")
+	compile(kotlin("test-junit"))
 }
 
 tasks.withType<KotlinCompile> {
