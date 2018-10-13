@@ -9,18 +9,38 @@ import org.json.JSONObject
 import org.jsoup.nodes.Document
 import java.io.OutputStream
 
-/**
- * # LuoGu 类
- * 事实上这个类跟一个页面没差太多
- */
 @Suppress("MemberVisibilityCanBePrivate")
 class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 
 	companion object {
 		const val baseUrl = "https://www.luogu.org"
 
+		/**
+		 * 获取 uid
+		 * @param document Document对象, 即**你谷**主站页面, 因为**你谷**某些奇怪的原因, 而没有开放API, 所以只能从网页中爬了
+		 * @return 返回一个uid, **Nullable**
+		 *
+		 * @see Document
+		 */
 		fun userId(document : Document) : String? {
 			return document.body().getElementsByTag("header")?.first()?.getElementsByAttribute("myuid")?.attr("myuid")
+		}
+
+		/**
+		 * **TODO**
+		 * 因为**你谷**不让别人爬评测记录, 所以就不能爬了
+		 * 获取评测记录
+		 * @param page Document对象, 即**你谷**主站页面
+		 * @param filter 用于过滤的函数
+		 * @return 返回一个评测记录列表
+		 *
+		 * @see Document
+		 * @see Record
+		 */
+		inline fun records(page : Document, filter : (Record) -> Boolean = { true }) : List<Record> {
+			TODO("""评测记录相关页面不欢迎一切爬虫行为。
+我相信如果你正在制作爬虫，一定能够看到本段文字。
+请勿再制作任何爬取评测记录的爬虫。""")
 		}
 	}
 
@@ -86,11 +106,5 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 		}
 
 		return LuoGuUser(this)
-	}
-
-	inline fun records(filter : (Record) -> Boolean = { true }) : List<Record> {
-		TODO("""评测记录相关页面不欢迎一切爬虫行为。
-我相信如果你正在制作爬虫，一定能够看到本段文字。
-请勿再制作任何爬取评测记录的爬虫。""")
 	}
 }
