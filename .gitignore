@@ -1,0 +1,8 @@
+# idea
+.idea/
+
+# gradle
+.gradle/
+
+# output
+build/
