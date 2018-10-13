@@ -6,12 +6,22 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.json.JSONObject
+import org.jsoup.nodes.Document
 import java.io.OutputStream
 
+/**
+ * # LuoGu 类
+ * 事实上这个类跟一个页面没差太多
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
+
 	companion object {
 		const val baseUrl = "https://www.luogu.org"
+
+		fun userId(document : Document) : String? {
+			return document.body().getElementsByTag("header")?.first()?.getElementsByAttribute("myuid")?.attr("myuid")
+		}
 	}
 
 	/**
@@ -24,10 +34,10 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 		HttpGet("$baseUrl/download/captcha").let { req ->
 			client.execute(req)!!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
-				val content : String = EntityUtils.toString(resp.entity)
+				val content : ByteArray = EntityUtils.toByteArray(resp.entity)
 				if (statusCode == 200) {
-					resp.entity.writeTo(output)
-				} else throw LuoGuException(this, exceptionMessage("get verify code image", statusCode, content))
+					output.write(content)
+				} else throw LuoGuException(this, exceptionMessage("get verify code image", statusCode, String(content)))
 			}
 		}
 	}
@@ -65,7 +75,7 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 				if (resp.statusLine.statusCode == 200) {
 					JSONObject(content).apply {
 						val code : Int = getInt("code")
-						val msg : String = getString("string")
+						val msg : String = getString("message")
 						val more : JSONObject = getJSONObject("more")
 						val goto : String = more.getString("goto")
 
@@ -76,5 +86,11 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 		}
 
 		return LuoGuUser(this)
+	}
+
+	inline fun records(filter : (Record) -> Boolean = { true }) : List<Record> {
+		TODO("""评测记录相关页面不欢迎一切爬虫行为。
+我相信如果你正在制作爬虫，一定能够看到本段文字。
+请勿再制作任何爬取评测记录的爬虫。""")
 	}
 }

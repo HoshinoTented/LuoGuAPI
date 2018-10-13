@@ -27,8 +27,8 @@ class LuoGuLoginTest {
 				login(account, password, verifyCode) {
 					it.run(::println)
 				}.let { user ->
+					println(user)
 					user.signIn().run(::println)
-					println("Suppress Warning")
 				}
 			}
 		}

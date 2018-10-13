@@ -3,6 +3,7 @@ package org.hoshino9.luogu
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.util.EntityUtils
 import org.json.JSONObject
+import org.jsoup.Jsoup
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
 class LuoGuUser(val luogu : LuoGu, val userid : String) {
@@ -14,7 +15,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 				val content = EntityUtils.toString(resp.entity)
 
 				if (statusCode == 200) {
-					return LuoGuUser(luogu, TODO("get user id"))
+					return LuoGuUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, exceptionMessage("get user id", statusCode, "null uid")))
 				} else throw LuoGuException(luogu, exceptionMessage("get user id", statusCode, content))
 			}
 		}
@@ -34,22 +35,12 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 				if (statusCode == 200) {
 					JSONObject(content).run {
 						val code : Int = getInt("code")
-						val msg : String = getString("string")
+						val msg : String = getString("message")
 
 						LuoGuSignedInResult(code, msg)
 					}
 				} else throw LuoGuUserException(this, exceptionMessage("sign in", statusCode, content))
 			}
-		}
-	}
-
-	inline fun recodes(filter : (Record) -> Boolean) : List<Record> {
-		TODO()
-	}
-
-	fun recodes(filter : Record.RecordInfo) : List<Record> {
-		return recodes {
-			it.info == filter
 		}
 	}
 
@@ -63,5 +54,9 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 				} else throw LuoGuUserException(this, exceptionMessage("load benben", statusCode, content))
 			}
 		}
+	}
+
+	override fun toString() : String {
+		return userid
 	}
 }
