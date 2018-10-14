@@ -8,6 +8,13 @@ import org.jsoup.Jsoup
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
 class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	companion object {
+		/**
+		 * 实例化一个 LuoGuUser 对象
+		 * @param luogu 已经登陆过的洛谷客户端
+		 * @return 返回一个 LuoGuUser 对象
+		 *
+		 * @see LuoGu.Companion.userId
+		 */
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LuoGuUser {
 			HttpGet(LuoGu.baseUrl).let(luogu.client::execute)!!.let { resp ->
@@ -44,13 +51,22 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 		}
 	}
 
-	fun benben(type : BenBenType, page : Int = 1) {
+	/**
+	 * 获取犇犇列表
+	 * @param type 犇犇的类型
+	 * @param page 页数, 默认为`1`
+	 * @return 返回一个犇犇的列表
+	 *
+	 * @see BenBen
+	 * @see BenBenType
+	 */
+	fun benben(type : BenBenType, page : Int = 1) : List<BenBen> {
 		HttpGet("$luogu/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = EntityUtils.toString(resp.entity)
 				if (resp.statusLine.statusCode == 200) {
-					TODO("get and parse benben")
+					return LuoGu.benben(Jsoup.parse(content))
 				} else throw LuoGuUserException(this, exceptionMessage("load benben", statusCode, content))
 			}
 		}

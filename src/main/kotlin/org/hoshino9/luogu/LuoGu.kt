@@ -42,6 +42,17 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 我相信如果你正在制作爬虫，一定能够看到本段文字。
 请勿再制作任何爬取评测记录的爬虫。""")
 		}
+
+		/**
+		 * 解析benben
+		 * @param page 犇犇的 `html` 代码
+		 * @return 返回一个犇犇列表
+		 *
+		 * @see BenBen
+		 */
+		fun benben(page : Document) : List<BenBen> {
+			TODO()
+		}
 	}
 
 	/**
