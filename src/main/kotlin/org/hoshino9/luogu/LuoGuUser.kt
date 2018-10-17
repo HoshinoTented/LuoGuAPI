@@ -7,7 +7,6 @@ import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.json.JSONObject
 import org.jsoup.Jsoup
-import javax.swing.text.html.parser.Entity
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
 class LuoGuUser(val luogu : LuoGu, val userid : String) {
@@ -64,6 +63,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @see BenBen
 	 * @see BenBenType
 	 */
+	@JvmOverloads
 	@Throws(LuoGuUserException::class)
 	fun benben(type : BenBenType, page : Int = 1) : List<BenBen> {
 		HttpGet("${LuoGu.baseUrl}/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
@@ -83,6 +83,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @param public 是否公开, 默认 **true**
 	 * @return 返回剪切板的代码
 	 */
+	@JvmOverloads
 	@Throws(LuoGuUserException::class, LuoGuException::class)
 	fun paste(code : String, public : Boolean = true) : String {
 		HttpPost("${LuoGu.baseUrl}/paste/post").apply {

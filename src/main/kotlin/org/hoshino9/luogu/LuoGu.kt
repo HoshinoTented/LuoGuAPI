@@ -11,7 +11,7 @@ import org.jsoup.nodes.Document
 import java.io.OutputStream
 
 @Suppress("MemberVisibilityCanBePrivate")
-class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
+class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.createDefault()) {
 	companion object {
 		const val baseUrl = "https://www.luogu.org"
 
@@ -99,15 +99,30 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 	 * @param account 账号
 	 * @param password 密码
 	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
-	 * @param action 登录时需要做的东西, 接受一个 LuoGuLoginResult
-	 * @return 返回一个 LuoGuUser 对象
+	 * @param action 接受一个 LuoGuLoginResult, 返回是否可以实例化一个 LuoGuUser
+	 * @return 返回一个 LuoGuLoginResule 对象
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LuoGuUser
 	 * @see LuoGuLoginResult
 	 */
-	inline fun login(account : String, password : String, verifyCode : String, action : (LuoGuLoginResult) -> Unit = {}) : LuoGuUser {
-		HttpPost("$baseUrl/login/loginpage").apply {
+	@Throws(LuoGuException::class)
+	fun login(account : String, password : String, verifyCode : String, action : (LuoGuLoginResult) -> Boolean) : LuoGuUser? =
+			if (action(login(account, password, verifyCode))) LuoGuUser(this) else null
+
+	/**
+	 * 登录**你谷**
+	 * @param account 账号
+	 * @param password 密码
+	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
+	 * @return 返回一个 LuoGuLoginResule 对象
+	 *
+	 * @see LuoGu.verifyCode
+	 * @see LuoGuLoginResult
+	 */
+	@Throws(LuoGuException::class)
+	fun login(account : String, password : String, verifyCode : String) : LuoGuLoginResult {
+		return HttpPost("$baseUrl/login/loginpage").apply {
 			val cookie = 0
 			val redirect = ""
 			val twoFactor = "undefined"
@@ -125,18 +140,16 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 				val statusCode = resp.statusLine.statusCode
 				val content : String = EntityUtils.toString(resp.entity)
 				if (resp.statusLine.statusCode == 200) {
-					JSONObject(content).apply {
+					JSONObject(content).run {
 						val code : Int = getInt("code")
 						val msg : String = getString("message")
 						val more : JSONObject? = optJSONObject("more")
 						val goto : String? = more?.getString("goto")
 
-						LuoGuLoginResult(code, msg, goto).run(action)
+						LuoGuLoginResult(code, msg, goto)
 					}
 				} else throw LuoGuException(this, exceptionMessage("login", statusCode, content))
 			}
 		}
-
-		return LuoGuUser(this)
 	}
 }
