@@ -6,12 +6,12 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.json.JSONObject
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.OutputStream
 
 @Suppress("MemberVisibilityCanBePrivate")
 class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
-
 	companion object {
 		const val baseUrl = "https://www.luogu.org"
 
@@ -52,6 +52,27 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 		 */
 		fun benben(page : Document) : List<BenBen> {
 			TODO()
+		}
+
+		/**
+		 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
+		 * @param page 任意一个**你谷**页面
+		 * @return 返回 `csrf-token`, 若找不到则返回 **null**
+		 */
+		fun csrfToken(page : Document) : String? {
+			return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content")
+		}
+	}
+
+	/**
+	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
+	 */
+	@get:Throws(LuoGuException::class)
+	val csrfToken : String get() {
+		HttpGet(baseUrl).let { req ->
+			client.execute(req)!!.let { resp ->
+				return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, exceptionMessage("get csrf-token", resp.statusLine.statusCode, "No such csrf-token"))
+			}
 		}
 	}
 
@@ -107,8 +128,8 @@ class LuoGu(val client : HttpClient = HttpClients.createDefault()) {
 					JSONObject(content).apply {
 						val code : Int = getInt("code")
 						val msg : String = getString("message")
-						val more : JSONObject = getJSONObject("more")
-						val goto : String = more.getString("goto")
+						val more : JSONObject? = optJSONObject("more")
+						val goto : String? = more?.getString("goto")
 
 						LuoGuLoginResult(code, msg, goto).run(action)
 					}

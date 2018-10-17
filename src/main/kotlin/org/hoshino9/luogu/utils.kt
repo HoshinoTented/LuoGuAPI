@@ -3,6 +3,7 @@ package org.hoshino9.luogu
 import org.apache.http.HttpEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.message.BasicNameValuePair
+import org.apache.http.util.EntityUtils
 import java.nio.charset.Charset
 
 /**
@@ -13,3 +14,5 @@ fun <K, V> Map<K, V>.entity() : HttpEntity = UrlEncodedFormEntity(
 			BasicNameValuePair(k.toString(), v.toString())
 		}, Charset.forName("UTF-8")
 )
+
+val HttpEntity.data : String get() = EntityUtils.toString(this)

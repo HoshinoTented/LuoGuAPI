@@ -1,9 +1,13 @@
 package org.hoshino9.luogu
 
+import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import javax.swing.text.html.parser.Entity
 
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
 class LuoGuUser(val luogu : LuoGu, val userid : String) {
@@ -60,8 +64,9 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @see BenBen
 	 * @see BenBenType
 	 */
+	@Throws(LuoGuUserException::class)
 	fun benben(type : BenBenType, page : Int = 1) : List<BenBen> {
-		HttpGet("$luogu/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
+		HttpGet("${LuoGu.baseUrl}/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = EntityUtils.toString(resp.entity)
@@ -69,6 +74,51 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 					return LuoGu.benben(Jsoup.parse(content))
 				} else throw LuoGuUserException(this, exceptionMessage("load benben", statusCode, content))
 			}
+		}
+	}
+
+	/**
+	 * 剪切板
+	 * @param code `markdown` 代码
+	 * @param public 是否公开, 默认 **true**
+	 * @return 返回剪切板的代码
+	 */
+	@Throws(LuoGuUserException::class, LuoGuException::class)
+	fun paste(code : String, public : Boolean = true) : String {
+		HttpPost("${LuoGu.baseUrl}/paste/post").apply {
+			addHeader("x-csrf-token", luogu.csrfToken)
+		}.let { req ->
+			req.entity = UrlEncodedFormEntity(
+					listOf(
+							"content" to code,
+							"verify" to "",
+							"public" to if (public) "1" else "0"
+					).map { (n, v) ->
+						BasicNameValuePair(n, v)
+					}
+			)
+
+			luogu.client.execute(req).let { resp ->
+				val statusCode = resp.statusLine.statusCode
+				val content = resp.entity.data
+				if (statusCode == 200) {
+					JSONObject(content).let {
+						if (it.optInt("status") == 200) {
+							return it.getString("data")
+						} else {
+							throw LuoGuUserException(this, exceptionMessage("paste code", it.getInt("status"), it.getString("data")))
+						}
+					}
+				} else throw LuoGuUserException(this, exceptionMessage("paste code", statusCode, content))
+			}
+		}
+	}
+
+	fun deletePaste(pasteId : String) {
+		HttpPost("${LuoGu.baseUrl}/paste/delete/$pasteId").apply {
+			addHeader("x-csrf-token", luogu.csrfToken)
+		}.let { req ->
+			luogu.client.execute(req)
 		}
 	}
 
