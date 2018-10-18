@@ -27,14 +27,9 @@ class LuoGuLoginTest {
 
 				login(account, password, verifyCode) {
 					it.run(::println)
-					if (it.code != 200) throw LuoGuException(this, "stop!")
-				}.let { user ->
-					println(user)
-					user.signIn().run(::println)
-					val pasteId = user.paste("Hello world!")
-					"https://www.luogu.org/paste/$pasteId".run(::println)
-					user.deletePaste(pasteId)
-					println("paste deleted")
+					it.code == 200
+				}?.let { user ->
+					user.postBenBen("QAQ")
 				}
 			}
 		}

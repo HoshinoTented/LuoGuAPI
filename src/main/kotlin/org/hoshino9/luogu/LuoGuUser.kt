@@ -8,6 +8,12 @@ import org.apache.http.util.EntityUtils
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
+/**
+ * **你谷**用户类
+ * 但仅限于已登录的用户
+ * 未登录的用户请用 `String` 代替
+ * 等到 Kotlin1.3 可以改用 `inline class`
+ */
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
 class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	companion object {
@@ -25,8 +31,8 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 				val content = EntityUtils.toString(resp.entity)
 
 				if (statusCode == 200) {
-					return LuoGuUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, exceptionMessage("get user id", statusCode, "null uid")))
-				} else throw LuoGuException(luogu, exceptionMessage("get user id", statusCode, content))
+					return LuoGuUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, "null uid"))
+				} else throw LuoGuException(luogu, content)
 			}
 		}
 	}
@@ -49,7 +55,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 
 						LuoGuSignedInResult(code, msg)
 					}
-				} else throw LuoGuUserException(this, exceptionMessage("sign in", statusCode, content))
+				} else throw LuoGuUserException(this, content)
 			}
 		}
 	}
@@ -64,15 +70,14 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @see BenBenType
 	 */
 	@JvmOverloads
-	@Throws(LuoGuUserException::class)
 	fun benben(type : BenBenType, page : Int = 1) : List<BenBen> {
 		HttpGet("${LuoGu.baseUrl}/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = EntityUtils.toString(resp.entity)
-				if (resp.statusLine.statusCode == 200) {
+				if (statusCode == 200) {
 					return LuoGu.benben(Jsoup.parse(content))
-				} else throw LuoGuUserException(this, exceptionMessage("load benben", statusCode, content))
+				} else throw LuoGuUserException(this, content)
 			}
 		}
 	}
@@ -84,7 +89,6 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @return 返回剪切板的代码
 	 */
 	@JvmOverloads
-	@Throws(LuoGuUserException::class, LuoGuException::class)
 	fun paste(code : String, public : Boolean = true) : String {
 		HttpPost("${LuoGu.baseUrl}/paste/post").apply {
 			addHeader("x-csrf-token", luogu.csrfToken)
@@ -107,19 +111,47 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 						if (it.optInt("status") == 200) {
 							return it.getString("data")
 						} else {
-							throw LuoGuUserException(this, exceptionMessage("paste code", it.getInt("status"), it.getString("data")))
+							throw LuoGuUserException(this, it.getString("data"))
 						}
 					}
-				} else throw LuoGuUserException(this, exceptionMessage("paste code", statusCode, content))
+				} else throw LuoGuUserException(this, content)
 			}
 		}
 	}
 
+	/**
+	 * 删除剪切板
+	 * @param pasteId 剪切板id
+	 */
 	fun deletePaste(pasteId : String) {
 		HttpPost("${LuoGu.baseUrl}/paste/delete/$pasteId").apply {
 			addHeader("x-csrf-token", luogu.csrfToken)
 		}.let { req ->
 			luogu.client.execute(req)
+		}
+	}
+
+	/**
+	 * 发射犇犇
+	 * @param text 犇犇内容
+	 */
+	fun postBenBen(text : String) {
+		HttpPost("${LuoGu.baseUrl}/api/feed/postBenben").apply {
+			addHeader("x-csrf-token", luogu.csrfToken)
+		}.let { req ->
+			req.entity = UrlEncodedFormEntity(listOf(BasicNameValuePair("content", text)))
+			luogu.client.execute(req).let { resp ->
+				val statusCode = resp.statusLine.statusCode
+				val content = resp.entity.data
+
+				if (statusCode == 200) {
+					JSONObject(content).run {
+						val status = getInt("status")
+						val data = get("data")
+						if (status != 200) throw LuoGuUserException(this@LuoGuUser, data.toString())
+					}
+				} else throw LuoGuUserException(this, statusCode.toString())
+			}
 		}
 	}
 

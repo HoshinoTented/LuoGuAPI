@@ -67,11 +67,10 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
-	@get:Throws(LuoGuException::class)
 	val csrfToken : String get() {
 		HttpGet(baseUrl).let { req ->
 			client.execute(req)!!.let { resp ->
-				return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, exceptionMessage("get csrf-token", resp.statusLine.statusCode, "No such csrf-token"))
+				return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, "No such csrf-token")
 			}
 		}
 	}
@@ -79,9 +78,7 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	/**
 	 * 获取验证码
 	 * @param output 输出流, 将会把验证码**图片**输出到这个流里
-	 * @throws LuoGuException
 	 */
-	@Throws(LuoGuException::class)
 	fun verifyCode(output : OutputStream) {
 		HttpGet("$baseUrl/download/captcha").let { req ->
 			client.execute(req)!!.let { resp ->
@@ -89,7 +86,7 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 				val content : ByteArray = EntityUtils.toByteArray(resp.entity)
 				if (statusCode == 200) {
 					output.write(content)
-				} else throw LuoGuException(this, exceptionMessage("get verify code image", statusCode, String(content)))
+				} else throw LuoGuException(this, String(content))
 			}
 		}
 	}
@@ -106,7 +103,6 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	 * @see LuoGuUser
 	 * @see LuoGuLoginResult
 	 */
-	@Throws(LuoGuException::class)
 	fun login(account : String, password : String, verifyCode : String, action : (LuoGuLoginResult) -> Boolean) : LuoGuUser? =
 			if (action(login(account, password, verifyCode))) LuoGuUser(this) else null
 
@@ -120,7 +116,6 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	 * @see LuoGu.verifyCode
 	 * @see LuoGuLoginResult
 	 */
-	@Throws(LuoGuException::class)
 	fun login(account : String, password : String, verifyCode : String) : LuoGuLoginResult {
 		return HttpPost("$baseUrl/login/loginpage").apply {
 			val cookie = 0
@@ -148,7 +143,7 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 
 						LuoGuLoginResult(code, msg, goto)
 					}
-				} else throw LuoGuException(this, exceptionMessage("login", statusCode, content))
+				} else throw LuoGuException(this, content)
 			}
 		}
 	}
