@@ -3,6 +3,7 @@ package org.hoshino9.luogu
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
+import org.apache.http.message.BasicHeader
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.json.JSONObject
@@ -136,9 +137,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @param text 犇犇内容
 	 */
 	fun postBenBen(text : String) {
-		HttpPost("${LuoGu.baseUrl}/api/feed/postBenben").apply {
-			addHeader("x-csrf-token", luogu.csrfToken)
-		}.let { req ->
+		luogu.postRequest("${LuoGu.baseUrl}/api/feed/postBenben").let { req ->
 			req.entity = UrlEncodedFormEntity(listOf(BasicNameValuePair("content", text)))
 			luogu.client.execute(req).let { resp ->
 				val statusCode = resp.statusLine.statusCode

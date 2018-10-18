@@ -29,7 +29,7 @@ class LuoGuLoginTest {
 					it.run(::println)
 					it.code == 200
 				}?.let { user ->
-					user.postBenBen("QAQ")
+					user.postBenBen("Try posting 犇犇")
 				}
 			}
 		}

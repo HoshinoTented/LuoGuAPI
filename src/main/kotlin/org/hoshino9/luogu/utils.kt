@@ -2,6 +2,7 @@ package org.hoshino9.luogu
 
 import org.apache.http.HttpEntity
 import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import java.nio.charset.Charset
@@ -16,3 +17,5 @@ fun <K, V> Map<K, V>.entity() : HttpEntity = UrlEncodedFormEntity(
 )
 
 val HttpEntity.data : String get() = EntityUtils.toString(this)
+
+fun LuoGu.postRequest(url : String) = HttpPost(url).apply { addHeader("x-csrf-token", this@postRequest.csrfToken) }

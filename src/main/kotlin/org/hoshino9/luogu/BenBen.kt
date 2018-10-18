@@ -2,4 +2,4 @@ package org.hoshino9.luogu
 
 import java.util.Date
 
-class BenBen(val user : String, date : Date, msg : String)
+class BenBen(val user : String, val bid : String, date : Date, msg : String)
