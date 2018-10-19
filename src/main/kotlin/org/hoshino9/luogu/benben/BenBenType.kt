@@ -1,4 +1,4 @@
-package org.hoshino9.luogu
+package org.hoshino9.luogu.benben
 
 /**
  * # 犇犇的类型

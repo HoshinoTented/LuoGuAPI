@@ -5,6 +5,9 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.hoshino9.luogu.benben.BenBen
+import org.hoshino9.luogu.problems.Record
+import org.hoshino9.luogu.results.LuoGuLoginResult
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

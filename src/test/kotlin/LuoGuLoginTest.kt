@@ -1,6 +1,5 @@
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.LuoGuException
-import org.hoshino9.luogu.Solution
+import org.hoshino9.luogu.problems.Solution
 import java.io.FileOutputStream
 import java.nio.file.Paths
 import java.util.Properties

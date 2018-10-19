@@ -1,4 +1,6 @@
-package org.hoshino9.luogu
+package org.hoshino9.luogu.problems
+
+import org.hoshino9.luogu.LuoGuUser
 
 @Suppress("unused")
 class Record(val info : RecordInfo) {
