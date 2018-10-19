@@ -1,10 +1,6 @@
 package org.hoshino9.luogu
 
-import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.StringEntity
-import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBen
 import org.hoshino9.luogu.benben.BenBenType
@@ -12,8 +8,6 @@ import org.hoshino9.luogu.problems.Solution
 import org.hoshino9.luogu.results.LuoGuSignedInResult
 import org.json.JSONObject
 import org.jsoup.Jsoup
-import java.net.URLEncoder
-import java.nio.charset.Charset
 
 /**
  * **你谷**用户类
