@@ -18,4 +18,4 @@ fun <K, V> Map<K, V>.entity() : HttpEntity = UrlEncodedFormEntity(
 
 val HttpEntity.data : String get() = EntityUtils.toString(this)
 
-fun LuoGu.postRequest(url : String) = HttpPost(url).apply { addHeader("x-csrf-token", this@postRequest.csrfToken) }
+fun LuoGu.postRequest(url : String) = HttpPost("${LuoGu.baseUrl}/$url").apply { addHeader("x-csrf-token", this@postRequest.csrfToken) }

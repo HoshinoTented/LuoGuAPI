@@ -29,7 +29,8 @@ class LuoGuLoginTest {
 					it.run(::println)
 					it.code == 200
 				}?.let { user ->
-					user.postSolution(Solution("P1000", Solution.Language.Cpp11, "//中文的注释", false)).run(::println)
+					//					user.postBenBen("尝试刷存在感")
+//					"https://www.luogu.org/paste/${user.paste("中文, Special character <>&^%")}".run(::println)
 				}
 			}
 		}

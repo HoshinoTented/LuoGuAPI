@@ -3,6 +3,7 @@ package org.hoshino9.luogu
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.StringEntity
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBen
@@ -11,6 +12,8 @@ import org.hoshino9.luogu.problems.Solution
 import org.hoshino9.luogu.results.LuoGuSignedInResult
 import org.json.JSONObject
 import org.jsoup.Jsoup
+import java.net.URLEncoder
+import java.nio.charset.Charset
 
 /**
  * **你谷**用户类
@@ -30,7 +33,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 		 */
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LuoGuUser {
-			HttpGet(LuoGu.baseUrl).let(luogu.client::execute)!!.let { resp ->
+			HttpGet(LuoGu.baseUrl).let(luogu.client::execute) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = EntityUtils.toString(resp.entity)
 
@@ -48,7 +51,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @see LuoGuSignedInResult
 	 */
 	fun signIn() : LuoGuSignedInResult? {
-		return HttpGet("${LuoGu.baseUrl}/index/ajax_punch").let { req ->
+		return HttpGet("index/ajax_punch").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content : String = EntityUtils.toString(resp.entity)
@@ -75,7 +78,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 */
 	@JvmOverloads
 	fun benben(type : BenBenType, page : Int = 1) : List<BenBen> {
-		HttpGet("${LuoGu.baseUrl}/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
+		HttpGet("feed/${type.toString().toLowerCase()}?page=$page").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = EntityUtils.toString(resp.entity)
@@ -94,18 +97,12 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 */
 	@JvmOverloads
 	fun paste(code : String, public : Boolean = true) : String {
-		HttpPost("${LuoGu.baseUrl}/paste/post").apply {
-			addHeader("x-csrf-token", luogu.csrfToken)
-		}.let { req ->
-			req.entity = UrlEncodedFormEntity(
-					listOf(
-							"content" to code,
-							"verify" to "",
-							"public" to if (public) "1" else "0"
-					).map { (n, v) ->
-						BasicNameValuePair(n, v)
-					}
-			)
+		luogu.postRequest("paste/post").let { req ->
+			req.entity = mapOf(
+					"content" to code,
+					"verify" to "",
+					"public" to if (public) "1" else "0"
+			).entity()
 
 			luogu.client.execute(req).let { resp ->
 				val statusCode = resp.statusLine.statusCode
@@ -118,7 +115,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 							throw LuoGuUserException(this, it.getString("data"))
 						}
 					}
-				} else throw LuoGuUserException(this, content)
+				} else throw LuoGuUserException(this, statusCode.toString())
 			}
 		}
 	}
@@ -128,9 +125,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @param pasteId 剪切板id
 	 */
 	fun deletePaste(pasteId : String) {
-		HttpPost("${LuoGu.baseUrl}/paste/delete/$pasteId").apply {
-			addHeader("x-csrf-token", luogu.csrfToken)
-		}.let { req ->
+		luogu.postRequest("paste/delete/$pasteId").let { req ->
 			luogu.client.execute(req)
 		}
 	}
@@ -140,8 +135,8 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @param text 犇犇内容
 	 */
 	fun postBenBen(text : String) {
-		luogu.postRequest("${LuoGu.baseUrl}/api/feed/postBenben").let { req ->
-			req.entity = UrlEncodedFormEntity(listOf(BasicNameValuePair("content", text)))
+		luogu.postRequest("api/feed/postBenben").let { req ->
+			req.entity = mapOf("content" to text).entity()
 			luogu.client.execute(req).let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = resp.entity.data
@@ -165,13 +160,13 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 * @see Solution
 	 */
 	fun postSolution(solution : Solution) : String {
-		luogu.postRequest("${LuoGu.baseUrl}/api/problem/submit/${solution.pid}").also { req ->
-			req.entity = UrlEncodedFormEntity(listOf(
+		luogu.postRequest("api/problem/submit/${solution.pid}").also { req ->
+			req.entity = mapOf(
 					"code" to solution.code,
 					"lang" to solution.language.value.toString(),
 					"enableO2" to if (solution.enableO2) "1" else "0",
 					"verify" to ""
-			).map { BasicNameValuePair(it.first, it.second) })
+			).entity()
 		}.run(luogu.client::execute).let { resp ->
 			val statusCode = resp.statusLine.statusCode
 			val content = resp.entity.data
