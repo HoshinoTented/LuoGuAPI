@@ -1,5 +1,6 @@
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuException
+import org.hoshino9.luogu.Solution
 import java.io.FileOutputStream
 import java.nio.file.Paths
 import java.util.Properties
@@ -29,7 +30,7 @@ class LuoGuLoginTest {
 					it.run(::println)
 					it.code == 200
 				}?.let { user ->
-					user.postBenBen("Try posting 犇犇")
+					user.postSolution(Solution("P1000", Solution.Language.Cpp11, "//中文的注释", false)).run(::println)
 				}
 			}
 		}

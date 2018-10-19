@@ -1,5 +1,6 @@
 package org.hoshino9.luogu
 
+import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
@@ -151,6 +152,39 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 					}
 				} else throw LuoGuUserException(this, statusCode.toString())
 			}
+		}
+	}
+
+	/**
+	 * 提交题解
+	 * @param solution 题解对象
+	 * @return 返回评测结果id
+	 *
+	 * @see Solution
+	 */
+	fun postSolution(solution : Solution) : String {
+		luogu.postRequest("${LuoGu.baseUrl}/api/problem/submit/${solution.pid}").also { req ->
+			req.entity = UrlEncodedFormEntity(listOf(
+					"code" to solution.code,
+					"lang" to solution.language.value.toString(),
+					"enableO2" to if (solution.enableO2) "1" else "0",
+					"verify" to ""
+			).map { BasicNameValuePair(it.first, it.second) })
+		}.run(luogu.client::execute).let { resp ->
+			val statusCode = resp.statusLine.statusCode
+			val content = resp.entity.data
+
+			if (statusCode == 200) {
+				JSONObject(content).run {
+					val status = optInt("status")
+					val data = get("data")
+
+					if (status == 200) {
+						data as JSONObject
+						return data.get("rid").toString()
+					} else throw LuoGuUserException(this@LuoGuUser, data.toString())
+				}
+			} else throw LuoGuUserException(this, statusCode.toString())
 		}
 	}
 
