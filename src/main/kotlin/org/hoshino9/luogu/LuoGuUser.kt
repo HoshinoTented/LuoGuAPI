@@ -106,7 +106,7 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 						if (it.optInt("status") == 200) {
 							return it.getString("data")
 						} else {
-							throw LuoGuUserException(this, it.getString("data"))
+							throw LuoGuUserException(this, it.optString("data").toString())
 						}
 					}
 				} else throw LuoGuUserException(this, statusCode.toString())
@@ -120,7 +120,10 @@ class LuoGuUser(val luogu : LuoGu, val userid : String) {
 	 */
 	fun deletePaste(pasteId : String) {
 		luogu.postRequest("paste/delete/$pasteId").let { req ->
-			luogu.client.execute(req)
+			luogu.client.execute(req).let { resp ->
+				val statusCode = resp.statusLine.statusCode
+				if (statusCode != 200) throw LuoGuUserException(this, statusCode.toString())
+			}
 		}
 	}
 

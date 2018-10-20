@@ -10,6 +10,7 @@ out/
 
 # test
 verify.png
+cookie.obj
 
 ## account and password for testing should be hidden
 src/test/resources/user.properties

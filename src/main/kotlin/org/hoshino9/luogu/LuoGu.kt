@@ -1,9 +1,13 @@
 package org.hoshino9.luogu
 
+import org.apache.http.client.CookieStore
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
+import org.apache.http.cookie.Cookie
+import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.HttpClients
+import org.apache.http.impl.cookie.BasicClientCookie
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBen
 import org.hoshino9.luogu.problems.Record
@@ -93,21 +97,6 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 			}
 		}
 	}
-
-	/**
-	 * 登录**你谷**
-	 * @param account 账号
-	 * @param password 密码
-	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
-	 * @param action 接受一个 LuoGuLoginResult, 返回是否可以实例化一个 LuoGuUser
-	 * @return 返回一个 LuoGuLoginResule 对象
-	 *
-	 * @see LuoGu.verifyCode
-	 * @see LuoGuUser
-	 * @see LuoGuLoginResult
-	 */
-	fun login(account : String, password : String, verifyCode : String, action : (LuoGuLoginResult) -> Boolean) : LuoGuUser? =
-			if (action(login(account, password, verifyCode))) LuoGuUser(this) else null
 
 	/**
 	 * 登录**你谷**
