@@ -5,7 +5,7 @@
 CI      |Status
 -------:|:---------
 CircleCI|[![CircleCI](https://circleci.com/gh/HoshinoTented/LuoGuAPI.svg?style=svg)](https://circleci.com/gh/HoshinoTented/LuoGuAPI)
-
+Jitpack |[![Jitpack](https://jitpack.io/v/HoshinoTented/LuoGuAPI.svg)](https://jitpack.io/#HoshinoTented/LuoGuAPI)
 
 # 如何使用
 您可以在 `JVM` 平台上使用  
