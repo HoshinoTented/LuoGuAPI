@@ -1,19 +1,13 @@
 import org.apache.http.cookie.Cookie
 import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.HttpClients
-import org.apache.http.impl.cookie.BasicClientCookie
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuException
-import org.hoshino9.luogu.LuoGuUser
-import org.hoshino9.luogu.LuoGuUserException
-import org.hoshino9.luogu.problems.Solution
+import org.hoshino9.luogu.LuoGuLoggedUser
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.io.OutputStream
 import java.nio.file.Paths
-import java.util.Calendar
-import java.util.Date
 import java.util.Properties
 import java.util.Scanner
 
@@ -45,12 +39,10 @@ class LuoGuLoginTest {
 					verifyCode(Paths.get("$testRoot/verify.png").toFile().run(::FileOutputStream))
 					println("Please input verify code")
 					val verifyCode : String = Scanner(System.`in`).next()
-					login(config.getProperty("account"), config.getProperty("password"), verifyCode).run {
-						if (code != 200) throw LuoGuException(this@apply, message)
-					}
+					login(config.getProperty("account"), config.getProperty("password"), verifyCode)
 				}
 
-				LuoGuUser(this).let { user ->
+				loggedUser.let { user ->
 					val id = user.paste("中文, Special character <>&^%")
 					println("https://www.luogu.org/paste/$id")
 					user.deletePaste(id)

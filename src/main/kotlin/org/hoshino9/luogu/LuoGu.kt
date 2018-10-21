@@ -1,24 +1,23 @@
 package org.hoshino9.luogu
 
-import org.apache.http.client.CookieStore
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
-import org.apache.http.cookie.Cookie
-import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.HttpClients
-import org.apache.http.impl.cookie.BasicClientCookie
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBen
 import org.hoshino9.luogu.problems.Record
-import org.hoshino9.luogu.results.LuoGuLoginResult
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.OutputStream
 
+/**
+ * # LuoGU
+ * **你谷**客户端类
+ */
 @Suppress("MemberVisibilityCanBePrivate")
-class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.createDefault()) {
+open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.createDefault()) : HttpClient by client {
 	companion object {
 		const val baseUrl = "https://www.luogu.org"
 
@@ -30,7 +29,10 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 		 * @see Document
 		 */
 		fun userId(document : Document) : String? {
-			return document.body().getElementsByTag("header")?.first()?.getElementsByAttribute("myuid")?.attr("myuid")
+			return (document.body()
+					.getElementsByAttribute("myuid")
+					.first()
+					?.attr("myuid") ?: "").takeIf { it != "" }
 		}
 
 		/**
@@ -74,13 +76,19 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
-	val csrfToken : String get() {
-		HttpGet(baseUrl).let { req ->
-			client.execute(req)!!.let { resp ->
-				return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, "No such csrf-token")
+	val csrfToken : String
+		get() {
+			HttpGet(baseUrl).let { req ->
+				client.execute(req) !!.let { resp ->
+					return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, "No such csrf-token")
+				}
 			}
 		}
-	}
+
+	/**
+	 * 获得当前客户端登录的用户
+	 */
+	val loggedUser : LuoGuLoggedUser get() = LuoGuLoggedUser(this)
 
 	/**
 	 * 获取验证码
@@ -88,12 +96,12 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	 */
 	fun verifyCode(output : OutputStream) {
 		HttpGet("$baseUrl/download/captcha").let { req ->
-			client.execute(req)!!.let { resp ->
+			execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content : ByteArray = EntityUtils.toByteArray(resp.entity)
 				if (statusCode == 200) {
 					output.write(content)
-				} else throw LuoGuException(this, String(content))
+				} else throw LuoGuStatusCodeException(this, statusCode, String(content))
 			}
 		}
 	}
@@ -103,12 +111,14 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 	 * @param account 账号
 	 * @param password 密码
 	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
+	 * @throws LuoGuStatusCodeException 当登录失败时抛出
 	 * @return 返回一个 LuoGuLoginResule 对象
 	 *
 	 * @see LuoGu.verifyCode
-	 * @see LuoGuLoginResult
+	 * @see LuoGuLoggedUser
+	 * @see LuoGuStatusCodeException
 	 */
-	fun login(account : String, password : String, verifyCode : String) : LuoGuLoginResult {
+	fun login(account : String, password : String, verifyCode : String) : LuoGuLoggedUser {
 		return HttpPost("$baseUrl/login/loginpage").apply {
 			val cookie = 0
 			val redirect = ""
@@ -123,17 +133,17 @@ class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.crea
 					"verify" to verifyCode
 			).entity()
 		}.let { req ->
-			client.execute(req)!!.let { resp ->
+			execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content : String = EntityUtils.toString(resp.entity)
-				if (resp.statusLine.statusCode == 200) {
+				if (statusCode == 200) {
 					JSONObject(content).run {
 						val code : Int = getInt("code")
 						val msg : String = getString("message")
-						val more : JSONObject? = optJSONObject("more")
-						val goto : String? = more?.getString("goto")
 
-						LuoGuLoginResult(code, msg, goto)
+						if (code == 200) {
+							loggedUser
+						} else throw LuoGuStatusCodeException(this@LuoGu, code, msg)
 					}
 				} else throw LuoGuException(this, content)
 			}

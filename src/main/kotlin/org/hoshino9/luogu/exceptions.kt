@@ -3,4 +3,5 @@
 package org.hoshino9.luogu
 
 open class LuoGuException(val luoGu : LuoGu, msg : String) : Exception(msg)
-open class LuoGuUserException(val user : LuoGuUser, msg : String) : LuoGuException(user.luogu, msg)
+open class LuoGuStatusCodeException(luoGu : LuoGu, val code : Int, msg : String) : LuoGuException(luoGu, msg)
+open class LuoGuUserException(val user : LuoGuLoggedUser, msg : String) : LuoGuException(user.luogu, msg)
