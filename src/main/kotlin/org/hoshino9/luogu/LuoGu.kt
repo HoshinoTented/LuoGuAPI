@@ -1,3 +1,5 @@
+@file:Suppress("unused", "UNUSED_PARAMETER")
+
 package org.hoshino9.luogu
 
 import org.apache.http.client.HttpClient
@@ -18,9 +20,16 @@ import java.io.OutputStream
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.createDefault()) : HttpClient by client {
-	companion object {
+	companion object Companion {        //先写个 Companion 吧, 以后可能要 rename
 		const val baseUrl = "https://www.luogu.org"
 
+		/**
+		 * 解析主站滚动图片
+		 * @param page 主站页面
+		 * @return 返回一个列表, 其中 Pair 的 first 是链接, second 是图片
+		 *
+		 * @see Document
+		 */
 		fun sliderPhotos(page : Document) : List<Pair<String, String>> {
 			val name = "lg-slider"
 			return page.getElementById(name)?.run {
