@@ -43,10 +43,10 @@ class LuoGuLoginTest {
 				}
 
 				loggedUser.let { user ->
-					val id = user.paste("中文, Special character <>&^%")
-					println("https://www.luogu.org/paste/$id")
-					user.deletePaste(id)
+					println(user)
 				}
+
+				println(this.sliderPhotos)
 			}
 
 			//save

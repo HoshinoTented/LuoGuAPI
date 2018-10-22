@@ -21,6 +21,24 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 	companion object {
 		const val baseUrl = "https://www.luogu.org"
 
+		fun sliderPhotos(page : Document) : List<Pair<String, String>> {
+			val name = "lg-slider"
+			return page.getElementById(name)?.run {
+				children().first()?.run {
+					children().filter {
+						it.className() != "clone"
+					}.mapNotNull {
+						val linkElement = it.children().first() ?: return@mapNotNull null
+						val imgElement = linkElement.children().first() ?: return@mapNotNull null
+						val link = linkElement.attr("href")
+						val img = imgElement.attr("src")
+
+						link to img
+					}
+				} ?: throw NoSuchElementException("first child of $name")
+			} ?: throw NoSuchElementException(name)
+		}
+
 		/**
 		 * 获取 uid
 		 * @param document Document对象, 即**你谷**主站页面, 因为**你谷**某些奇怪的原因, 而没有开放API, 所以只能从网页中爬了
@@ -83,6 +101,11 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 					return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, "No such csrf-token")
 				}
 			}
+		}
+
+	val sliderPhotos : List<Pair<String, String>>
+		get() {
+			return HttpGet(baseUrl).run(client::execute).entity.data.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
 		}
 
 	/**
