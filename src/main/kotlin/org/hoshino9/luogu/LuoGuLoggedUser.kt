@@ -181,8 +181,4 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			} else throw LuoGuUserException(this, statusCode.toString())
 		}
 	}
-
-	override fun toString() : String {
-		return uid
-	}
 }
