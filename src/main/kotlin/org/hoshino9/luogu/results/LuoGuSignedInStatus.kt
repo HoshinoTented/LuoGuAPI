@@ -48,7 +48,7 @@ data class LuoGuSignedInStatus(val qian : Qian, val goods : List<Thing>, val bad
 
 	enum class Qian(val show : String) {
 		VeryGood("大吉"),
-		Good("吉"),
+		Good("小吉"),
 		Middle("中平"),
 		Bad("凶"),
 		VeryBad("大凶"),
