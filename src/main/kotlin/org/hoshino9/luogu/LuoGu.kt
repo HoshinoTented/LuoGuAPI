@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.problems.Record
 import org.json.JSONObject
@@ -187,4 +188,12 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 			}
 		}
 	}
+
+	/**
+	 * 公开的犇犇列表
+	 * @param page 页面序号
+	 * @return 返回一个评论列表
+	 * @see LuoGuComment
+	 */
+	fun publicBenben(page : Int = 1) : List<LuoGuComment> = LuoGuLoggedUser(this, "Internal").benben(BenBenType.ALL, page)
 }
