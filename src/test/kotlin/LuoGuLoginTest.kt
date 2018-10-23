@@ -44,6 +44,7 @@ class LuoGuLoginTest {
 
 				loggedUser.let { user ->
 					println(user)
+					println(user.signInStatus)
 				}
 
 				println(this.sliderPhotos)

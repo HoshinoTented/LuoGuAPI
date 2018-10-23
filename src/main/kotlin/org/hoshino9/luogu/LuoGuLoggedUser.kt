@@ -5,7 +5,7 @@ import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBen
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.problems.Solution
-import org.hoshino9.luogu.results.LuoGuSignedInResult
+import org.hoshino9.luogu.results.LuoGuSignedInStatus
 import org.json.JSONObject
 import org.jsoup.Jsoup
 
@@ -39,24 +39,36 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	}
 
 	/**
-	 * **你谷**签到
-	 * @return 返回一个签到结果
+	 * 获取签到状态信息
+	 * @return 返回一个签到状态类
+	 * @throws StatusException 未签到时抛出
 	 *
-	 * @see LuoGuSignedInResult
+	 * @see LuoGuSignedInStatus
 	 */
-	fun signIn() : LuoGuSignedInResult? {
+	val signInStatus : LuoGuSignedInStatus
+		get() {
+			val doc = luogu.homePage.data.run(Jsoup::parse)
+			val node = doc.body().children()
+					.getOrNull(1)?.children()
+					?.getOrNull(1)?.children()
+					?.getOrNull(1)?.children()
+					?.first()?.children()
+					?.first()?.children()
+					?.first()?.children()
+					?.first()?.children()
+					?.getOrNull(1) ?: throw NoSuchElementException()
+			return LuoGuSignedInStatus(node.children())
+		}
+
+	/**
+	 * **你谷**签到
+	 */
+	fun signIn() {
 		return HttpGet("index/ajax_punch").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content : String = EntityUtils.toString(resp.entity)
-				if (statusCode == 200) {
-					JSONObject(content).run {
-						val code : Int = getInt("code")
-						val msg : String = getString("message")
-
-						LuoGuSignedInResult(code, msg)
-					}
-				} else throw LuoGuUserException(this, content)
+				if (statusCode != 200) throw LuoGuUserException(this, content)
 			}
 		}
 	}

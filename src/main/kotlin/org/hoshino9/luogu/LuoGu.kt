@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu
 
+import org.apache.http.HttpEntity
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost
@@ -99,6 +100,8 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 			return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content")
 		}
 	}
+
+	val homePage : HttpEntity get() = HttpGet(baseUrl).run(::execute).takeIf { it.statusLine.statusCode == 200 }?.entity ?: throw LuoGuException(this, "wrong status code")
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
