@@ -4,6 +4,7 @@ import org.apache.http.impl.client.HttpClients
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuException
 import org.hoshino9.luogu.LuoGuLoggedUser
+import org.hoshino9.luogu.benben.BenBenType
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -45,6 +46,7 @@ class LuoGuLoginTest {
 				loggedUser.let { user ->
 					println(user)
 					println(user.signInStatus)
+					println(user.benben(BenBenType.WATCHING))
 				}
 
 				println(this.sliderPhotos)

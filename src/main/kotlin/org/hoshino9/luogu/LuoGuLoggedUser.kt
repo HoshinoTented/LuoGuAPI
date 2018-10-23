@@ -2,7 +2,7 @@ package org.hoshino9.luogu
 
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.util.EntityUtils
-import org.hoshino9.luogu.benben.BenBen
+import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.problems.Solution
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
@@ -64,7 +64,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * **你谷**签到
 	 */
 	fun signIn() {
-		return HttpGet("index/ajax_punch").let { req ->
+		return HttpGet("${LuoGu.baseUrl}/index/ajax_punch").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content : String = EntityUtils.toString(resp.entity)
@@ -79,17 +79,17 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * @param page 页数, 默认为`1`
 	 * @return 返回一个犇犇的列表
 	 *
-	 * @see BenBen
+	 * @see LuoGuComment
 	 * @see BenBenType
 	 */
 	@JvmOverloads
-	fun benben(type : BenBenType, page : Int = 1) : List<BenBen> {
-		HttpGet("feed/${type.toString().toLowerCase()}?page=$page").let { req ->
-			luogu.client.execute(req) !!.let { resp ->
+	fun benben(type : BenBenType, page : Int = 1) : List<LuoGuComment> {
+		HttpGet("${LuoGu.baseUrl}/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
+			luogu.execute(req).let { resp ->
 				val statusCode = resp.statusLine.statusCode
-				val content = EntityUtils.toString(resp.entity)
+				val content = resp.entity.data
 				if (statusCode == 200) {
-					return LuoGu.benben(Jsoup.parse(content))
+					return LuoGu.benben(Jsoup.parse(content).body().children())
 				} else throw LuoGuUserException(this, content)
 			}
 		}
