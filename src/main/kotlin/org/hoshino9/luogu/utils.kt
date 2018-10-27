@@ -6,7 +6,9 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 import java.nio.charset.Charset
-import java.util.Date
+
+const val SEPARATOR = "&"
+const val EQUAL = "="
 
 /**
  * 把 Map 对象转化为 HttpEntity 对象

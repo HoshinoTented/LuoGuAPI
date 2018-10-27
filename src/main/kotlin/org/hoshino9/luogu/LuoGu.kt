@@ -10,6 +10,9 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
+import org.hoshino9.luogu.problems.Problem
+import org.hoshino9.luogu.problems.ProblemListPage
+import org.hoshino9.luogu.problems.ProblemSearchConfig
 import org.hoshino9.luogu.problems.Record
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -105,6 +108,9 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 		}
 	}
 
+	/**
+	 * 返回 **你谷** 主页源代码
+	 */
 	val homePage : HttpEntity get() = HttpGet(baseUrl).run(::execute).takeIf { it.statusLine.statusCode == 200 }?.entity ?: throw LuoGuException(this, "wrong status code")
 
 	/**
@@ -195,5 +201,18 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 	 * @return 返回一个评论列表
 	 * @see LuoGuComment
 	 */
+	@JvmOverloads
 	fun publicBenben(page : Int = 1) : List<LuoGuComment> = LuoGuLoggedUser(this, "Internal").benben(BenBenType.ALL, page)
+
+	@JvmOverloads
+	fun problemList(filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
+		HttpGet("$baseUrl/problemnew/lists").run(::execute).let { resp ->
+			val statusCode = resp.statusLine.statusCode
+			val content = resp.entity.data
+
+			if (statusCode == 200) {
+				return ProblemListPage(Jsoup.parse(content)).list()
+			} else throw LuoGuStatusCodeException(this, statusCode, content)
+		}
+	}
 }
