@@ -205,8 +205,8 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 	fun publicBenben(page : Int = 1) : List<LuoGuComment> = LuoGuLoggedUser(this, "Internal").benben(BenBenType.ALL, page)
 
 	@JvmOverloads
-	fun problemList(filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
-		HttpGet("$baseUrl/problemnew/lists").run(::execute).let { resp ->
+	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
+		HttpGet("$baseUrl/problemnew/lists?$filter&page=$page").run(::execute).let { resp ->
 			val statusCode = resp.statusLine.statusCode
 			val content = resp.entity.data
 

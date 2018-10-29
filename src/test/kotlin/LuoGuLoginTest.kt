@@ -50,7 +50,7 @@ class LuoGuLoginTest {
 				}
 
 				println(this.sliderPhotos)
-				println(this.problemList())
+				println(this.problemList(2))
 			}
 
 			//save
