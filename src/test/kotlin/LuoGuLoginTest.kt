@@ -5,6 +5,7 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuException
 import org.hoshino9.luogu.LuoGuLoggedUser
 import org.hoshino9.luogu.benben.BenBenType
+import org.hoshino9.luogu.problems.ParsedProblem
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -34,7 +35,9 @@ class LuoGuLoginTest {
 					it.readObject() as Cookie
 				}.run(cookieStore::addCookie)
 			}
+			// end: load config
 
+			// main test
 			LuoGu(builder.build()).apply {
 				if (cookieStore.cookies.isEmpty()) {
 					verifyCode(Paths.get("$testRoot/verify.png").toFile().run(::FileOutputStream))
@@ -50,10 +53,13 @@ class LuoGuLoginTest {
 				}
 
 				println(this.sliderPhotos)
-				println(this.problemList(2))
+				println(this.problemList().map {
+					it as ParsedProblem
+					it.elem
+				})
 			}
 
-			//save
+			//save cookie
 			ObjectOutputStream(cookieObj.toFile().outputStream()).use { out ->
 				out.writeObject(cookieStore.cookies.first { it.name == "__client_id" })
 			}

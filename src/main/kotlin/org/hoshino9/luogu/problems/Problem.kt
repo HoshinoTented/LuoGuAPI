@@ -2,22 +2,51 @@
 
 package org.hoshino9.luogu.problems
 
+import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.problems.tags.LuoGuTag
 
-open class Problem(open val pid : String) {
+abstract class Problem(open val pid : String) {
 	abstract class Difficulty(text : String) : LuoGuTag(text, - 1)
-	sealed class Red : Difficulty("入门难度")
-	sealed class Orange : Difficulty("普及-")
-	sealed class Yellow : Difficulty("普及/提高-")
-	sealed class Green : Difficulty("普及+/提高")
-	sealed class Blue : Difficulty("提高+/省选-")
-	sealed class Purple : Difficulty("省选/NOI-")
-	sealed class Black : Difficulty("NOI/NOI+/CTSC")
+	object Red : Difficulty("入门难度")
+	object Orange : Difficulty("普及-")
+	object Yellow : Difficulty("普及/提高-")
+	object Green : Difficulty("普及+/提高")
+	object Blue : Difficulty("提高+/省选-")
+	object Purple : Difficulty("省选/NOI-")
+	object Black : Difficulty("NOI/NOI+/CTSC")
 
-	open val difficulty : Difficulty get() = TODO()
-	open val name : String get() = TODO()
-	open val passPercent : Pair<Long, Long> get() = TODO()
-	open val tags : List<LuoGuTag> get() = TODO()
+	/**
+	 * 难度
+	 */
+	abstract val difficulty : Difficulty
+
+	/**
+	 * 题目名称
+	 */
+	abstract val name : String
+
+	/**
+	 * 题目通过率
+	 */
+	abstract val passPercent : Pair<Long, Long>
+
+	/**
+	 * 题目的标签
+	 */
+	abstract val tags : List<LuoGuTag>
+
+	/**
+	 * 题目的地址
+	 */
+	open val url : String get() = "${LuoGu.baseUrl}/problemnew/show/$pid"
+
+	override fun equals(other : Any?) : Boolean {
+		return (other as? Problem)?.pid == pid
+	}
+
+	override fun hashCode() : Int {
+		return pid.hashCode()
+	}
 
 	override fun toString() : String {
 		return pid

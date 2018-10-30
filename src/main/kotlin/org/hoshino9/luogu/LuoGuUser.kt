@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.hoshino9.luogu
 
 import org.jsoup.nodes.Element
@@ -27,6 +29,21 @@ open class LuoGuUser(val uid : String) {
 	 * 题目的pid
 	 */
 	val triedProblems : List<String> get() = TODO()
+
+	override fun equals(other : Any?) : Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as LuoGuUser
+
+		if (uid != other.uid) return false
+
+		return true
+	}
+
+	override fun hashCode() : Int {
+		return uid.hashCode()
+	}
 
 	override fun toString() : String {
 		return uid

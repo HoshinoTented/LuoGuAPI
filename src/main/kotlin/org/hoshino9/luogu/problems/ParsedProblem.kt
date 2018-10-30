@@ -1,5 +1,6 @@
 package org.hoshino9.luogu.problems
 
+import org.hoshino9.luogu.problems.tags.LuoGuTag
 import org.jsoup.nodes.Element
 
 /**
@@ -20,5 +21,8 @@ open class ParsedProblem(val elem : Element) : Problem(pid(elem)) {
 		}
 	}
 
-
+	override val difficulty : Difficulty by lazy { TODO() }
+	override val name : String by lazy { TODO() }
+	override val passPercent : Pair<Long, Long> by lazy { TODO() }
+	override val tags : List<LuoGuTag> by lazy { TODO() }
 }
