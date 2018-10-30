@@ -53,10 +53,10 @@ class LuoGuLoginTest {
 				}
 
 				println(this.sliderPhotos)
-				println(this.problemList().map {
+				this.problemList().forEach {
 					it as ParsedProblem
-					it.elem
-				})
+					println("${it.pid} with ${it.passPercent.first} / ${it.passPercent.second}")
+				}
 			}
 
 			//save cookie
