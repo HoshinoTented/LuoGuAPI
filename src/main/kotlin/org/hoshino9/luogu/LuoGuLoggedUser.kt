@@ -25,6 +25,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		 *
 		 * @see LuoGu.Companion.userId
 		 */
+		@Throws(StatusCodeException::class, LuoGuException::class)
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LuoGuLoggedUser {
 			HttpGet(LuoGu.baseUrl).let(luogu.client::execute) !!.let { resp ->
@@ -33,7 +34,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 
 				if (statusCode == 200) {
 					return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, "no logged in"))
-				} else throw LuoGuException(luogu, content)
+				} else throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -45,6 +46,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 *
 	 * @see LuoGuSignedInStatus
 	 */
+	@get:Throws(StatusException::class)
 	val signInStatus : LuoGuSignedInStatus
 		get() {
 			val doc = luogu.homePage.data.run(Jsoup::parse)
@@ -67,8 +69,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		return HttpGet("${LuoGu.baseUrl}/index/ajax_punch").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
-				val content : String = EntityUtils.toString(resp.entity)
-				if (statusCode != 200) throw LuoGuUserException(this, content)
+				if (statusCode != 200) throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -90,7 +91,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				val content = resp.entity.data
 				if (statusCode == 200) {
 					return LuoGu.benben(Jsoup.parse(content).body().children())
-				} else throw LuoGuUserException(this, content)
+				} else throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -115,13 +116,15 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				val content = resp.entity.data
 				if (statusCode == 200) {
 					JSONObject(content).let {
+						val mStatusCode = it.optInt("status")
+						val mData = it.optString("data")
 						if (it.optInt("status") == 200) {
-							return it.getString("data")
+							return mData
 						} else {
-							throw LuoGuUserException(this, it.optString("data").toString())
+							throw StatusCodeException(mStatusCode, mData)
 						}
 					}
-				} else throw LuoGuUserException(this, statusCode.toString())
+				} else throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -134,7 +137,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		luogu.postRequest("paste/delete/$pasteId").let { req ->
 			luogu.client.execute(req).let { resp ->
 				val statusCode = resp.statusLine.statusCode
-				if (statusCode != 200) throw LuoGuUserException(this, statusCode.toString())
+				if (statusCode != 200) throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -154,9 +157,9 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 					JSONObject(content).run {
 						val status = getInt("status")
 						val data = get("data")
-						if (status != 200) throw LuoGuUserException(this@LuoGuLoggedUser, data.toString())
+						if (status != 200) throw StatusCodeException(status, data.toString())
 					}
-				} else throw LuoGuUserException(this, statusCode.toString())
+				} else throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -188,9 +191,9 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 					if (status == 200) {
 						data as JSONObject
 						return data.get("rid").toString()
-					} else throw LuoGuUserException(this@LuoGuLoggedUser, data.toString())
+					} else throw StatusCodeException(statusCode, data.toString())
 				}
-			} else throw LuoGuUserException(this, statusCode.toString())
+			} else throw StatusCodeException(statusCode)
 		}
 	}
 }

@@ -131,6 +131,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 	/**
 	 * 获得当前客户端登录的用户
 	 */
+	@get:Throws(StatusCodeException::class, LuoGuException::class)
 	val loggedUser : LuoGuLoggedUser get() = LuoGuLoggedUser(this)
 
 	/**
@@ -188,7 +189,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 							loggedUser
 						} else throw LuoGuStatusCodeException(this@LuoGu, code, msg)
 					}
-				} else throw LuoGuException(this, content)
+				} else throw StatusCodeException(statusCode)
 			}
 		}
 	}
@@ -210,7 +211,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 
 			if (statusCode == 200) {
 				return ProblemListPage(Jsoup.parse(content)).list()
-			} else throw LuoGuStatusCodeException(this, statusCode, content)
+			} else throw StatusCodeException(statusCode, content)
 		}
 	}
 
