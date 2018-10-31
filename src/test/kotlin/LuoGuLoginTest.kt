@@ -49,7 +49,7 @@ class LuoGuLoginTest {
 				loggedUser.let { user ->
 					println(user)
 					println(user.signInStatus)
-					println(user.benben(BenBenType.WATCHING))
+					println(user.benben(BenBenType.ALL))
 				}
 
 				println(this.sliderPhotos)

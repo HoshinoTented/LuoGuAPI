@@ -10,10 +10,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
-import org.hoshino9.luogu.problems.Problem
-import org.hoshino9.luogu.problems.ProblemListPage
-import org.hoshino9.luogu.problems.ProblemSearchConfig
-import org.hoshino9.luogu.problems.Record
+import org.hoshino9.luogu.problems.*
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -214,5 +211,9 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 				return ProblemListPage(Jsoup.parse(content)).list()
 			} else throw LuoGuStatusCodeException(this, statusCode, content)
 		}
+	}
+
+	fun practiceList() : List<String> {
+		TODO()
 	}
 }
