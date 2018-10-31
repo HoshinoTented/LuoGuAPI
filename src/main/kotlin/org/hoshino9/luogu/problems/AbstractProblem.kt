@@ -3,7 +3,7 @@
 package org.hoshino9.luogu.problems
 
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.problems.tags.LuoGuTag
+import org.hoshino9.luogu.LuoGuTag
 
 interface Problem {
 	abstract class Difficulty(text : String) : LuoGuTag(text, - 1)

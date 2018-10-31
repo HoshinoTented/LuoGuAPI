@@ -10,6 +10,7 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
+import org.hoshino9.luogu.practice.PracticeBlock
 import org.hoshino9.luogu.problems.*
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -213,7 +214,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 		}
 	}
 
-	fun practiceList() : List<String> {
+	fun practiceList() : List<PracticeBlock> {
 		TODO()
 	}
 }

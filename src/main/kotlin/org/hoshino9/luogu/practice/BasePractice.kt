@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.hoshino9.luogu.practice
 
 import org.hoshino9.luogu.problems.Problem

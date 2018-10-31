@@ -2,7 +2,7 @@ package org.hoshino9.luogu.problems
 
 import org.hoshino9.luogu.EQUAL
 import org.hoshino9.luogu.SEPARATOR
-import org.hoshino9.luogu.problems.tags.LuoGuTag
+import org.hoshino9.luogu.LuoGuTag
 import org.hoshino9.luogu.problems.tags.ProblemStore
 
 /**
