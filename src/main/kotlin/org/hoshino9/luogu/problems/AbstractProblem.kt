@@ -15,7 +15,7 @@ interface Problem {
 	object Purple : Difficulty("省选/NOI-")
 	object Black : Difficulty("NOI/NOI+/CTSC")
 
-	val pid : String
+	val id : String
 
 	/**
 	 * 难度
@@ -36,23 +36,28 @@ interface Problem {
 	 * 题目的标签
 	 */
 	val tags : List<LuoGuTag>
+
+	/**
+	 * 题目内容
+	 */
+	val content : ProblemContent
 }
 
 abstract class AbstractProblem : Problem {
 	/**
 	 * 题目的地址
 	 */
-	open val url : String get() = "${LuoGu.baseUrl}/problemnew/show/$pid"
+	open val url : String get() = "${LuoGu.baseUrl}/problemnew/show/$id"
 
 	override fun equals(other : Any?) : Boolean {
-		return (other as? AbstractProblem)?.pid == pid
+		return (other as? AbstractProblem)?.id == id
 	}
 
 	override fun hashCode() : Int {
-		return pid.hashCode()
+		return id.hashCode()
 	}
 
 	override fun toString() : String {
-		return pid
+		return id
 	}
 }

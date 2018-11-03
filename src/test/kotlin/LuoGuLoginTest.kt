@@ -151,7 +151,7 @@ ${it.source}
 	@Test
 	fun problemListTest() {
 		luogu.problemList().forEach {
-			println("${it.pid} (${it.passPercent.first} / ${it.passPercent.second})")
+			println("${it.id} (${it.passPercent.first} / ${it.passPercent.second})")
 		}
 	}
 }
