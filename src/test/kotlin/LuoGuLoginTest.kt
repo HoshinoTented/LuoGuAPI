@@ -56,6 +56,8 @@ class LuoGuLoginTest {
 						println(user.signInStatus)
 					}
 
+					user.postPhoto(verifyPath.toFile())
+
 					println(user.benben(BenBenType.ALL))
 				}
 

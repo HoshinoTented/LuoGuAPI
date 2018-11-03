@@ -5,7 +5,6 @@ package org.hoshino9.luogu
 import org.apache.http.HttpEntity
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
@@ -155,15 +154,18 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 	 * @param account 账号
 	 * @param password 密码
 	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
-	 * @throws LuoGuStatusCodeException 当登录失败时抛出
+	 * @throws APIStatusCodeException 当登录失败时抛出
+	 * @throws StatusCodeException 当请求码错误时抛出
 	 * @return 返回一个 LuoGuLoginResule 对象
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LuoGuLoggedUser
-	 * @see LuoGuStatusCodeException
+	 * @see APIStatusCodeException
+	 * @see StatusCodeException
 	 */
+	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun login(account : String, password : String, verifyCode : String) : LuoGuLoggedUser {
-		return HttpPost("$baseUrl/login/loginpage").apply {
+		return postRequest("login/loginpage").apply {
 			val cookie = 0
 			val redirect = ""
 			val twoFactor = "undefined"
@@ -175,7 +177,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 					"redirect" to redirect,
 					"two_factor" to twoFactor,
 					"verify" to verifyCode
-			).entity()
+			).stringEntity()
 		}.let { req ->
 			execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
@@ -187,7 +189,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 
 						if (code == 200) {
 							loggedUser
-						} else throw LuoGuStatusCodeException(this@LuoGu, code, msg)
+						} else throw APIStatusCodeException(code, msg)
 					}
 				} else throw StatusCodeException(statusCode)
 			}

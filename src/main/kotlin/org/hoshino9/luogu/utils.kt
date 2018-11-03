@@ -13,11 +13,13 @@ const val EQUAL = "="
 /**
  * 把 Map 对象转化为 HttpEntity 对象
  */
-fun <K, V> Map<K, V>.entity() : HttpEntity = UrlEncodedFormEntity(
-		map { (k, v) ->
-			BasicNameValuePair(k.toString(), v.toString())
-		}, Charset.forName("UTF-8")
-)
+fun <K, V> Map<K, V>.stringEntity() : HttpEntity {
+	return UrlEncodedFormEntity(
+			map { (k, v) ->
+				BasicNameValuePair(k.toString(), v.toString())
+			}, Charset.forName("UTF-8")
+	)
+}
 
 val HttpEntity.data : String get() = EntityUtils.toString(this)
 
