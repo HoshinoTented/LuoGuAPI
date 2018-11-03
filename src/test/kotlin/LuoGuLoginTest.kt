@@ -4,6 +4,8 @@ import org.apache.http.impl.client.HttpClients
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.StatusException
 import org.hoshino9.luogu.benben.BenBenType
+import org.hoshino9.luogu.benben.LuoGuComment
+import org.hoshino9.luogu.results.LuoGuSignedInStatus
 import org.junit.Test
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
@@ -44,6 +46,8 @@ class LuoGuLoginTest {
 
 	private val user by lazy { luogu.loggedUser }
 
+	private val separator = "${"=".repeat(100)}\n"
+
 	init {
 		loadCookie()
 	}
@@ -76,31 +80,67 @@ class LuoGuLoginTest {
 
 	@Test
 	fun signInTest() {
-		try {
-			println(user.signInStatus)
+		val toString : (LuoGuSignedInStatus.Thing) -> String = {
+			"${it.name}: ${it.description}"
+		}
+
+		val status = try {
+			user.signInStatus
 		} catch (e : StatusException) {
 			println("failed, trying signing...")
 			user.signIn()
-			println(user.signInStatus)
+			user.signInStatus
 		}
+
+		//language=TEXT
+		"""${status.qian.show}
+宜:
+${status.goods.joinToString(separator = "\n", transform = toString)}
+
+忌:
+${status.bads.joinToString(separator = "\n", transform = toString)}
+""".run(::println)
+
 	}
 
 	@Test
 	fun photoListTest() {
-		user.photoList().forEach {
-			"url=${it.url}, date=${it.date}, uploader=${it.user}".run(::println)
-		}
+		user.photoList().joinToString {
+			//language=TEXT
+			"""user: ${it.user}
+url: ${it.url}
+date: ${it.date}
+${it.user}
+"""
+		}.run(::println)
 	}
 
 	@Test
 	fun benbenTest() {
-		user.benben(BenBenType.ALL).run(::println)
-		user.benben(BenBenType.WATCHING).run(::println)
+		val toString : (LuoGuComment) -> String = {
+			//language=TEXT
+			"""user: ${it.user}
+date: ${it.date}
+content:
+${it.content}
+"""
+		}
+
+		user.benben(BenBenType.ALL).joinToString(separator = separator, transform = toString).run(::println)
+		user.benben(BenBenType.WATCHING).joinToString(separator = separator, transform = toString).run(::println)
 	}
 
 	@Test
 	fun pasteListTest() {
-		user.pasteList().run(::println)
+		user.pasteList().joinToString(separator = separator) {
+			//language=TEXT
+			"""user: ${it.user}
+date: ${it.date}
+is public: ${it.isPublic}
+source:
+${it.source}
+"""
+		}.run(::println)
 	}
 
 	@Test
