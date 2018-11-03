@@ -9,11 +9,14 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
+import org.hoshino9.luogu.photo.LuoGuPhoto
+import org.hoshino9.luogu.photo.ParsedLuoGuPhoto
 import org.hoshino9.luogu.practice.PracticeBlock
 import org.hoshino9.luogu.problems.*
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.io.OutputStream
 
@@ -89,8 +92,8 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 		 *
 		 * @see LuoGuComment
 		 */
-		fun benben(list : Elements) : List<LuoGuComment> {
-			return list.mapNotNull {
+		fun benben(list : Element) : List<LuoGuComment> {
+			return list.children().mapNotNull {
 				if (it.tagName() == "li") LuoGuComment(it) else null
 			}
 		}
@@ -102,6 +105,12 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 		 */
 		fun csrfToken(page : Document) : String? {
 			return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content")
+		}
+
+		fun photo(list : Element) : List<LuoGuPhoto> {
+			return list.getElementsByClass("lg-table-row").map {
+				ParsedLuoGuPhoto(it)
+			}
 		}
 	}
 

@@ -56,7 +56,9 @@ class LuoGuLoginTest {
 						println(user.signInStatus)
 					}
 
-					user.postPhoto(verifyPath.toFile())
+					user.photoList().forEach {
+						println("url=${it.url}, date=${it.date}, uploader=${it.uid}")
+					}
 
 					println(user.benben(BenBenType.ALL))
 				}

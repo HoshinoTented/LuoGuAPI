@@ -6,6 +6,7 @@ import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.benben.BenBenType
+import org.hoshino9.luogu.photo.LuoGuPhoto
 import org.hoshino9.luogu.problems.Solution
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
 import org.json.JSONObject
@@ -95,7 +96,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				val statusCode = resp.statusLine.statusCode
 				val content = resp.entity.data
 				if (statusCode == 200) {
-					return LuoGu.benben(Jsoup.parse(content).body().children())
+					return LuoGu.benben(Jsoup.parse(content).body())
 				} else throw StatusCodeException(statusCode)
 			}
 		}
@@ -228,6 +229,13 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				val code = optInt("code")
 				if (code != 201) throw APIStatusCodeException(code)
 			}
+		}
+	}
+
+	fun photoList() : List<LuoGuPhoto> {
+		HttpGet("${LuoGu.baseUrl}/app/upload").run(luogu::execute).let { resp ->
+			val page = resp.entity.data
+			return LuoGu.photo(Jsoup.parse(page))
 		}
 	}
 }

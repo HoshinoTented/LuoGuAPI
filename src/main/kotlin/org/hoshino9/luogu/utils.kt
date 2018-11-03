@@ -5,6 +5,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
+import java.io.OutputStream
 import java.nio.charset.Charset
 
 const val SEPARATOR = "&"
