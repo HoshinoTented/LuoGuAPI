@@ -1,19 +1,16 @@
 package org.hoshino9.luogu.photo
 
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClients
-import org.hoshino9.luogu.HTMLParseException
-import org.hoshino9.luogu.MatchException
+import org.hoshino9.luogu.*
 import org.hoshino9.luogu.interfaces.NeedElement
 import org.jsoup.nodes.Element
-import java.io.OutputStream
 
 interface LuoGuPhoto {
 	val id : String
 	val date : String
 	val uid : String
 	val url : String
+
+	fun delete(luogu : LuoGu)
 }
 
 abstract class AbstractLuoGuPhoto : LuoGuPhoto {
@@ -23,6 +20,13 @@ abstract class AbstractLuoGuPhoto : LuoGuPhoto {
 		urlRegex.matchEntire(url)?.run {
 			groupValues[1]
 		} ?: throw MatchException(urlRegex, url)
+	}
+
+	override fun delete(luogu : LuoGu) {
+		luogu.postRequest("app/upload?delete=1&uploadid=$id").run(luogu::execute).let { resp ->
+			val statusCode = resp.statusLine.statusCode
+			if (statusCode != 200) throw StatusCodeException(statusCode)
+		}
 	}
 
 	override fun equals(other : Any?) : Boolean {
