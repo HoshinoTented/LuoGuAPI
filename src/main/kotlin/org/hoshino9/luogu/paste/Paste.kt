@@ -1,7 +1,6 @@
 package org.hoshino9.luogu.paste
 
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClients
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.Jsoup
@@ -52,7 +51,7 @@ open class BasicPaste(override val id : String) : AbstractPaste(), HasElement {
 	private val body : Element by lazy { elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem) }
 
 	override val elem : Element by lazy {
-		HttpClients.createDefault().execute(url.run(::HttpGet)).let { resp ->
+		defaultClient.execute(url.run(::HttpGet)).let { resp ->
 			val statusCode = resp.statusLine.statusCode
 			val content = resp.entity.data
 

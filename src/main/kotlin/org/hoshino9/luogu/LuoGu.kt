@@ -5,7 +5,6 @@ package org.hoshino9.luogu
 import org.apache.http.HttpEntity
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
@@ -25,7 +24,7 @@ import java.io.OutputStream
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.createDefault()) : HttpClient by client {
+open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClient) : HttpClient by client {
 	companion object Companion {        //先写个 Companion 吧, 以后可能要 rename
 		const val baseUrl = "https://www.luogu.org"
 
