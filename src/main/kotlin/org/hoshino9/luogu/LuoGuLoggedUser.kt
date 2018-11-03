@@ -157,7 +157,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * @param text 犇犇内容
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
-	fun postBenBen(text : String) {
+	fun postBenben(text : String) {
 		luogu.postRequest("api/feed/postBenben").let { req ->
 			req.entity = mapOf("content" to text).stringEntity()
 			luogu.client.execute(req).let { resp ->
