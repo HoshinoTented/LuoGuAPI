@@ -46,24 +46,30 @@ class LuoGuLoginTest {
 				}
 
 				loggedUser.let { user ->
-					println(user)
+					println("userid: $user")
 
+					print("sign in status: ")
 					try {
 						println(user.signInStatus)
 					} catch (e : StatusException) {
-						println("auto signing...")
+						println("failed, trying signing...")
 						user.signIn()
 						println(user.signInStatus)
 					}
 
+					println("photo list")
 					user.photoList().forEach {
 						println("url=${it.url}, date=${it.date}, uploader=${it.uid}")
 					}
 
+					println("benben list")
 					println(user.benben(BenBenType.ALL))
 				}
 
+				println("slider photos")
 				println(this.sliderPhotos)
+
+				println("problem list")
 				this.problemList().forEach {
 					it as ParsedProblem
 					println("${it.pid} with ${it.passPercent.first} / ${it.passPercent.second}")
