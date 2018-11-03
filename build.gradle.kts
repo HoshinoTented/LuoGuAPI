@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-	compile(kotlin("stdlib-jdk8"))
+	compile(kotlin("stdlib"))
 	compile("org.apache.httpcomponents:httpclient:4.5.6")
 	compile("org.apache.httpcomponents:httpmime:4.5.6")
 	compile("org.json", "json", "20180813")

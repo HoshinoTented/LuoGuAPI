@@ -4,7 +4,7 @@ import org.apache.http.impl.client.HttpClients
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.StatusException
 import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.problems.ParsedProblem
+import org.junit.Test
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -14,75 +14,104 @@ import java.util.Scanner
 
 class LuoGuLoginTest {
 	companion object {
-		private const val testRoot = "src/test/resources"
-		private val verifyPath by lazy { Paths.get(testRoot, "verify.png") }
-		private val cookiePath by lazy { Paths.get(testRoot, "cookie.obj") }
-		private val configPath by lazy { Paths.get(testRoot, "user.properties") }
-		private val config by lazy {
-			Properties().apply {
-				load(configPath.toFile().inputStream())
-			}
-		}
-
 		@JvmStatic
 		fun main(args : Array<String>) {
-			val builder = HttpClients.custom()
-			val cookieStore = BasicCookieStore()
-			builder.setDefaultCookieStore(cookieStore)
-
-			if (cookiePath.toFile().exists()) {
-				ObjectInputStream(cookiePath.toFile().inputStream()).use {
-					it.readObject() as Cookie
-				}.run(cookieStore::addCookie)
+			LuoGuLoginTest().run {
+				login()
+				saveCookie()
 			}
+		}
+	}
 
-			// main test
-			LuoGu(builder.build()).apply {
-				if (cookieStore.cookies.isEmpty()) {
-					verifyCode(verifyPath.toFile().run(::FileOutputStream))
-					println("Please input verify code")
-					val verifyCode : String = Scanner(System.`in`).next()
-					login(config.getProperty("account"), config.getProperty("password"), verifyCode)
-				}
+	private val testRoot = "src/test/resources"
+	private val verifyPath by lazy { Paths.get(testRoot, "verify.png") }
+	private val cookiePath by lazy { Paths.get(testRoot, "cookie.obj") }
+	private val configPath by lazy { Paths.get(testRoot, "user.properties") }
+	private val config by lazy {
+		Properties().apply {
+			load(configPath.toFile().inputStream())
+		}
+	}
 
-				loggedUser.let { user ->
-					println("userid: $user")
+	private val cookieStore by lazy { BasicCookieStore() }
 
-					print("sign in status: ")
-					try {
-						println(user.signInStatus)
-					} catch (e : StatusException) {
-						println("failed, trying signing...")
-						user.signIn()
-						println(user.signInStatus)
-					}
+	private val luogu by lazy {
+		val builder = HttpClients.custom()
+		builder.setDefaultCookieStore(cookieStore)
 
-					println("photo list")
-					user.photoList().forEach {
-						println("url=${it.url}, date=${it.date}, uploader=${it.user}")
-					}
+		LuoGu(builder.build())
+	}
 
-					println("benben list")
-					println(user.benben(BenBenType.ALL))
+	private val user by lazy { luogu.loggedUser }
 
-					println("paste list")
-					println(user.pasteList())
-				}
+	init {
+		loadCookie()
+	}
 
-				println("slider photos")
-				println(this.sliderPhotos)
+	private fun loadCookie() {
+		if (cookiePath.toFile().exists()) {
+			ObjectInputStream(cookiePath.toFile().inputStream()).use {
+				it.readObject() as Cookie
+			}.run(cookieStore::addCookie)
+		}
+	}
 
-				println("problem list")
-				this.problemList().forEach {
-					it as ParsedProblem
-					println("${it.pid} with ${it.passPercent.first} / ${it.passPercent.second}")
-				}
-			}
+	private fun saveCookie() {
+		ObjectOutputStream(cookiePath.toFile().outputStream()).use { out ->
+			out.writeObject(cookieStore.cookies.first { it.name == "__client_id" })
+		}
+	}
 
-			//save cookie
-			ObjectOutputStream(cookiePath.toFile().outputStream()).use { out ->
-				out.writeObject(cookieStore.cookies.first { it.name == "__client_id" })
-			}
+	private fun login() {
+		luogu.verifyCode(verifyPath.toFile().run(::FileOutputStream))
+		println("Please input verify code")
+		val verifyCode : String = Scanner(System.`in`).next()
+		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
+	}
+
+	@Test
+	fun userTest() {
+		println(user)
+	}
+
+	@Test
+	fun signInTest() {
+		try {
+			println(user.signInStatus)
+		} catch (e : StatusException) {
+			println("failed, trying signing...")
+			user.signIn()
+			println(user.signInStatus)
+		}
+	}
+
+	@Test
+	fun photoListTest() {
+		user.photoList().forEach {
+			"url=${it.url}, date=${it.date}, uploader=${it.user}".run(::println)
+		}
+	}
+
+	@Test
+	fun benbenTest() {
+		user.benben(BenBenType.ALL).run(::println)
+		user.benben(BenBenType.WATCHING).run(::println)
+	}
+
+	@Test
+	fun pasteListTest() {
+		user.pasteList().run(::println)
+	}
+
+	@Test
+	fun sliderPhotoTest() {
+		luogu.sliderPhotos.run(::println)
+	}
+
+	@Test
+	fun problemListTest() {
+		luogu.problemList().forEach {
+			println("${it.pid} (${it.passPercent.first} / ${it.passPercent.second})")
 		}
 	}
 }
