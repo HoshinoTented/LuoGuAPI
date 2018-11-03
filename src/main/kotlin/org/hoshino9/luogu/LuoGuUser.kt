@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu
 
+import org.hoshino9.luogu.problems.Problem
 import org.jsoup.nodes.Element
 
 open class LuoGuUser(val uid : String) {
@@ -21,14 +22,14 @@ open class LuoGuUser(val uid : String) {
 	 * 返回一个 List
 	 * 题目的pid
 	 */
-	val passedProblems : List<String> get() = TODO()
+	val passedProblems : List<Problem> get() = TODO()
 
 	/**
 	 * 尝试过的题目
 	 * 返回一个 List
 	 * 题目的pid
 	 */
-	val triedProblems : List<String> get() = TODO()
+	val triedProblems : List<Problem> get() = TODO()
 
 	override fun equals(other : Any?) : Boolean {
 		if (this === other) return true

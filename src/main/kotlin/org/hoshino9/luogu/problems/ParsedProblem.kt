@@ -9,7 +9,7 @@ import org.jsoup.nodes.Element
 /**
  * `AbstractProblem` 的子类
  *
- * @param elem 题目的 html 元素
+ * @param elem 题目的 html 元素(题目列表)
  */
 open class ParsedProblem(override val elem : Element) : AbstractProblem(), HasElement {
 	companion object {
