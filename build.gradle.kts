@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.2.71"
+	kotlin("jvm") version "1.3.0"
 	maven
 }
 
@@ -19,6 +19,7 @@ repositories {
 dependencies {
 	compile(kotlin("stdlib-jdk8"))
 	compile("org.apache.httpcomponents:httpclient:4.5.6")
+	compile("org.apache.httpcomponents:httpmime:4.5.6")
 	compile("org.json", "json", "20180813")
 	compile("org.jsoup", "jsoup", "1.11.3")
 	compile(kotlin("test-junit"))
