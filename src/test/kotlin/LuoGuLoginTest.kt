@@ -59,11 +59,14 @@ class LuoGuLoginTest {
 
 					println("photo list")
 					user.photoList().forEach {
-						println("url=${it.url}, date=${it.date}, uploader=${it.uid}")
+						println("url=${it.url}, date=${it.date}, uploader=${it.user}")
 					}
 
 					println("benben list")
 					println(user.benben(BenBenType.ALL))
+
+					println("paste list")
+					println(user.pasteList())
 				}
 
 				println("slider photos")

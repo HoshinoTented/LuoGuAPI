@@ -6,6 +6,8 @@ import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.benben.BenBenType
+import org.hoshino9.luogu.paste.BasicPaste
+import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.photo.LuoGuPhoto
 import org.hoshino9.luogu.problems.Solution
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
@@ -110,7 +112,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@JvmOverloads
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
-	fun paste(code : String, public : Boolean = true) : String {
+	fun paste(code : String, public : Boolean = true) : Paste {
 		luogu.postRequest("paste/post").let { req ->
 			req.entity = mapOf(
 					"content" to code,
@@ -126,7 +128,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 						val mStatusCode = it.optInt("status")
 						val mData = it.optString("data")
 						if (it.optInt("status") == 200) {
-							return mData
+							return mData.run(::BasicPaste)
 						} else {
 							throw APIStatusCodeException(mStatusCode, mData)
 						}
@@ -136,17 +138,17 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		}
 	}
 
-	/**
-	 * 删除剪切板
-	 * @param pasteId 剪切板id
-	 */
-	@Throws(StatusCodeException::class)
-	fun deletePaste(pasteId : String) {
-		luogu.postRequest("paste/delete/$pasteId").let { req ->
-			luogu.client.execute(req).let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				if (statusCode != 200) throw StatusCodeException(statusCode)
-			}
+	fun pasteList() : List<Paste> {
+		val regex = Regex("""https://www.luogu.org/paste/(\w+)""")
+		HttpGet("${LuoGu.baseUrl}/paste").run(luogu::execute).let { resp ->
+			val statusCode = resp.statusLine.statusCode
+			val content = resp.entity.data
+
+			if (statusCode != 200) throw StatusCodeException(statusCode)
+
+			return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
+				BasicPaste(it.groupValues[1])
+			}.toList()
 		}
 	}
 

@@ -17,7 +17,7 @@ import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
+import org.hoshino9.luogu.record.Record
 import java.io.OutputStream
 
 /**
@@ -28,6 +28,10 @@ import java.io.OutputStream
 open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients.createDefault()) : HttpClient by client {
 	companion object Companion {        //先写个 Companion 吧, 以后可能要 rename
 		const val baseUrl = "https://www.luogu.org"
+
+		fun user(url : String) : LuoGuUser {
+			return url.substring(url.lastIndexOf('=') + 1).run(::LuoGuUser)
+		}
 
 		/**
 		 * 解析主站滚动图片
@@ -55,7 +59,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 		}
 
 		/**
-		 * 获取 uid
+		 * 获取 user
 		 * @param document Document对象, 即**你谷**主站页面, 因为**你谷**某些奇怪的原因, 而没有开放API, 所以只能从网页中爬了
 		 * @return 返回一个uid, **Nullable**
 		 *

@@ -3,7 +3,7 @@
 package org.hoshino9.luogu.problems
 
 import org.hoshino9.luogu.LuoGuTag
-import org.hoshino9.luogu.interfaces.NeedElement
+import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.nodes.Element
 
 /**
@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element
  *
  * @param elem 题目的 html 元素
  */
-open class ParsedProblem(override val elem : Element) : AbstractProblem(), NeedElement {
+open class ParsedProblem(override val elem : Element) : AbstractProblem(), HasElement {
 	companion object {
 		private val passPercentRegex = Regex("""(\d+) /(\d+)""")
 	}

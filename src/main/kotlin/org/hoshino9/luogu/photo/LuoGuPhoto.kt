@@ -1,13 +1,13 @@
 package org.hoshino9.luogu.photo
 
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.interfaces.NeedElement
+import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.nodes.Element
 
 interface LuoGuPhoto {
 	val id : String
 	val date : String
-	val uid : String
+	val user : LuoGuUser
 	val url : String
 
 	fun delete(luogu : LuoGu)
@@ -47,7 +47,7 @@ abstract class AbstractLuoGuPhoto : LuoGuPhoto {
 	}
 }
 
-open class ParsedLuoGuPhoto(override val elem : Element) : AbstractLuoGuPhoto(), NeedElement {
+open class ParsedLuoGuPhoto(override val elem : Element) : AbstractLuoGuPhoto(), HasElement {
 	private val leftElem : Element by lazy { elem.child(0) }
 	private val rightElem : Element by lazy { elem.child(1) }
 
@@ -57,9 +57,9 @@ open class ParsedLuoGuPhoto(override val elem : Element) : AbstractLuoGuPhoto(),
 		}
 	}
 
-	override val uid : String by lazy {
+	override val user : LuoGuUser by lazy {
 		leftElem.child(2).child(0).attr("href").let { str ->
-			str.substring(str.lastIndexOf('=') + 1)
+			LuoGu.user(str)
 		}
 	}
 
