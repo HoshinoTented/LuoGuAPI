@@ -140,6 +140,11 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 			return HttpGet(baseUrl).run(client::execute).entity.data.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
 		}
 
+	val practiceList : List<PracticeBlock>
+		get() {
+			TODO()
+		}
+
 	/**
 	 * 获得当前客户端登录的用户
 	 */
@@ -218,7 +223,18 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 	@JvmOverloads
 	fun publicBenben(page : Int = 1) : List<LuoGuComment> = LuoGuLoggedUser(this, "Internal").benben(BenBenType.ALL, page)
 
+	/**
+	 * 题目列表
+	 * @param page 页数, 默认为 **1**
+	 * @param filter 过滤器
+	 * @throws StatusCodeException
+	 * @return 返回题目列表
+	 *
+	 * @see Problem
+	 * @see ProblemSearchConfig
+	 */
 	@JvmOverloads
+	@Throws(StatusCodeException::class)
 	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
 		HttpGet("$baseUrl/problemnew/lists?$filter&page=$page").run(::execute).let { resp ->
 			val statusCode = resp.statusLine.statusCode
@@ -228,9 +244,5 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = HttpClients
 				return ProblemListPage(Jsoup.parse(content)).list()
 			} else throw StatusCodeException(statusCode, content)
 		}
-	}
-
-	fun practiceList() : List<PracticeBlock> {
-		TODO()
 	}
 }
