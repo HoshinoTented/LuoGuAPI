@@ -120,14 +120,14 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	/**
 	 * 返回 **你谷** 主页源代码
 	 */
-	val homePage : HttpEntity get() = HttpGet(baseUrl).run(::execute).takeIf { it.statusLine.statusCode == 200 }?.entity ?: throw LuoGuException(this, "wrong status code")
+	val homePage : HttpEntity get() = getRequest().run(::execute).takeIf { it.statusLine.statusCode == 200 }?.entity ?: throw LuoGuException(this, "wrong status code")
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
 	val csrfToken : String
 		get() {
-			HttpGet(baseUrl).let { req ->
+			getRequest().let { req ->
 				client.execute(req) !!.let { resp ->
 					return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, "No such csrf-token")
 				}
@@ -136,7 +136,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 
 	val sliderPhotos : List<Pair<String, String>>
 		get() {
-			return HttpGet(baseUrl).run(client::execute).entity.data.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
+			return getRequest().run(client::execute).entity.data.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
 		}
 
 	val practiceList : List<PracticeBlock>
@@ -155,7 +155,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	 * @param output 输出流, 将会把验证码**图片**输出到这个流里
 	 */
 	fun verifyCode(output : OutputStream) {
-		HttpGet("$baseUrl/download/captcha").let { req ->
+		getRequest("download/captcha").let { req ->
 			execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content : ByteArray = EntityUtils.toByteArray(resp.entity)
@@ -235,7 +235,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	@JvmOverloads
 	@Throws(StatusCodeException::class)
 	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
-		HttpGet("$baseUrl/problemnew/lists?$filter&page=$page").run(::execute).let { resp ->
+		getRequest("problemnew/lists?$filter&page=$page").run(::execute).let { resp ->
 			val statusCode = resp.statusLine.statusCode
 			val content = resp.entity.data
 

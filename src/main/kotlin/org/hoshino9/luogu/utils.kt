@@ -28,7 +28,8 @@ val HttpEntity.data : String get() = EntityUtils.toString(this)
 
 fun LuoGu.postRequest(url : String) = HttpPost("${LuoGu.baseUrl}/$url").apply { addHeader("x-csrf-token", this@postRequest.csrfToken) }
 
-fun LuoGu.getRequest(url : String) = HttpGet("${LuoGu.baseUrl}/$url").apply { this.setHeader("User-Agent", USER_AGENT) }
+@JvmOverloads
+fun LuoGu.getRequest(url : String = "") = HttpGet("${LuoGu.baseUrl}/$url").apply { this.setHeader("User-Agent", USER_AGENT) }
 
 fun <T : CharSequence> Iterable<T>.firstNotBlackOrNull() : T? = firstOrNull { it.isNotBlank() }
 
