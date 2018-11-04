@@ -5,6 +5,7 @@ package org.hoshino9.luogu
 import org.apache.http.HttpEntity
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
 import org.apache.http.util.EntityUtils
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
@@ -182,7 +183,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun login(account : String, password : String, verifyCode : String) : LuoGuLoggedUser {
-		return postRequest("login/loginpage").apply {
+		return HttpPost("$baseUrl/login/loginpage").apply {
 			val cookie = 0
 			val redirect = ""
 			val twoFactor = "undefined"
