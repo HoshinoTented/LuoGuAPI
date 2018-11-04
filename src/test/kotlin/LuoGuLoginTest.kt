@@ -1,3 +1,4 @@
+import org.apache.http.client.methods.HttpGet
 import org.apache.http.cookie.Cookie
 import org.apache.http.impl.client.BasicCookieStore
 import org.apache.http.impl.client.HttpClients
@@ -13,6 +14,7 @@ import java.io.ObjectOutputStream
 import java.nio.file.Paths
 import java.util.Properties
 import java.util.Scanner
+import kotlin.system.measureTimeMillis
 
 class LuoGuLoginTest {
 	companion object {
@@ -25,10 +27,10 @@ class LuoGuLoginTest {
 		}
 	}
 
-	private val testRoot = "src/test/resources"
-	private val verifyPath by lazy { Paths.get(testRoot, "verify.png") }
-	private val cookiePath by lazy { Paths.get(testRoot, "cookie.obj") }
-	private val configPath by lazy { Paths.get(testRoot, "user.properties") }
+	private val testRoot = Paths.get("src/test/resources")
+	private val verifyPath by lazy { testRoot.resolve("verify.png") }
+	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
+	private val configPath by lazy { testRoot.resolve("user.properties") }
 	private val config by lazy {
 		Properties().apply {
 			load(configPath.toFile().inputStream())
@@ -145,7 +147,13 @@ ${it.source}
 
 	@Test
 	fun sliderPhotoTest() {
-		luogu.sliderPhotos.run(::println)
+		luogu.sliderPhotos.forEach {
+			val time = measureTimeMillis {
+				luogu.execute(HttpGet(it.second)).entity.writeTo(testRoot.resolve(it.second.hashCode().toString() + ".png").toFile().outputStream())
+			}
+
+			println("used $time ms")
+		}
 	}
 
 	@Test
