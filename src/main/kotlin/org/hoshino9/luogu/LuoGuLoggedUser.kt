@@ -73,7 +73,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@Throws(StatusCodeException::class)
 	fun signIn() {
-		return HttpGet("${LuoGu.baseUrl}/index/ajax_punch").let { req ->
+		return luogu.getRequest("index/ajax_punch").let { req ->
 			luogu.client.execute(req) !!.let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				if (statusCode != 200) throw StatusCodeException(statusCode)
@@ -93,7 +93,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	@JvmOverloads
 	@Throws(StatusCodeException::class)
 	fun benben(type : BenBenType, page : Int = 1) : List<LuoGuComment> {
-		HttpGet("${LuoGu.baseUrl}/feed/${type.toString().toLowerCase()}?page=$page").let { req ->
+		luogu.getRequest("feed/${type.toString().toLowerCase()}?page=$page").let { req ->
 			luogu.execute(req).let { resp ->
 				val statusCode = resp.statusLine.statusCode
 				val content = resp.entity.data
@@ -140,7 +140,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 
 	fun pasteList() : List<Paste> {
 		val regex = Regex("""https://www.luogu.org/paste/(\w+)""")
-		HttpGet("${LuoGu.baseUrl}/paste").run(luogu::execute).let { resp ->
+		luogu.getRequest("paste").run(luogu::execute).let { resp ->
 			val statusCode = resp.statusLine.statusCode
 			val content = resp.entity.data
 
@@ -235,7 +235,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	}
 
 	fun photoList() : List<LuoGuPhoto> {
-		HttpGet("${LuoGu.baseUrl}/app/upload").run(luogu::execute).let { resp ->
+		luogu.getRequest("app/upload").run(luogu::execute).let { resp ->
 			val page = resp.entity.data
 			return LuoGu.photo(Jsoup.parse(page))
 		}
