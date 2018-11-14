@@ -1,16 +1,11 @@
 import okhttp3.Cookie
-import okhttp3.CookieJar
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
-import org.hoshino9.okhttp.DefaultCookieJar
 import org.junit.Test
 import java.io.FileOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import java.nio.file.Paths
 import java.util.Properties
 import java.util.Scanner

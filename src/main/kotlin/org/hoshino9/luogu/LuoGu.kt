@@ -132,7 +132,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	val csrfToken : String
 		get() {
 			return getExecute { resp ->
-				if (resp.isSuccessful) throw StatusCodeException(resp)
+				resp.assert()
 				csrfToken(Jsoup.parse(resp.data !!)) ?: throw LuoGuException(this, "No such csrf-token")
 			}
 		}

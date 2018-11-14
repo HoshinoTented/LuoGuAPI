@@ -6,7 +6,12 @@ import okhttp3.HttpUrl
 import java.net.CookieManager
 import java.net.HttpCookie
 
-open class DefaultCookieJar : CookieJar {
+/**
+ * 只有 www.luogu.org 才能用的 CookieJar
+ * 锁定 domain 为 www.luogu.org
+ * 如果用在别的网站会爆炸
+ */
+open class LuoGuOnlyCookieJar : CookieJar {
 	private val domain = "www.luogu.org"
 
 	private val cookieManager = CookieManager()
@@ -16,7 +21,7 @@ open class DefaultCookieJar : CookieJar {
 			cookieManager.cookieStore.add(
 					url.uri(),
 					HttpCookie(it.name(), it.value()).apply {
-						domain = this@DefaultCookieJar.domain
+						domain = this@LuoGuOnlyCookieJar.domain
 					}
 			)
 		}

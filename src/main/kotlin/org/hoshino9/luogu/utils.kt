@@ -1,8 +1,7 @@
 package org.hoshino9.luogu
 
 import okhttp3.*
-import org.hoshino9.okhttp.DefaultCookieJar
-import java.io.IOException
+import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import okhttp3.Callback as OkHttpCallback
 
 const val SEPARATOR = "&"
@@ -35,34 +34,11 @@ inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) ->
 
 fun <T : CharSequence> Iterable<T>.firstNotBlackOrNull() : T? = firstOrNull { it.isNotBlank() }
 
+val emptyClient : OkHttpClient = OkHttpClient()
 val defaultClient : OkHttpClient = OkHttpClient.Builder()
-		.cookieJar(DefaultCookieJar())
+		.cookieJar(LuoGuOnlyCookieJar())
 		.build()
 
-//class HoshinoCallback : OkHttpCallback {
-//	private var mOnFailure : (Call, IOException) -> Unit = { _, _ -> }
-//	private var mOnResponse : (Call, Response) -> Unit = { _, _ -> }
-//
-//	fun fail(action : (Call, IOException) -> Unit) {
-//		mOnFailure = action
-//	}
-//
-//	fun success(action : (Call, Response) -> Unit) {
-//		mOnResponse = action
-//	}
-//
-//	override fun onFailure(call : Call, e : IOException) {
-//		mOnFailure(call, e)
-//	}
-//
-//	override fun onResponse(call : Call, response : Response) {
-//		mOnResponse(call, response)
-//	}
-//}
-//
-//inline fun callback(init : HoshinoCallback.() -> Unit) : OkHttpCallback {
-//	return HoshinoCallback().apply(init)
-//}
 
 fun Response.assert() {
 	if (! isSuccessful) throw StatusCodeException(this)
