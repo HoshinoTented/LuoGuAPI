@@ -24,7 +24,7 @@ class LuoGuLoginTest {
 
 	private val testRoot = Paths.get("src/test/resources")
 	private val verifyPath by lazy { testRoot.resolve("verify.png") }
-	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
+	//	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
 	private val configPath by lazy { testRoot.resolve("user.properties") }
 	private val config by lazy {
 		Properties().apply {

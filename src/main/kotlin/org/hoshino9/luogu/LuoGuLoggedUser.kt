@@ -28,7 +28,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		 * @param luogu 已经登陆过的洛谷客户端
 		 * @return 返回一个 LuoGuLoggedUser 对象
 		 *
-		 * @see LuoGu.Companion.userId
+		 * @see LuoGu.Utils.userId
 		 */
 		@Throws(StatusCodeException::class, LuoGuException::class)
 		@JvmName("newInstance")
@@ -37,7 +37,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				resp.assert()
 				val content = resp.data !!
 
-				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, "no logged in"))
+				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Utils::userId) ?: throw LuoGuException(luogu, "no logged in"))
 			}
 		}
 	}

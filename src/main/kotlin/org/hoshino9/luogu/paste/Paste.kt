@@ -56,7 +56,7 @@ open class BasicPaste(override val id : String) : AbstractPaste(), HasElement {
 	}
 
 	override val user : LuoGuUser by lazy {
-		body.child(0).child(0).attr("href").run(LuoGu.Companion::user)
+		body.child(0).child(0).attr("href").run(LuoGu.Utils::user)
 	}
 
 	override val date : String by lazy {

@@ -2,20 +2,24 @@
 
 package org.hoshino9.luogu
 
+import okhttp3.Cookie
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.photo.LuoGuPhoto
 import org.hoshino9.luogu.photo.ParsedLuoGuPhoto
 import org.hoshino9.luogu.practice.PracticeBlock
-import org.hoshino9.luogu.problems.*
+import org.hoshino9.luogu.problems.Problem
+import org.hoshino9.luogu.problems.ProblemListPage
+import org.hoshino9.luogu.problems.ProblemSearchConfig
+import org.hoshino9.luogu.record.Record
+import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.hoshino9.luogu.record.Record
 import java.io.OutputStream
 
 /**
@@ -24,8 +28,21 @@ import java.io.OutputStream
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultClient) {
-	companion object Companion {        //先写个 Companion 吧, 以后可能要 rename
-		const val baseUrl = "https://www.luogu.org"
+	companion object Utils {
+		const val baseUrl = "https://${LuoGuOnlyCookieJar.domain}"
+
+		@JvmName("byClientId")
+		operator fun invoke(clientId : String) : LuoGu {
+			return LuoGu().apply {
+				client.cookieJar().saveFromResponse(HttpUrl.get(baseUrl), listOf(
+						Cookie.Builder()
+								.domain(LuoGuOnlyCookieJar.domain)
+								.name("__client_id")
+								.value(clientId)
+								.build()
+				))
+			}
+		}
 
 		fun user(url : String) : LuoGuUser {
 			return url.substring(url.lastIndexOf('=') + 1).run(::LuoGuUser)
@@ -46,11 +63,12 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 						it.className() != "clone"
 					}.mapNotNull {
 						val linkElement = it.children().first() ?: return@mapNotNull null
-						val imgElement = linkElement.children().first() ?: return@mapNotNull null
-						val link = linkElement.attr("href")
-						val img = imgElement.attr("src")
-
-						link to img
+						val imgElement = linkElement.children().first() ?: null
+						if (imgElement == null) {
+							"" to linkElement.attr("src")
+						} else {
+							linkElement.attr("href") to imgElement.attr("src")
+						}
 					}
 				} ?: throw NoSuchElementException("first child of $name")
 			} ?: throw NoSuchElementException(name)
@@ -142,7 +160,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			return getExecute { resp ->
 				resp.assert()
 
-				resp.data !!.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
+				resp.data !!.run(Jsoup::parse).run(LuoGu.Utils::sliderPhotos)
 			}
 		}
 

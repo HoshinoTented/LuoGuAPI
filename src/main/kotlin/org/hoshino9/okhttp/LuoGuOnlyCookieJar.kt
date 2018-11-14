@@ -12,7 +12,9 @@ import java.net.HttpCookie
  * 如果用在别的网站会爆炸
  */
 open class LuoGuOnlyCookieJar : CookieJar {
-	private val domain = "www.luogu.org"
+	companion object {
+		const val domain = "www.luogu.org"
+	}
 
 	private val cookieManager = CookieManager()
 
@@ -21,7 +23,7 @@ open class LuoGuOnlyCookieJar : CookieJar {
 			cookieManager.cookieStore.add(
 					url.uri(),
 					HttpCookie(it.name(), it.value()).apply {
-						domain = this@LuoGuOnlyCookieJar.domain
+						domain = LuoGuOnlyCookieJar.domain
 					}
 			)
 		}
