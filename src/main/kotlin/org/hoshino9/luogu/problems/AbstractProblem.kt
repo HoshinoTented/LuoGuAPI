@@ -30,7 +30,7 @@ interface Problem {
 	/**
 	 * 题目通过率
 	 */
-	val passPercent : Pair<Long, Long>
+	val passPercent : Pair<String, String>
 
 	/**
 	 * 题目的标签

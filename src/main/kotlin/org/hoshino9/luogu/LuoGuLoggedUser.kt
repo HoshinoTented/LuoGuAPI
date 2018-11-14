@@ -30,14 +30,14 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		 *
 		 * @see LuoGu.Utils.userId
 		 */
-		@Throws(StatusCodeException::class, LuoGuException::class)
+		@Throws(StatusCodeException::class)
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LuoGuLoggedUser {
 			luogu.getExecute { resp ->
 				resp.assert()
 				val content = resp.data !!
 
-				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Utils::userId) ?: throw LuoGuException(luogu, "no logged in"))
+				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Utils::userId) ?: throw StatusException("no logged in"))
 			}
 		}
 	}

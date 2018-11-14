@@ -123,8 +123,8 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 		 * @param page 任意一个**你谷**页面
 		 * @return 返回 `csrf-token`, 若找不到则返回 **null**
 		 */
-		fun csrfToken(page : Document) : String? {
-			return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content")
+		fun csrfToken(page : Document) : String {
+			return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content") ?: throw HTMLParseException(page)
 		}
 
 		fun photo(list : Element) : List<LuoGuPhoto> {
@@ -151,7 +151,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 		get() {
 			return getExecute { resp ->
 				resp.assert()
-				csrfToken(Jsoup.parse(resp.data !!)) ?: throw LuoGuException(this, "No such csrf-token")
+				csrfToken(Jsoup.parse(resp.data !!))
 			}
 		}
 
@@ -172,7 +172,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	/**
 	 * 获得当前客户端登录的用户
 	 */
-	@get:Throws(StatusCodeException::class, LuoGuException::class)
+	@get:Throws(StatusCodeException::class)
 	val loggedUser : LuoGuLoggedUser
 		get() = LuoGuLoggedUser(this)
 
