@@ -2,11 +2,9 @@
 
 package org.hoshino9.luogu
 
-import org.apache.http.HttpEntity
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.util.EntityUtils
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.photo.LuoGuPhoto
@@ -25,7 +23,7 @@ import java.io.OutputStream
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClient) : HttpClient by client {
+open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultClient) {
 	companion object Companion {        //先写个 Companion 吧, 以后可能要 rename
 		const val baseUrl = "https://www.luogu.org"
 
@@ -121,23 +119,31 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	/**
 	 * 返回 **你谷** 主页源代码
 	 */
-	val homePage : HttpEntity get() = getRequest().run(::execute).takeIf { it.statusLine.statusCode == 200 }?.entity ?: throw LuoGuException(this, "wrong status code")
+	val homePage : String
+		get() = getExecute { resp ->
+			if (resp.isSuccessful) {
+				resp.data !!
+			} else throw StatusCodeException(resp.code())
+		}
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
 	val csrfToken : String
 		get() {
-			getRequest().let { req ->
-				client.execute(req) !!.let { resp ->
-					return csrfToken(Jsoup.parse(EntityUtils.toString(resp.entity))) ?: throw LuoGuException(this, "No such csrf-token")
-				}
+			return getExecute { resp ->
+				if (resp.isSuccessful) throw StatusCodeException(resp)
+				csrfToken(Jsoup.parse(resp.data !!)) ?: throw LuoGuException(this, "No such csrf-token")
 			}
 		}
 
 	val sliderPhotos : List<Pair<String, String>>
 		get() {
-			return getRequest().run(client::execute).entity.data.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
+			return getExecute { resp ->
+				resp.assert()
+
+				resp.data !!.run(Jsoup::parse).run(LuoGu.Companion::sliderPhotos)
+			}
 		}
 
 	val practiceList : List<PracticeBlock>
@@ -149,21 +155,17 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	 * 获得当前客户端登录的用户
 	 */
 	@get:Throws(StatusCodeException::class, LuoGuException::class)
-	val loggedUser : LuoGuLoggedUser get() = LuoGuLoggedUser(this)
+	val loggedUser : LuoGuLoggedUser
+		get() = LuoGuLoggedUser(this)
 
 	/**
 	 * 获取验证码
 	 * @param output 输出流, 将会把验证码**图片**输出到这个流里
 	 */
 	fun verifyCode(output : OutputStream) {
-		getRequest("download/captcha").let { req ->
-			execute(req) !!.let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				val content : ByteArray = EntityUtils.toByteArray(resp.entity)
-				if (statusCode == 200) {
-					output.write(content)
-				} else throw LuoGuStatusCodeException(this, statusCode, String(content))
-			}
+		getExecute("download/captcha") { resp ->
+			resp.assert()
+			resp.body() !!.byteStream().copyTo(output)
 		}
 	}
 
@@ -183,24 +185,27 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun login(account : String, password : String, verifyCode : String) : LuoGuLoggedUser {
-		return HttpPost("$baseUrl/login/loginpage").apply {
-			val cookie = 0
-			val redirect = ""
-			val twoFactor = "undefined"
+		return Request.Builder()
+				.url("$baseUrl/login/loginpage")
+				.post({
+					val cookie = 0
+					val redirect = ""
+					val twoFactor = "undefined"
 
-			entity = mapOf(
-					"username" to account,
-					"password" to password,
-					"cookie" to cookie.toString(),
-					"redirect" to redirect,
-					"two_factor" to twoFactor,
-					"verify" to verifyCode
-			).stringEntity()
-		}.let { req ->
-			execute(req) !!.let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				val content : String = EntityUtils.toString(resp.entity)
-				if (statusCode == 200) {
+					mapOf(
+							"username" to account,
+							"password" to password,
+							"cookie" to cookie.toString(),
+							"redirect" to redirect,
+							"two_factor" to twoFactor,
+							"verify" to verifyCode
+					).params()
+				}())
+				.build()
+				.run(client::newCall)
+				.execute().let { resp ->
+					resp.assert()
+					val content = resp.data !!
 					JSONObject(content).run {
 						val code : Int = getInt("code")
 						val msg : String = getString("message")
@@ -209,9 +214,7 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 							loggedUser
 						} else throw APIStatusCodeException(code, msg)
 					}
-				} else throw StatusCodeException(statusCode)
-			}
-		}
+				}
 	}
 
 	/**
@@ -236,13 +239,9 @@ open class LuoGu @JvmOverloads constructor(val client : HttpClient = defaultClie
 	@JvmOverloads
 	@Throws(StatusCodeException::class)
 	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
-		getRequest("problemnew/lists?$filter&page=$page").run(::execute).let { resp ->
-			val statusCode = resp.statusLine.statusCode
-			val content = resp.entity.data
-
-			if (statusCode == 200) {
-				return ProblemListPage(Jsoup.parse(content)).list()
-			} else throw StatusCodeException(statusCode, content)
+		return getExecute("problemnew/lists?$filter&page=$page") { resp ->
+			resp.assert()
+			ProblemListPage(Jsoup.parse(resp.data !!)).list()
 		}
 	}
 }

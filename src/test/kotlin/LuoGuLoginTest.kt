@@ -1,12 +1,12 @@
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.cookie.Cookie
-import org.apache.http.impl.client.BasicCookieStore
-import org.apache.http.impl.client.HttpClients
-import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.StatusException
+import okhttp3.Cookie
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import org.hoshino9.luogu.*
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
+import org.hoshino9.okhttp.DefaultCookieJar
 import org.junit.Test
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
@@ -37,13 +37,8 @@ class LuoGuLoginTest {
 		}
 	}
 
-	private val cookieStore by lazy { BasicCookieStore() }
-
 	private val luogu by lazy {
-		val builder = HttpClients.custom()
-		builder.setDefaultCookieStore(cookieStore)
-
-		LuoGu(builder.build())
+		LuoGu()
 	}
 
 	private val user by lazy { luogu.loggedUser }
@@ -55,17 +50,24 @@ class LuoGuLoginTest {
 	}
 
 	private fun loadCookie() {
-		if (cookiePath.toFile().exists()) {
-			ObjectInputStream(cookiePath.toFile().inputStream()).use {
-				it.readObject() as Cookie
-			}.run(cookieStore::addCookie)
-		}
+		val id : String? = config.getProperty("__client_id")
+
+		if (id != null)
+			luogu.client.cookieJar()
+					.saveFromResponse(HttpUrl.get("https://www.luogu.org"), listOf(Cookie.Builder()
+							.domain("www.luogu.org")
+							.name("__client_id")
+							.value(id)
+							.build()
+					))
 	}
 
 	private fun saveCookie() {
-		ObjectOutputStream(cookiePath.toFile().outputStream()).use { out ->
-			out.writeObject(cookieStore.cookies.first { it.name == "__client_id" })
-		}
+		val id = luogu.client.cookieJar().loadForRequest(HttpUrl.get("https://www.luogu.org"))
+				.first { it.name() == "__client_id" }.value()
+
+		config.setProperty("__client_id", id)
+		config.store(configPath.toFile().outputStream(), null)
 	}
 
 	private fun login() {
@@ -149,7 +151,10 @@ ${it.source}
 	fun sliderPhotoTest() {
 		luogu.sliderPhotos.forEach {
 			val time = measureTimeMillis {
-				luogu.execute(HttpGet(it.second)).entity.writeTo(testRoot.resolve(it.second.hashCode().toString() + ".png").toFile().outputStream())
+				defaultClient.getExecute(it.second) { resp ->
+					resp.assert()
+					resp.body() !!.byteStream().copyTo(testRoot.resolve(it.second.hashCode().toString() + ".png").toFile().outputStream())
+				}
 			}
 
 			println("used $time ms")

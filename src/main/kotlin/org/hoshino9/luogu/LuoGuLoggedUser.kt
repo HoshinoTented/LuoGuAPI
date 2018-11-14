@@ -1,9 +1,8 @@
 package org.hoshino9.luogu
 
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.entity.mime.MultipartEntityBuilder
-import org.apache.http.entity.mime.content.FileBody
-import org.apache.http.util.EntityUtils
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.paste.BasicPaste
@@ -34,13 +33,11 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		@Throws(StatusCodeException::class, LuoGuException::class)
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LuoGuLoggedUser {
-			HttpGet(LuoGu.baseUrl).let(luogu.client::execute) !!.let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				val content = EntityUtils.toString(resp.entity)
+			luogu.getExecute { resp ->
+				resp.assert()
+				val content = resp.data !!
 
-				if (statusCode == 200) {
-					return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, "no logged in"))
-				} else throw StatusCodeException(statusCode)
+				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Companion::userId) ?: throw LuoGuException(luogu, "no logged in"))
 			}
 		}
 	}
@@ -55,7 +52,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	@get:Throws(StatusException::class)
 	val signInStatus : LuoGuSignedInStatus
 		get() {
-			val doc = luogu.homePage.data.run(Jsoup::parse)
+			val doc = luogu.homePage.run(Jsoup::parse)
 			val node = doc.body().children()
 					.getOrNull(1)?.children()
 					?.getOrNull(1)?.children()
@@ -73,11 +70,8 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@Throws(StatusCodeException::class)
 	fun signIn() {
-		return luogu.getRequest("index/ajax_punch").let { req ->
-			luogu.client.execute(req) !!.let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				if (statusCode != 200) throw StatusCodeException(statusCode)
-			}
+		return luogu.getExecute("index/ajax_punch") { resp ->
+			resp.assert()
 		}
 	}
 
@@ -93,14 +87,10 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	@JvmOverloads
 	@Throws(StatusCodeException::class)
 	fun benben(type : BenBenType, page : Int = 1) : List<LuoGuComment> {
-		luogu.getRequest("feed/${type.toString().toLowerCase()}?page=$page").let { req ->
-			luogu.execute(req).let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				val content = resp.entity.data
-				if (statusCode == 200) {
-					return LuoGu.benben(Jsoup.parse(content).body())
-				} else throw StatusCodeException(statusCode)
-			}
+		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
+			resp.assert()
+			val content = resp.data !!
+			return LuoGu.benben(Jsoup.parse(content).body())
 		}
 	}
 
@@ -113,38 +103,31 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	@JvmOverloads
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun paste(code : String, public : Boolean = true) : Paste {
-		luogu.postRequest("paste/post").let { req ->
-			req.entity = mapOf(
-					"content" to code,
-					"verify" to "",
-					"public" to if (public) "1" else "0"
-			).stringEntity()
+		luogu.postExecute("paste/post", mapOf(
+				"content" to code,
+				"verify" to "",
+				"public" to if (public) "1" else "0"
+		).params()) { resp ->
+			resp.assert()
 
-			luogu.client.execute(req).let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				val content = resp.entity.data
-				if (statusCode == 200) {
-					JSONObject(content).let {
-						val mStatusCode = it.optInt("status")
-						val mData = it.optString("data")
-						if (it.optInt("status") == 200) {
-							return mData.run(::BasicPaste)
-						} else {
-							throw APIStatusCodeException(mStatusCode, mData)
-						}
-					}
-				} else throw StatusCodeException(statusCode)
+			val content = resp.data !!
+			JSONObject(content).let {
+				val mStatusCode = it.optInt("status")
+				val mData = it.optString("data")
+				if (it.optInt("status") == 200) {
+					return mData.run(::BasicPaste)
+				} else {
+					throw APIStatusCodeException(mStatusCode, mData)
+				}
 			}
 		}
 	}
 
 	fun pasteList() : List<Paste> {
 		val regex = Regex("""https://www.luogu.org/paste/(\w+)""")
-		luogu.getRequest("paste").run(luogu::execute).let { resp ->
-			val statusCode = resp.statusLine.statusCode
-			val content = resp.entity.data
-
-			if (statusCode != 200) throw StatusCodeException(statusCode)
+		luogu.getExecute("paste") { resp ->
+			resp.assert()
+			val content = resp.data !!
 
 			return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
 				BasicPaste(it.groupValues[1])
@@ -158,19 +141,14 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun postBenben(text : String) {
-		luogu.postRequest("api/feed/postBenben").let { req ->
-			req.entity = mapOf("content" to text).stringEntity()
-			luogu.client.execute(req).let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				val content = resp.entity.data
+		luogu.postExecute("api/feed/postBenben", mapOf("content" to text).params()) { resp ->
+			resp.assert()
+			val content = resp.data !!
 
-				if (statusCode == 200) {
-					JSONObject(content).run {
-						val status = getInt("status")
-						val data = get("data")
-						if (status != 200) throw APIStatusCodeException(status, data.toString())
-					}
-				} else throw StatusCodeException(statusCode)
+			JSONObject(content).run {
+				val status = getInt("status")
+				val data = get("data")
+				if (status != 200) throw APIStatusCodeException(status, data.toString())
 			}
 		}
 	}
@@ -184,28 +162,26 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun postSolution(solution : Solution) : String {
-		luogu.postRequest("api/problem/submit/${solution.pid}").also { req ->
-			req.entity = mapOf(
-					"code" to solution.code,
-					"lang" to solution.language.value.toString(),
-					"enableO2" to if (solution.enableO2) "1" else "0",
-					"verify" to ""
-			).stringEntity()
-		}.run(luogu.client::execute).let { resp ->
-			val statusCode = resp.statusLine.statusCode
-			val content = resp.entity.data
+		luogu.postExecute("api/problem/submit/${solution.pid}",
+				mapOf(
+						"code" to solution.code,
+						"lang" to solution.language.value.toString(),
+						"enableO2" to if (solution.enableO2) "1" else "0",
+						"verify" to ""
+				).params()
+		) { resp ->
+			resp.assert()
+			val content = resp.data !!
 
-			if (statusCode == 200) {
-				JSONObject(content).run {
-					val status = optInt("status")
-					val data = get("data")
+			JSONObject(content).run {
+				val status = optInt("status")
+				val data = get("data")
 
-					if (status == 200) {
-						data as JSONObject
-						return data.get("rid").toString()
-					} else throw APIStatusCodeException(statusCode, data.toString())
-				}
-			} else throw StatusCodeException(statusCode)
+				if (status == 200) {
+					data as JSONObject
+					return data.get("rid").toString()
+				} else throw APIStatusCodeException(status, data.toString())
+			}
 		}
 	}
 
@@ -219,13 +195,12 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun postPhoto(file : File) {
-		luogu.postRequest("app/upload").apply {
-			entity = MultipartEntityBuilder.create().addPart("picupload", FileBody(file)).build()
-		}.run(luogu::execute).let { resp ->
-			val statusCode = resp.statusLine.statusCode
-			val content = resp.entity.data
-
-			if (statusCode != 200) throw StatusCodeException(statusCode)
+		luogu.postExecute("app/upload", MultipartBody.Builder()
+				.setType(MultipartBody.FORM)
+				.addFormDataPart("picupload", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
+				.build()) { resp ->
+			resp.assert()
+			val content = resp.data !!
 
 			JSONObject(content).run {
 				val code = optInt("code")
@@ -235,8 +210,10 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	}
 
 	fun photoList() : List<LuoGuPhoto> {
-		luogu.getRequest("app/upload").run(luogu::execute).let { resp ->
-			val page = resp.entity.data
+		luogu.getExecute("app/upload") { resp ->
+			resp.assert()
+
+			val page = resp.data !!
 			return LuoGu.photo(Jsoup.parse(page))
 		}
 	}

@@ -23,9 +23,8 @@ abstract class AbstractLuoGuPhoto : LuoGuPhoto {
 	}
 
 	override fun delete(luogu : LuoGu) {
-		luogu.postRequest("app/upload?delete=1&uploadid=$id").run(luogu::execute).let { resp ->
-			val statusCode = resp.statusLine.statusCode
-			if (statusCode != 200) throw StatusCodeException(statusCode)
+		luogu.postExecute("app/upload?delete=1&uploadid=$id") {
+			it.assert()
 		}
 	}
 

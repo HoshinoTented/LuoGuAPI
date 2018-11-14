@@ -1,37 +1,71 @@
 package org.hoshino9.luogu
 
-import org.apache.http.HttpEntity
-import org.apache.http.client.HttpClient
-import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.util.EntityUtils
-import java.io.OutputStream
+import okhttp3.*
+import org.hoshino9.okhttp.DefaultCookieJar
+import java.io.IOException
+import okhttp3.Callback as OkHttpCallback
 
 const val SEPARATOR = "&"
 const val EQUAL = "="
 const val USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
 
-/**
- * 把 Map 对象转化为 HttpEntity 对象
- */
-fun <K, V> Map<K, V>.stringEntity() : HttpEntity {
-	return UrlEncodedFormEntity(
-			map { (k, v) ->
-				BasicNameValuePair(k.toString(), v.toString())
-			}, "UTF-8"
-	)
+fun <K, V> Map<K, V>.params() : RequestBody {
+	return FormBody.Builder().apply {
+		forEach { k, v ->
+			addEncoded(k.toString(), v.toString())
+		}
+	}.build()
 }
 
-val HttpEntity.data : String get() = EntityUtils.toString(this)
-
-fun LuoGu.postRequest(url : String) = HttpPost("${LuoGu.baseUrl}/$url").apply { addHeader("x-csrf-token", this@postRequest.csrfToken) }
+fun LuoGu.postRequest(url : String, body : RequestBody = emptyMap<String, String>().params()) : Request = Request.Builder()
+		.url("${LuoGu.baseUrl}/$url")
+		.addHeader("x-csrf-token", csrfToken)
+		.post(body)
+		.build()
 
 @JvmOverloads
-fun LuoGu.getRequest(url : String = "") = HttpGet("${LuoGu.baseUrl}/$url").apply { this.setHeader("User-Agent", USER_AGENT) }
+fun getRequest(url : String = "") : Request = Request.Builder()
+		.url(url)
+		.addHeader("User-Agent", USER_AGENT)
+		.build()
+
+inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMap<String, String>().params(), action : (Response) -> T) : T = client.newCall(postRequest(url, body)).execute().run(action)
+inline fun <T> LuoGu.getExecute(url : String = "", action : (Response) -> T) : T = client.getExecute("${LuoGu.baseUrl}/$url", action)
+inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) -> T) : T = newCall(getRequest(url)).execute().run(action)
 
 fun <T : CharSequence> Iterable<T>.firstNotBlackOrNull() : T? = firstOrNull { it.isNotBlank() }
 
-val defaultClient : HttpClient get() = HttpClients.createDefault()
+val defaultClient : OkHttpClient = OkHttpClient.Builder()
+		.cookieJar(DefaultCookieJar())
+		.build()
+
+//class HoshinoCallback : OkHttpCallback {
+//	private var mOnFailure : (Call, IOException) -> Unit = { _, _ -> }
+//	private var mOnResponse : (Call, Response) -> Unit = { _, _ -> }
+//
+//	fun fail(action : (Call, IOException) -> Unit) {
+//		mOnFailure = action
+//	}
+//
+//	fun success(action : (Call, Response) -> Unit) {
+//		mOnResponse = action
+//	}
+//
+//	override fun onFailure(call : Call, e : IOException) {
+//		mOnFailure(call, e)
+//	}
+//
+//	override fun onResponse(call : Call, response : Response) {
+//		mOnResponse(call, response)
+//	}
+//}
+//
+//inline fun callback(init : HoshinoCallback.() -> Unit) : OkHttpCallback {
+//	return HoshinoCallback().apply(init)
+//}
+
+fun Response.assert() {
+	if (! isSuccessful) throw StatusCodeException(this)
+}
+
+val Response.data : String? get() = this.body()?.string()

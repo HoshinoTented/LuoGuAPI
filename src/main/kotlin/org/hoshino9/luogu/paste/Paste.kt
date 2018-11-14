@@ -1,6 +1,5 @@
 package org.hoshino9.luogu.paste
 
-import org.apache.http.client.methods.HttpGet
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.Jsoup
@@ -21,11 +20,8 @@ abstract class AbstractPaste : Paste {
 	override val url : String by lazy { "${LuoGu.baseUrl}/paste/$id" }
 
 	override fun delete(luogu : LuoGu) {
-		luogu.postRequest("paste/delete/$id").let { req ->
-			luogu.client.execute(req).let { resp ->
-				val statusCode = resp.statusLine.statusCode
-				if (statusCode != 200) throw StatusCodeException(statusCode)
-			}
+		luogu.postExecute("paste/delete/$id") { resp ->
+			resp.assert()
 		}
 	}
 
@@ -51,11 +47,9 @@ open class BasicPaste(override val id : String) : AbstractPaste(), HasElement {
 	private val body : Element by lazy { elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem) }
 
 	override val elem : Element by lazy {
-		defaultClient.execute(url.run(::HttpGet)).let { resp ->
-			val statusCode = resp.statusLine.statusCode
-			val content = resp.entity.data
-
-			if (statusCode != 200) throw StatusCodeException(statusCode)
+		defaultClient.getExecute(url) { resp ->
+			resp.assert()
+			val content = resp.data !!
 
 			Jsoup.parse(content)
 		}
