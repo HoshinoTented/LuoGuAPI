@@ -103,7 +103,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	@JvmOverloads
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun paste(code : String, public : Boolean = true) : Paste {
-		luogu.postExecute("paste/post", mapOf(
+		return luogu.postExecute("paste/post", mapOf(
 				"content" to code,
 				"verify" to "",
 				"public" to if (public) "1" else "0"
@@ -111,11 +111,11 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			resp.assert()
 
 			val content = resp.data !!
-			JSONObject(content).let {
-				val mStatusCode = it.optInt("status")
-				val mData = it.optString("data")
-				if (it.optInt("status") == 200) {
-					return mData.run(::BasicPaste)
+			json(content) {
+				val mStatusCode = optInt("status")
+				val mData = optString("data")
+				if (optInt("status") == 200) {
+					mData.run(::BasicPaste)
 				} else {
 					throw APIStatusCodeException(mStatusCode, mData)
 				}
@@ -145,7 +145,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			resp.assert()
 			val content = resp.data !!
 
-			JSONObject(content).run {
+			json(content) {
 				val status = getInt("status")
 				val data = get("data")
 				if (status != 200) throw APIStatusCodeException(status, data.toString())
@@ -162,7 +162,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 */
 	@Throws(StatusCodeException::class, APIStatusCodeException::class)
 	fun postSolution(solution : Solution) : String {
-		luogu.postExecute("api/problem/submit/${solution.pid}",
+		return luogu.postExecute("api/problem/submit/${solution.pid}",
 				mapOf(
 						"code" to solution.code,
 						"lang" to solution.language.value.toString(),
@@ -173,13 +173,13 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			resp.assert()
 			val content = resp.data !!
 
-			JSONObject(content).run {
+			json(content) {
 				val status = optInt("status")
 				val data = get("data")
 
 				if (status == 200) {
 					data as JSONObject
-					return data.get("rid").toString()
+					data.get("rid").toString()
 				} else throw APIStatusCodeException(status, data.toString())
 			}
 		}
@@ -202,7 +202,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			resp.assert()
 			val content = resp.data !!
 
-			JSONObject(content).run {
+			json(content) {
 				val code = optInt("code")
 				if (code != 201) throw APIStatusCodeException(code)
 			}

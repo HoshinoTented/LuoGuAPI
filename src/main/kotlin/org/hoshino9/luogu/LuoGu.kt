@@ -108,28 +108,24 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @see StatusCodeException
 	 */
 	fun login(account : String, password : String, verifyCode : String) {
+		val params = mapOf(
+				"username" to account,
+				"password" to password,
+				"cookie" to "0",
+				"redirect" to "",
+				"two_factor" to "undefined",
+				"verify" to verifyCode
+		).params()
+
 		return Request.Builder()
 				.url("$baseUrl/login/loginpage")
-				.post({
-					val cookie = 0
-					val redirect = ""
-					val twoFactor = "undefined"
-
-					mapOf(
-							"username" to account,
-							"password" to password,
-							"cookie" to cookie.toString(),
-							"redirect" to redirect,
-							"two_factor" to twoFactor,
-							"verify" to verifyCode
-					).params()
-				}())
+				.post(params)
 				.build()
 				.run(client::newCall)
 				.execute().let { resp ->
 					resp.assert()
 					val content = resp.data !!
-					JSONObject(content).run {
+					json(content) {
 						val code : Int = getInt("code")
 						val msg : String = getString("message")
 

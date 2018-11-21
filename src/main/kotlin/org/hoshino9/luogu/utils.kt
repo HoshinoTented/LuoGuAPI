@@ -2,6 +2,7 @@ package org.hoshino9.luogu
 
 import okhttp3.*
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
+import org.json.JSONObject
 import okhttp3.Callback as OkHttpCallback
 
 const val baseUrl = "https://${LuoGuOnlyCookieJar.domain}"
@@ -46,3 +47,7 @@ fun Response.assert() {
 }
 
 val Response.data : String? get() = this.body()?.string()
+
+inline fun <T> json(content : String, init : JSONObject.() -> T) : T {
+	return JSONObject(content).run(init)
+}
