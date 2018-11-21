@@ -32,9 +32,7 @@ class LuoGuLoginTest {
 		}
 	}
 
-	private val luogu by lazy {
-		LuoGu()
-	}
+	private lateinit var luogu : LuoGu
 
 	private val user by lazy { luogu.loggedUser }
 
@@ -47,14 +45,10 @@ class LuoGuLoginTest {
 	private fun loadCookie() {
 		val id : String? = config.getProperty("__client_id")
 
-		if (id != null)
-			luogu.client.cookieJar()
-					.saveFromResponse(HttpUrl.get("https://www.luogu.org"), listOf(Cookie.Builder()
-							.domain("www.luogu.org")
-							.name("__client_id")
-							.value(id)
-							.build()
-					))
+		if (id != null) {
+			luogu = LuoGu(id)
+		} else throw StatusException("No logged in")
+
 	}
 
 	private fun saveCookie() {
@@ -145,10 +139,11 @@ ${it.source}
 	@Test
 	fun sliderPhotoTest() {
 		luogu.sliderPhotos.forEach {
+			println(it)
 			val time = measureTimeMillis {
-				defaultClient.getExecute(it.second) { resp ->
+				defaultClient.getExecute(it.img) { resp ->
 					resp.assert()
-					resp.body() !!.byteStream().copyTo(testRoot.resolve(it.second.hashCode().toString() + ".png").toFile().outputStream())
+					resp.body() !!.byteStream().copyTo(testRoot.resolve(it.img.hashCode().toString() + ".png").toFile().outputStream())
 				}
 			}
 

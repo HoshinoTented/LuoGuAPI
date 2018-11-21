@@ -2,8 +2,8 @@
 
 package org.hoshino9.luogu.problems
 
-import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuTag
+import org.hoshino9.luogu.baseUrl
 
 interface Problem {
 	abstract class Difficulty(text : String) : LuoGuTag(text, - 1)
@@ -47,7 +47,7 @@ abstract class AbstractProblem : Problem {
 	/**
 	 * 题目的地址
 	 */
-	open val url : String get() = "${LuoGu.baseUrl}/problemnew/show/$id"
+	open val url : String get() = "$baseUrl/problemnew/show/$id"
 
 	override fun equals(other : Any?) : Boolean {
 		return (other as? AbstractProblem)?.id == id

@@ -17,7 +17,7 @@ interface Paste {
 }
 
 abstract class AbstractPaste : Paste {
-	override val url : String by lazy { "${LuoGu.baseUrl}/paste/$id" }
+	override val url : String by lazy { "$baseUrl/paste/$id" }
 
 	override fun delete(luogu : LuoGu) {
 		luogu.postExecute("paste/delete/$id") { resp ->
@@ -56,7 +56,7 @@ open class BasicPaste(override val id : String) : AbstractPaste(), HasElement {
 	}
 
 	override val user : LuoGuUser by lazy {
-		body.child(0).child(0).attr("href").run(LuoGu.Utils::user)
+		body.child(0).child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
 	}
 
 	override val date : String by lazy {

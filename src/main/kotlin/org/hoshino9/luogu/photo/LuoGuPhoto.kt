@@ -11,6 +11,18 @@ interface LuoGuPhoto {
 	val url : String
 
 	fun delete(luogu : LuoGu)
+
+	class Builder {
+		private var elem : Element? = null
+
+		fun element(elem : Element) : Builder = apply {
+			this.elem = elem
+		}
+
+		fun build() : LuoGuPhoto {
+			return ParsedLuoGuPhoto(elem ?: throw NullPointerException("Builder::elem == null"))
+		}
+	}
 }
 
 abstract class AbstractLuoGuPhoto : LuoGuPhoto {
@@ -57,9 +69,7 @@ open class ParsedLuoGuPhoto(override val elem : Element) : AbstractLuoGuPhoto(),
 	}
 
 	override val user : LuoGuUser by lazy {
-		leftElem.child(2).child(0).attr("href").let { str ->
-			LuoGu.user(str)
-		}
+		leftElem.child(2).child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
 	}
 
 	override val url : String by lazy {

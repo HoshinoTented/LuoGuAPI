@@ -28,7 +28,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		 * @param luogu 已经登陆过的洛谷客户端
 		 * @return 返回一个 LuoGuLoggedUser 对象
 		 *
-		 * @see LuoGu.Utils.userId
+		 * @see LuoGuUtils.getUserIdFromPage
 		 */
 		@Throws(StatusCodeException::class)
 		@JvmName("newInstance")
@@ -37,7 +37,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				resp.assert()
 				val content = resp.data !!
 
-				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGu.Utils::userId) ?: throw StatusException("no logged in"))
+				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGuUtils::getUserIdFromPage) ?: throw StatusException("no logged in"))
 			}
 		}
 	}
@@ -90,7 +90,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!
-			return LuoGu.benben(Jsoup.parse(content).body())
+			return LuoGuUtils.getBenben(Jsoup.parse(content).body())
 		}
 	}
 
@@ -214,7 +214,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			resp.assert()
 
 			val page = resp.data !!
-			return LuoGu.photo(Jsoup.parse(page))
+			return LuoGuUtils.getPhotos(Jsoup.parse(page))
 		}
 	}
 }
