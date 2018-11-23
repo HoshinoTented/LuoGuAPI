@@ -50,6 +50,10 @@ abstract class AbstractProblem : Problem {
 	@Suppress("SpellCheckingInspection")
 	open val url : String get() = "$baseUrl/problemnew/show/$id"
 
+	override val content : ProblemContent by lazy {
+		DefaultProblemContent(id)
+	}
+
 	override fun equals(other : Any?) : Boolean {
 		return (other as? AbstractProblem)?.id == id
 	}

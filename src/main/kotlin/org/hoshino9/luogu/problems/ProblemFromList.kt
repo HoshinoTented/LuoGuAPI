@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element
  *
  * @param elem 题目的 html 元素(题目列表)
  */
-open class ProblemListProblem(override val elem : Element) : AbstractProblem(), HasElement {
+open class ProblemFromList(override val elem : Element) : AbstractProblem(), HasElement {
 	companion object {
 		private val passPercentRegex = Regex("""(\d+) /(\d+)""")
 	}
@@ -31,7 +31,6 @@ open class ProblemListProblem(override val elem : Element) : AbstractProblem(), 
 
 	override val difficulty : Problem.Difficulty by lazy { TODO() }
 	override val name : String by lazy { TODO() }
-	override val content : ProblemContent by lazy { BasicProblemContent(id) }
 	override val passPercent : Pair<String, String> by lazy {
 		passBlock.child(0).child(0).text().run(passPercentRegex::matchEntire)?.let {
 			it.groupValues[1] to it.groupValues[2]

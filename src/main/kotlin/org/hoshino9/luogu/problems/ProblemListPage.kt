@@ -7,7 +7,7 @@ open class ProblemListPage(val page : Document) {
 
 	fun list() : List<Problem> {
 		return page.body().getElementsByClass(listClass).first()?.children()?.dropLast(1)?.map { elem ->
-			ProblemListProblem(elem)
+			ProblemFromList(elem)
 		} ?: throw NoSuchElementException(listClass)
 	}
 }

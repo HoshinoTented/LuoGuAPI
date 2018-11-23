@@ -53,7 +53,7 @@ object LuoGuUtils {
 	}
 
 	/**
-	 * **TODO**
+	 * **TODO** move to org.hoshino9.luogu.record
 	 * 因为**你谷**不让别人爬评测记录, 所以就不能爬了
 	 * 获取评测记录
 	 * @param page Document对象, 即**你谷**主站页面
@@ -71,30 +71,11 @@ object LuoGuUtils {
 	}
 
 	/**
-	 * 解析benben
-	 * @param list
-	 * @return 返回一个犇犇列表
-	 *
-	 * @see LuoGuComment
-	 */
-	fun getBenben(list : Element) : List<LuoGuComment> {
-		return list.children().mapNotNull {
-			if (it.tagName() == "li") LuoGuComment(it) else null
-		}
-	}
-
-	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 * @param page 任意一个**你谷**页面
 	 * @return 返回 `csrf-token`, 若找不到则返回 **null**
 	 */
 	fun getCsrfTokenFromPage(page : Document) : String {
 		return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content") ?: throw HTMLParseException(page)
-	}
-
-	fun getPhotos(list : Element) : List<LuoGuPhoto> {
-		return list.getElementsByClass("lg-table-row").map {
-			LuoGuPhoto.Builder().element(it).build()
-		}
 	}
 }

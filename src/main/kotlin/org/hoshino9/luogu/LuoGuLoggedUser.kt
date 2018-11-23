@@ -5,9 +5,11 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.paste.BasicPaste
+import org.hoshino9.luogu.benben.BenbenUtils
+import org.hoshino9.luogu.paste.DefaultPaste
 import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.photo.LuoGuPhoto
+import org.hoshino9.luogu.photo.LuoGuPhotoUtils
 import org.hoshino9.luogu.problems.Solution
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
 import org.json.JSONObject
@@ -90,7 +92,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!
-			return LuoGuUtils.getBenben(Jsoup.parse(content).body())
+			return BenbenUtils.getBenben(Jsoup.parse(content).body())
 		}
 	}
 
@@ -115,7 +117,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				val mStatusCode = optInt("status")
 				val mData = optString("data")
 				if (optInt("status") == 200) {
-					mData.run(::BasicPaste)
+					mData.run(::DefaultPaste)
 				} else {
 					throw IllegalAPIStatusCodeException(mStatusCode, mData)
 				}
@@ -130,7 +132,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			val content = resp.data !!
 
 			return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
-				BasicPaste(it.groupValues[1])
+				DefaultPaste(it.groupValues[1])
 			}.toList()
 		}
 	}
@@ -214,7 +216,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			resp.assert()
 
 			val page = resp.data !!
-			return LuoGuUtils.getPhotos(Jsoup.parse(page))
+			return LuoGuPhotoUtils.getPhotos(Jsoup.parse(page))
 		}
 	}
 }

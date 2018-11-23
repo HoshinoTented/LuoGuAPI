@@ -1,11 +1,10 @@
 package org.hoshino9.luogu.results
 
-import org.hoshino9.luogu.IllegalStateException
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 data class LuoGuSignedInStatus(val qian : Qian, val goods : List<Thing>, val bads : List<Thing>, val continuation : Int) {
-	companion object Utils {
+	companion object Parser {
 		private val regex = Regex("[宜忌]：([^ ]+) ([^ ]+)")
 
 		/**

@@ -3,6 +3,10 @@ package org.hoshino9.luogu
 import okhttp3.*
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.json.JSONObject
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import kotlin.test.assertFailsWith
 import okhttp3.Callback as OkHttpCallback
 
@@ -50,4 +54,8 @@ val Response.data : String? get() = this.body()?.string()
 
 inline fun <T> json(content : String, init : JSONObject.() -> T) : T {
 	return JSONObject(content).run(init)
+}
+
+fun json(content : String) : JSONObject {
+	return JSONObject(content)
 }

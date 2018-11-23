@@ -57,7 +57,7 @@ abstract class AbstractProblemContent : ProblemContent {
 	}
 }
 
-open class BasicProblemContent(override val id : String) : AbstractProblemContent(), HasElement {
+open class DefaultProblemContent(override val id : String) : AbstractProblemContent(), HasElement {
 	override val background : Element
 		get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 	override val description : Element

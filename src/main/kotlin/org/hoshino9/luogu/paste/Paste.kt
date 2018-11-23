@@ -43,7 +43,7 @@ abstract class AbstractPaste : Paste {
 	}
 }
 
-open class BasicPaste(override val id : String) : AbstractPaste(), HasElement {
+open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement {
 	private val body : Element by lazy { elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem) }
 
 	override val elem : Element by lazy {
