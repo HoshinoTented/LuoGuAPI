@@ -3,6 +3,7 @@ package org.hoshino9.luogu
 import okhttp3.*
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.json.JSONObject
+import kotlin.test.assertFailsWith
 import okhttp3.Callback as OkHttpCallback
 
 const val baseUrl = "https://${LuoGuOnlyCookieJar.domain}"
@@ -40,7 +41,6 @@ val emptyClient : OkHttpClient = OkHttpClient()
 val defaultClient : OkHttpClient = OkHttpClient.Builder()
 		.cookieJar(LuoGuOnlyCookieJar())
 		.build()
-
 
 fun Response.assert() {
 	if (! isSuccessful) throw StatusCodeException(this)

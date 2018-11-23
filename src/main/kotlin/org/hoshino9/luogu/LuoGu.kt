@@ -10,7 +10,6 @@ import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemListPage
 import org.hoshino9.luogu.problems.ProblemSearchConfig
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
-import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.io.OutputStream
 
@@ -42,7 +41,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 		get() = getExecute { resp ->
 			if (resp.isSuccessful) {
 				resp.data !!
-			} else throw StatusCodeException(resp.code())
+			} else throw IllegalStatusCodeException(resp.code())
 		}
 
 	/**
@@ -98,14 +97,14 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @param account 账号
 	 * @param password 密码
 	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
-	 * @throws APIStatusCodeException 当登录失败时抛出
-	 * @throws StatusCodeException 当请求码错误时抛出
+	 * @throws IllegalAPIStatusCodeException 当登录失败时抛出
+	 * @throws IllegalStatusCodeException 当请求码错误时抛出
 	 * @return 返回一个 LuoGuLoginResule 对象
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LuoGuLoggedUser
-	 * @see APIStatusCodeException
-	 * @see StatusCodeException
+	 * @see IllegalAPIStatusCodeException
+	 * @see IllegalStatusCodeException
 	 */
 	fun login(account : String, password : String, verifyCode : String) {
 		val params = mapOf(
@@ -129,7 +128,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 						val code : Int = getInt("code")
 						val msg : String = getString("message")
 
-						if (code != 200) throw APIStatusCodeException(code, msg)
+						if (code != 200) throw IllegalAPIStatusCodeException(code, msg)
 						refresh()
 					}
 				}
@@ -148,7 +147,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * 题目列表
 	 * @param page 页数, 默认为 **1**
 	 * @param filter 过滤器
-	 * @throws StatusCodeException
+	 * @throws IllegalStatusCodeException
 	 * @return 返回题目列表
 	 *
 	 * @see Problem

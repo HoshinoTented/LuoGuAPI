@@ -1,4 +1,3 @@
-import okhttp3.Cookie
 import okhttp3.HttpUrl
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.benben.BenBenType
@@ -47,7 +46,7 @@ class LuoGuLoginTest {
 
 		if (id != null) {
 			luogu = LuoGu(id)
-		} else throw StatusException("No logged in")
+		} else throw IllegalStateException("No logged in")
 
 	}
 
@@ -79,7 +78,7 @@ class LuoGuLoginTest {
 
 		val status = try {
 			user.signInStatus
-		} catch (e : StatusException) {
+		} catch (e : IllegalStateException) {
 			println("failed, trying signing...")
 			user.signIn()
 			user.signInStatus

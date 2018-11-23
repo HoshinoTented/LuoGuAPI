@@ -1,6 +1,6 @@
 package org.hoshino9.luogu.results
 
-import org.hoshino9.luogu.StatusException
+import org.hoshino9.luogu.IllegalStateException
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
@@ -17,7 +17,7 @@ data class LuoGuSignedInStatus(val qian : Qian, val goods : List<Thing>, val bad
 		 * @see Elements
 		 * @see LuoGuSignedInStatus
 		 */
-		@Throws(StatusException::class)
+		@Throws(IllegalStateException::class)
 		@JvmName("newInstance")
 		operator fun invoke(page : Elements) : LuoGuSignedInStatus {
 			val head = page.getOrNull(1) ?: throw NoSuchElementException("second element of $page")
@@ -37,7 +37,7 @@ data class LuoGuSignedInStatus(val qian : Qian, val goods : List<Thing>, val bad
 						bads.run(::parseThings),
 						bottom.children().firstOrNull { it.tagName() == "strong" }?.text()?.toInt() ?: throw NoSuchElementException("first element of tag name 'strong' in $bottom")
 				)
-			} else throw StatusException("no signed in")
+			} else throw IllegalStateException("no signed in")
 		}
 
 		private fun parseThings(node : Element) : List<Thing> {

@@ -47,6 +47,7 @@ abstract class AbstractProblem : Problem {
 	/**
 	 * 题目的地址
 	 */
+	@Suppress("SpellCheckingInspection")
 	open val url : String get() = "$baseUrl/problemnew/show/$id"
 
 	override fun equals(other : Any?) : Boolean {

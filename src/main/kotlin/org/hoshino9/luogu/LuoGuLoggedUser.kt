@@ -30,14 +30,14 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		 *
 		 * @see LuoGuUtils.getUserIdFromPage
 		 */
-		@Throws(StatusCodeException::class)
+		@Throws(IllegalStatusCodeException::class)
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LuoGuLoggedUser {
 			luogu.getExecute { resp ->
 				resp.assert()
 				val content = resp.data !!
 
-				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGuUtils::getUserIdFromPage) ?: throw StatusException("no logged in"))
+				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGuUtils::getUserIdFromPage) ?: throw IllegalStateException("no logged in"))
 			}
 		}
 	}
@@ -45,11 +45,11 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	/**
 	 * 获取签到状态信息
 	 * @return 返回一个签到状态类
-	 * @throws StatusException 未签到时抛出
+	 * @throws IllegalStateException 未签到时抛出
 	 *
 	 * @see LuoGuSignedInStatus
 	 */
-	@get:Throws(StatusException::class)
+	@get:Throws(IllegalStateException::class)
 	val signInStatus : LuoGuSignedInStatus
 		get() {
 			val doc = luogu.homePage.run(Jsoup::parse)
@@ -68,7 +68,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	/**
 	 * **你谷**签到
 	 */
-	@Throws(StatusCodeException::class)
+	@Throws(IllegalStatusCodeException::class)
 	fun signIn() {
 		return luogu.getExecute("index/ajax_punch") { resp ->
 			resp.assert()
@@ -85,7 +85,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * @see BenBenType
 	 */
 	@JvmOverloads
-	@Throws(StatusCodeException::class)
+	@Throws(IllegalStatusCodeException::class)
 	fun benben(type : BenBenType, page : Int = 1) : List<LuoGuComment> {
 		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
@@ -101,7 +101,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * @return 返回剪切板的代码
 	 */
 	@JvmOverloads
-	@Throws(StatusCodeException::class, APIStatusCodeException::class)
+	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun paste(code : String, public : Boolean = true) : Paste {
 		return luogu.postExecute("paste/post", mapOf(
 				"content" to code,
@@ -117,7 +117,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				if (optInt("status") == 200) {
 					mData.run(::BasicPaste)
 				} else {
-					throw APIStatusCodeException(mStatusCode, mData)
+					throw IllegalAPIStatusCodeException(mStatusCode, mData)
 				}
 			}
 		}
@@ -139,7 +139,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * 发射犇犇
 	 * @param text 犇犇内容
 	 */
-	@Throws(StatusCodeException::class, APIStatusCodeException::class)
+	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun postBenben(text : String) {
 		luogu.postExecute("api/feed/postBenben", mapOf("content" to text).params()) { resp ->
 			resp.assert()
@@ -148,7 +148,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 			json(content) {
 				val status = getInt("status")
 				val data = get("data")
-				if (status != 200) throw APIStatusCodeException(status, data.toString())
+				if (status != 200) throw IllegalAPIStatusCodeException(status, data.toString())
 			}
 		}
 	}
@@ -160,7 +160,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 *
 	 * @see Solution
 	 */
-	@Throws(StatusCodeException::class, APIStatusCodeException::class)
+	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun postSolution(solution : Solution) : String {
 		return luogu.postExecute("api/problem/submit/${solution.pid}",
 				mapOf(
@@ -180,7 +180,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 				if (status == 200) {
 					data as JSONObject
 					data.get("rid").toString()
-				} else throw APIStatusCodeException(status, data.toString())
+				} else throw IllegalAPIStatusCodeException(status, data.toString())
 			}
 		}
 	}
@@ -188,12 +188,12 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	/**
 	 * 上传图片到**你谷**
 	 * @param file 图片的 File 对象
-	 * @throws APIStatusCodeException 当 api 状态码不为 201 时抛出
-	 * @throws StatusCodeException 当 请求状态码不为 200 时抛出
+	 * @throws IllegalAPIStatusCodeException 当 api 状态码不为 201 时抛出
+	 * @throws IllegalStatusCodeException 当 请求状态码不为 200 时抛出
 	 *
 	 * @see File
 	 */
-	@Throws(StatusCodeException::class, APIStatusCodeException::class)
+	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun postPhoto(file : File) {
 		luogu.postExecute("app/upload", MultipartBody.Builder()
 				.setType(MultipartBody.FORM)
@@ -204,7 +204,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 
 			json(content) {
 				val code = optInt("code")
-				if (code != 201) throw APIStatusCodeException(code)
+				if (code != 201) throw IllegalAPIStatusCodeException(code)
 			}
 		}
 	}
