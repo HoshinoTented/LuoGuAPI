@@ -6,6 +6,7 @@ import okhttp3.*
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.practice.PracticeBlock
+import org.hoshino9.luogu.practice.PracticePage
 import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemListPage
 import org.hoshino9.luogu.problems.ProblemSearchConfig
@@ -64,7 +65,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			}
 		}
 
-	val practiceList : List<PracticeBlock>
+	val practicePage : PracticePage
 		get() {
 			TODO()
 		}
