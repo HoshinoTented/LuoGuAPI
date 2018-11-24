@@ -51,10 +51,10 @@ open class DefaultTrainingBlock(override val elem : Element, val luogu : LuoGu)
 	}
 
 	override val trainings : List<Training> by lazy {
-		val missionid = "missionid"
+		val tagName = "section"
 
-		elem.getElementsByAttribute(missionid).map {
-			val mid = it.attr(missionid)
+		elem.getElementsByTag(tagName).map {
+			val mid = it.attr("missionid")
 			DefaultTraining(mid, luogu)
 		}
 	}
