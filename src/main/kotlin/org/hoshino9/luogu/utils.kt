@@ -59,3 +59,22 @@ inline fun <T> json(content : String, init : JSONObject.() -> T) : T {
 fun json(content : String) : JSONObject {
 	return JSONObject(content)
 }
+
+inline fun <T> Iterable<T>.splitWith(block : (T) -> Boolean) : List<List<T>> {
+	val result = ArrayList<List<T>>()
+	var tmpList = ArrayList<T>()
+
+	forEach { elem ->
+
+		if (block(elem) && tmpList.isNotEmpty()) {
+			result.add(tmpList)
+			tmpList = ArrayList()
+		}
+
+		tmpList.add(elem)
+	}
+
+	if (tmpList.isNotEmpty()) result.add(tmpList)
+
+	return result
+}

@@ -5,8 +5,8 @@ package org.hoshino9.luogu
 import okhttp3.*
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
-import org.hoshino9.luogu.practice.PracticeBlock
-import org.hoshino9.luogu.practice.PracticePage
+import org.hoshino9.luogu.training.DefaultTrainingPage
+import org.hoshino9.luogu.training.TrainingPage
 import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemListPage
 import org.hoshino9.luogu.problems.ProblemSearchConfig
@@ -56,6 +56,9 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			}
 		}
 
+	/**
+	 * 主站滚动图片
+	 */
 	val sliderPhotos : List<SliderPhoto>
 		get() {
 			return getExecute { resp ->
@@ -65,9 +68,9 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			}
 		}
 
-	val practicePage : PracticePage
+	val trainingPage : TrainingPage
 		get() {
-			TODO()
+			return DefaultTrainingPage(this)
 		}
 
 	/**
@@ -78,6 +81,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	/**
 	 * 刷新客户端状态
 	 */
+	@Synchronized
 	fun refresh() {
 		loggedUser = LuoGuLoggedUser(this)
 	}

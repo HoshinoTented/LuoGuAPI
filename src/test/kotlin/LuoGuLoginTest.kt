@@ -3,6 +3,7 @@ import org.hoshino9.luogu.*
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.LuoGuComment
 import org.hoshino9.luogu.results.LuoGuSignedInStatus
+import org.junit.Before
 import org.junit.Test
 import java.io.FileOutputStream
 import java.nio.file.Paths
@@ -12,6 +13,16 @@ import kotlin.system.measureTimeMillis
 
 class LuoGuLoginTest {
 	companion object {
+		private val testRoot = Paths.get("src/test/resources")
+		private val verifyPath by lazy { testRoot.resolve("verify.png") }
+		//	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
+		private val configPath by lazy { testRoot.resolve("user.properties") }
+		private val config by lazy {
+			Properties().apply {
+				load(configPath.toFile().inputStream())
+			}
+		}
+
 		@JvmStatic
 		fun main(args : Array<String>) {
 			LuoGuLoginTest().run {
@@ -21,27 +32,14 @@ class LuoGuLoginTest {
 		}
 	}
 
-	private val testRoot = Paths.get("src/test/resources")
-	private val verifyPath by lazy { testRoot.resolve("verify.png") }
-	//	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
-	private val configPath by lazy { testRoot.resolve("user.properties") }
-	private val config by lazy {
-		Properties().apply {
-			load(configPath.toFile().inputStream())
-		}
-	}
-
 	private lateinit var luogu : LuoGu
 
-	private val user by lazy { luogu.loggedUser }
+	private val user by lazy { this.luogu.loggedUser }
 
 	private val separator = "${"=".repeat(100)}\n"
 
-	init {
-		loadCookie()
-	}
-
-	private fun loadCookie() {
+	@Before
+	fun loadCookie() {
 		val id : String? = config.getProperty("__client_id")
 
 		if (id != null) {
@@ -50,19 +48,20 @@ class LuoGuLoginTest {
 
 	}
 
+	private fun login() {
+		luogu = LuoGu()
+		luogu.verifyCode(verifyPath.toFile().run(::FileOutputStream))
+		println("Please input verify code")
+		val verifyCode : String = Scanner(System.`in`).next()
+		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
+	}
+
 	private fun saveCookie() {
 		val id = luogu.client.cookieJar().loadForRequest(HttpUrl.get("https://www.luogu.org"))
 				.first { it.name() == "__client_id" }.value()
 
 		config.setProperty("__client_id", id)
 		config.store(configPath.toFile().outputStream(), null)
-	}
-
-	private fun login() {
-		luogu.verifyCode(verifyPath.toFile().run(::FileOutputStream))
-		println("Please input verify code")
-		val verifyCode : String = Scanner(System.`in`).next()
-		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
 	}
 
 	@Test
@@ -154,6 +153,21 @@ ${it.source}
 	fun problemListTest() {
 		luogu.problemList().forEach {
 			println("${it.id} (${it.passPercent.first} / ${it.passPercent.second})")
+		}
+	}
+
+	@Test
+	fun training() {
+		luogu.trainingPage.trainingBlocks.forEach {
+			println(it.name)
+			it.trainings.forEach { training ->
+				println(training.name)
+				training.problems.forEach { problem ->
+					println(problem.id)
+				}
+			}
+
+			println(separator)
 		}
 	}
 }

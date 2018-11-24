@@ -24,23 +24,6 @@ abstract class AbstractPaste : Paste {
 			resp.assert()
 		}
 	}
-
-	override fun equals(other : Any?) : Boolean {
-		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
-
-		other as AbstractPaste
-
-		return other.id == id
-	}
-
-	override fun hashCode() : Int {
-		return id.hashCode()
-	}
-
-	override fun toString() : String {
-		return id
-	}
 }
 
 open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement {
@@ -70,4 +53,19 @@ open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement 
 	override val source : String by lazy {
 		body.children().last().text()
 	}
+
+	override fun equals(other : Any?) : Boolean {
+		if (this === other) return true
+		if (other !is DefaultPaste) return false
+
+		if (id != other.id) return false
+
+		return true
+	}
+
+	override fun hashCode() : Int {
+		return id.hashCode()
+	}
+
+
 }
