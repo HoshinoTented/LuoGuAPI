@@ -104,7 +104,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 */
 	@JvmOverloads
 	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
-	fun paste(code : String, public : Boolean = true) : Paste {
+	fun postPaste(code : String, public : Boolean = true) : Paste {
 		return luogu.postExecute("paste/post", mapOf(
 				"content" to code,
 				"verify" to "",
@@ -122,6 +122,12 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 					throw IllegalAPIStatusCodeException(mStatusCode, mData)
 				}
 			}
+		}
+	}
+
+	fun deletePaste(paste : Paste) {
+		luogu.postExecute("paste/delete/${paste.id}") { resp ->
+			resp.assert()
 		}
 	}
 

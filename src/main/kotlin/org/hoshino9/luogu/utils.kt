@@ -32,7 +32,14 @@ fun getRequest(url : String = "") : Request = Request.Builder()
 
 inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMap<String, String>().params(), action : (Response) -> T) : T = client.newCall(postRequest(url, body)).execute().run(action)
 inline fun <T> LuoGu.getExecute(url : String = "", action : (Response) -> T) : T = client.getExecute("$baseUrl/$url", action)
-inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) -> T) : T = newCall(getRequest(url)).execute().run(action)
+inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) -> T) : T {
+	return newCall(getRequest(url)).execute().let { resp ->
+		resp.run(action).apply {
+			resp.close()
+		}
+	}
+}
+
 
 fun <T : CharSequence> Iterable<T>.firstNotBlackOrNull() : T? = firstOrNull { it.isNotBlank() }
 

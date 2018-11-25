@@ -12,18 +12,10 @@ interface Paste {
 	val date : String
 	val source : String
 	val isPublic : Boolean
-
-	fun delete(luogu : LuoGu)
 }
 
 abstract class AbstractPaste : Paste {
 	override val url : String by lazy { "$baseUrl/paste/$id" }
-
-	override fun delete(luogu : LuoGu) {
-		luogu.postExecute("paste/delete/$id") { resp ->
-			resp.assert()
-		}
-	}
 }
 
 open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement {
