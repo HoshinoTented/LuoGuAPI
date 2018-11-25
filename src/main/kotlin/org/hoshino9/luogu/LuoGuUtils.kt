@@ -1,15 +1,11 @@
 package org.hoshino9.luogu
 
-import org.hoshino9.luogu.benben.LuoGuComment
-import org.hoshino9.luogu.photo.LuoGuPhoto
-import org.hoshino9.luogu.photo.ParsedLuoGuPhoto
 import org.hoshino9.luogu.record.Record
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 
 object LuoGuUtils {
-	fun getUserFromUrl(url : String) : LuoGuUser {
-		return url.substring(url.lastIndexOf('=') + 1).run(::LuoGuUser)
+	fun getUserFromUrl(url : String) : User {
+		return url.substring(url.lastIndexOf('=') + 1).run(::User)
 	}
 
 	/**

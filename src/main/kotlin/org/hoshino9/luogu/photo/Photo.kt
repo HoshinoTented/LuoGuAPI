@@ -4,10 +4,10 @@ import org.hoshino9.luogu.*
 import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.nodes.Element
 
-interface LuoGuPhoto {
+interface Photo {
 	val id : String
 	val date : String
-	val user : LuoGuUser
+	val user : User
 	val url : String
 
 	fun delete(luogu : LuoGu)
@@ -19,13 +19,13 @@ interface LuoGuPhoto {
 			this.elem = elem
 		}
 
-		fun build() : LuoGuPhoto {
-			return ParsedLuoGuPhoto(elem ?: throw NullPointerException("Builder::elem == null"))
+		fun build() : Photo {
+			return ParsedPhoto(elem ?: throw NullPointerException("Builder::elem == null"))
 		}
 	}
 }
 
-abstract class AbstractLuoGuPhoto : LuoGuPhoto {
+abstract class AbstractPhoto : Photo {
 	private val urlRegex = Regex("""https://cdn.luogu.org/upload/pic/(\d+)\.(jpg|png|gif)""")
 
 	override val id : String by lazy {
@@ -44,7 +44,7 @@ abstract class AbstractLuoGuPhoto : LuoGuPhoto {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false
 
-		other as AbstractLuoGuPhoto
+		other as AbstractPhoto
 
 		return other.id == id
 	}
@@ -58,7 +58,7 @@ abstract class AbstractLuoGuPhoto : LuoGuPhoto {
 	}
 }
 
-open class ParsedLuoGuPhoto(override val elem : Element) : AbstractLuoGuPhoto(), HasElement {
+open class ParsedPhoto(override val elem : Element) : AbstractPhoto(), HasElement {
 	private val leftElem : Element by lazy { elem.child(0) }
 	private val rightElem : Element by lazy { elem.child(1) }
 
@@ -68,7 +68,7 @@ open class ParsedLuoGuPhoto(override val elem : Element) : AbstractLuoGuPhoto(),
 		}
 	}
 
-	override val user : LuoGuUser by lazy {
+	override val user : User by lazy {
 		leftElem.child(2).child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
 	}
 

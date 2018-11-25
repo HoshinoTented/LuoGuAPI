@@ -1,10 +1,10 @@
 package org.hoshino9.luogu.record
 
-import org.hoshino9.luogu.LuoGuUser
+import org.hoshino9.luogu.User
 
 @Suppress("unused")
 open class Record(val info : RecordInfo) {
-	data class RecordInfo(val pid : String, val user : LuoGuUser, val status : Status, val sort : SortMode) {
+	data class RecordInfo(val pid : String, val user : User, val status : Status, val sort : SortMode) {
 		enum class Status(val value : Int) {
 			WAITING(0),
 			JUDGING(1),

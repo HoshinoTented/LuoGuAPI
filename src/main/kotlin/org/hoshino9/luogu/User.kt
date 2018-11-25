@@ -8,7 +8,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-open class LuoGuUser(val uid : String) {
+open class User(val uid : String) {
 	private val page : Document by lazy {
 		defaultClient.getExecute("https://${LuoGuOnlyCookieJar.domain}/space/show?uid=$uid") { resp ->
 			resp.assert()
@@ -50,7 +50,7 @@ open class LuoGuUser(val uid : String) {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false
 
-		other as LuoGuUser
+		other as User
 
 		if (uid != other.uid) return false
 

@@ -1,6 +1,6 @@
 package org.hoshino9.luogu.benben
 
-import org.hoshino9.luogu.LuoGuUser
+import org.hoshino9.luogu.User
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 
@@ -12,10 +12,10 @@ import org.jsoup.nodes.Node
  * @param date 发送的时间
  * @param content 本体, 是一个 Node 的列表
  */
-data class LuoGuComment(val user : LuoGuUser, val date : String, val content : List<Node>) {
+data class Comment(val user : User, val date : String, val content : List<Node>) {
 	companion object Utils {
 		@JvmName("newInstance")
-		operator fun invoke(element : Element) : LuoGuComment {
+		operator fun invoke(element : Element) : Comment {
 			val children = element.children()
 			val userBlock = children.getOrNull(0) ?: throw NoSuchElementException()
 			val mainBlock = children.getOrNull(1) ?: throw NoSuchElementException()
@@ -34,7 +34,7 @@ data class LuoGuComment(val user : LuoGuUser, val date : String, val content : L
 			//comment
 			val content = comment.children().first()?.childNodes() ?: throw NoSuchElementException()
 
-			return LuoGuComment(LuoGuUser(uid), date, content)
+			return Comment(User(uid), date, content)
 		}
 	}
 }

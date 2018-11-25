@@ -8,12 +8,14 @@ import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemFromId
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import java.lang.IllegalArgumentException
 
 interface Training {
 	enum class Status(val content : String) {
 		ALL_KILL("已通过"),
 		CHALLENGING("可挑战"),
 		DISABLE("有先决要求"),
+		SKIP("暂时跳过"),
 	}
 
 	val mid : String
@@ -54,7 +56,9 @@ open class DefaultTraining(override val mid : String, val luogu : LuoGu) : Abstr
 		get() {
 			val className = "am-badge"
 
-			return elem.getElementsByClass(className).first().text().run(Training.Status::valueOf)
+			return elem.getElementsByClass(className).first().text().run {
+				Training.Status.values().firstOrNull { it.content == this } ?: throw IllegalArgumentException("No such status: $this")
+			}
 		}
 
 	override val problems : List<Problem>

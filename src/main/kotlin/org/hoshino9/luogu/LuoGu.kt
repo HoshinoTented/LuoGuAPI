@@ -4,7 +4,7 @@ package org.hoshino9.luogu
 
 import okhttp3.*
 import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.benben.LuoGuComment
+import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.training.DefaultTrainingPage
 import org.hoshino9.luogu.training.TrainingPage
 import org.hoshino9.luogu.problems.Problem
@@ -76,14 +76,14 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	/**
 	 * 获得当前客户端登录的用户
 	 */
-	lateinit var loggedUser : LuoGuLoggedUser
+	lateinit var loggedUser : LoggedUser
 
 	/**
 	 * 刷新客户端状态
 	 */
 	@Synchronized
 	fun refresh() {
-		loggedUser = LuoGuLoggedUser(this)
+		loggedUser = LoggedUser(this)
 	}
 
 	/**
@@ -107,7 +107,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @return 返回一个 LuoGuLoginResule 对象
 	 *
 	 * @see LuoGu.verifyCode
-	 * @see LuoGuLoggedUser
+	 * @see LoggedUser
 	 * @see IllegalAPIStatusCodeException
 	 * @see IllegalStatusCodeException
 	 */
@@ -143,10 +143,10 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * 公开的犇犇列表
 	 * @param page 页面序号
 	 * @return 返回一个评论列表
-	 * @see LuoGuComment
+	 * @see Comment
 	 */
 	@JvmOverloads
-	fun publicBenben(page : Int = 1) : List<LuoGuComment> = LuoGuLoggedUser(this, "Internal").benben(BenBenType.ALL, page)
+	fun publicBenben(page : Int = 1) : List<Comment> = LoggedUser(this, "Internal").benben(BenBenType.ALL, page)
 
 	/**
 	 * 题目列表

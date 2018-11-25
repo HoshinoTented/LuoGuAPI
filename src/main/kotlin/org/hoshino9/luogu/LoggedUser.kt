@@ -3,15 +3,15 @@ package org.hoshino9.luogu
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.hoshino9.luogu.benben.LuoGuComment
+import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.BenbenUtils
 import org.hoshino9.luogu.paste.DefaultPaste
 import org.hoshino9.luogu.paste.Paste
-import org.hoshino9.luogu.photo.LuoGuPhoto
-import org.hoshino9.luogu.photo.LuoGuPhotoUtils
+import org.hoshino9.luogu.photo.Photo
+import org.hoshino9.luogu.photo.PhotoUtils
 import org.hoshino9.luogu.problems.Solution
-import org.hoshino9.luogu.results.LuoGuSignedInStatus
+import org.hoshino9.luogu.results.SignedInStatus
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.io.File
@@ -23,23 +23,23 @@ import java.io.File
  * 等到 Kotlin1.3 可以改用 `inline class`
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
-open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
+open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	companion object {
 		/**
-		 * 实例化一个 LuoGuLoggedUser 对象
+		 * 实例化一个 LoggedUser 对象
 		 * @param luogu 已经登陆过的洛谷客户端
-		 * @return 返回一个 LuoGuLoggedUser 对象
+		 * @return 返回一个 LoggedUser 对象
 		 *
 		 * @see LuoGuUtils.getUserIdFromPage
 		 */
 		@Throws(IllegalStatusCodeException::class)
 		@JvmName("newInstance")
-		operator fun invoke(luogu : LuoGu) : LuoGuLoggedUser {
+		operator fun invoke(luogu : LuoGu) : LoggedUser {
 			luogu.getExecute { resp ->
 				resp.assert()
 				val content = resp.data !!
 
-				return LuoGuLoggedUser(luogu, Jsoup.parse(content).run(LuoGuUtils::getUserIdFromPage) ?: throw IllegalStateException("no logged in"))
+				return LoggedUser(luogu, Jsoup.parse(content).run(LuoGuUtils::getUserIdFromPage) ?: throw IllegalStateException("no logged in"))
 			}
 		}
 	}
@@ -49,10 +49,10 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * @return 返回一个签到状态类
 	 * @throws IllegalStateException 未签到时抛出
 	 *
-	 * @see LuoGuSignedInStatus
+	 * @see SignedInStatus
 	 */
 	@get:Throws(IllegalStateException::class)
-	val signInStatus : LuoGuSignedInStatus
+	val signInStatus : SignedInStatus
 		get() {
 			val doc = luogu.homePage.run(Jsoup::parse)
 			val node = doc.body().children()
@@ -64,7 +64,7 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 					?.first()?.children()
 					?.first()?.children()
 					?.getOrNull(1) ?: throw NoSuchElementException()
-			return LuoGuSignedInStatus(node.children())
+			return SignedInStatus(node.children())
 		}
 
 	/**
@@ -83,12 +83,12 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 	 * @param page 页数, 默认为`1`
 	 * @return 返回一个犇犇的列表
 	 *
-	 * @see LuoGuComment
+	 * @see Comment
 	 * @see BenBenType
 	 */
 	@JvmOverloads
 	@Throws(IllegalStatusCodeException::class)
-	fun benben(type : BenBenType, page : Int = 1) : List<LuoGuComment> {
+	fun benben(type : BenBenType, page : Int = 1) : List<Comment> {
 		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!
@@ -125,9 +125,9 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		}
 	}
 
-	fun pasteList() : List<Paste> {
+	fun pasteList(page : Int = 1) : List<Paste> {
 		val regex = Regex("""https://www.luogu.org/paste/(\w+)""")
-		luogu.getExecute("paste") { resp ->
+		luogu.getExecute("paste&page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!
 
@@ -211,12 +211,12 @@ open class LuoGuLoggedUser(val luogu : LuoGu, uid : String) : LuoGuUser(uid) {
 		}
 	}
 
-	fun photoList() : List<LuoGuPhoto> {
+	fun photoList() : List<Photo> {
 		luogu.getExecute("app/upload") { resp ->
 			resp.assert()
 
 			val page = resp.data !!
-			return LuoGuPhotoUtils.getPhotos(Jsoup.parse(page))
+			return PhotoUtils.getPhotos(Jsoup.parse(page))
 		}
 	}
 }

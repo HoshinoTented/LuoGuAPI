@@ -3,22 +3,22 @@ package org.hoshino9.luogu.results
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
-data class LuoGuSignedInStatus(val qian : Qian, val goods : List<Thing>, val bads : List<Thing>, val continuation : Int) {
+data class SignedInStatus(val qian : Qian, val goods : List<Thing>, val bads : List<Thing>, val continuation : Int) {
 	companion object Parser {
 		private val regex = Regex("[宜忌]：([^ ]+) ([^ ]+)")
 
 		/**
-		 * 解析html代码并实例化一个 `LuoGuSignedInStatus`
+		 * 解析html代码并实例化一个 `SignedInStatus`
 		 * 接受一个 `<div class="am-u-md-4 lg-punch am-text-center">...</div>` 的子元素集合
 		 * @param page
-		 * @return LuoGuSignedInStatus
+		 * @return SignedInStatus
 		 *
 		 * @see Elements
-		 * @see LuoGuSignedInStatus
+		 * @see SignedInStatus
 		 */
 		@Throws(IllegalStateException::class)
 		@JvmName("newInstance")
-		operator fun invoke(page : Elements) : LuoGuSignedInStatus {
+		operator fun invoke(page : Elements) : SignedInStatus {
 			val head = page.getOrNull(1) ?: throw NoSuchElementException("second element of $page")
 			val body = page.lastOrNull() ?: throw NoSuchElementException("last element of $page")
 
@@ -30,7 +30,7 @@ data class LuoGuSignedInStatus(val qian : Qian, val goods : List<Thing>, val bad
 				val bads = body.children().getOrNull(1) ?: throw NoSuchElementException("second element of $body")
 				val bottom = body.children().getOrNull(2) ?: throw NoSuchElementException("third element of $body")
 
-				return LuoGuSignedInStatus(
+				return SignedInStatus(
 						qian,
 						goods.run(::parseThings),
 						bads.run(::parseThings),

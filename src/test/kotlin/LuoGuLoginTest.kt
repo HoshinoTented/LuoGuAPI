@@ -1,8 +1,8 @@
 import okhttp3.HttpUrl
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.benben.LuoGuComment
-import org.hoshino9.luogu.results.LuoGuSignedInStatus
+import org.hoshino9.luogu.benben.Comment
+import org.hoshino9.luogu.results.SignedInStatus
 import org.junit.Before
 import org.junit.Test
 import java.io.FileOutputStream
@@ -71,7 +71,7 @@ class LuoGuLoginTest {
 
 	@Test
 	fun signInTest() {
-		val toString : (LuoGuSignedInStatus.Thing) -> String = {
+		val toString : (SignedInStatus.Thing) -> String = {
 			"${it.name}: ${it.description}"
 		}
 
@@ -108,7 +108,7 @@ ${it.user}
 
 	@Test
 	fun benbenTest() {
-		val toString : (LuoGuComment) -> String = {
+		val toString : (Comment) -> String = {
 			//language=TEXT
 			"""user: ${it.user}
 date: ${it.date}
@@ -161,6 +161,7 @@ ${it.source}
 		luogu.trainingPage.trainingBlocks.forEach {
 			println(it.name)
 			it.trainings.forEach { training ->
+				print("[${training.status.content}]")
 				println(training.name)
 				training.problems.forEach { problem ->
 					println(problem.id)

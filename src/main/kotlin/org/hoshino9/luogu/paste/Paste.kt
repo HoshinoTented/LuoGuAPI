@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element
 
 interface Paste {
 	val id : String
-	val user : LuoGuUser
+	val user : User
 	val url : String
 	val date : String
 	val source : String
@@ -38,7 +38,7 @@ open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement 
 		}
 	}
 
-	override val user : LuoGuUser by lazy {
+	override val user : User by lazy {
 		body.child(0).child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
 	}
 

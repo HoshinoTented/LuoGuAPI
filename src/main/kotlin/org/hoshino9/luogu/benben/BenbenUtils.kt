@@ -8,11 +8,11 @@ object BenbenUtils {
 	 * @param list
 	 * @return 返回一个犇犇列表
 	 *
-	 * @see LuoGuComment
+	 * @see Comment
 	 */
-	fun getBenben(list : Element) : List<LuoGuComment> {
+	fun getBenben(list : Element) : List<Comment> {
 		return list.children().mapNotNull {
-			if (it.tagName() == "li") LuoGuComment(it) else null
+			if (it.tagName() == "li") Comment(it) else null
 		}
 	}
 }
