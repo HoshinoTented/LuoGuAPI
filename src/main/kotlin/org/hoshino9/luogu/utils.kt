@@ -3,11 +3,6 @@ package org.hoshino9.luogu
 import okhttp3.*
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.json.JSONObject
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-import kotlin.test.assertFailsWith
 import okhttp3.Callback as OkHttpCallback
 
 const val baseUrl = "https://${LuoGuOnlyCookieJar.domain}"

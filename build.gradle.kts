@@ -23,7 +23,7 @@ dependencies {
 	compile("com.squareup.okhttp3:okhttp:3.11.0")
 	compile("org.json", "json", "20180813")
 	compile("org.jsoup", "jsoup", "1.11.3")
-	compile(kotlin("test-junit"))
+	testCompile(kotlin("test-junit"))
 }
 
 tasks.withType<KotlinCompile> {

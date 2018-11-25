@@ -127,7 +127,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 
 	fun pasteList(page : Int = 1) : List<Paste> {
 		val regex = Regex("""https://www.luogu.org/paste/(\w+)""")
-		luogu.getExecute("paste&page=$page") { resp ->
+		luogu.getExecute("paste?page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!
 
