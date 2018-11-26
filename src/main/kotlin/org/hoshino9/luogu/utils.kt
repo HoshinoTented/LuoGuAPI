@@ -1,6 +1,12 @@
 package org.hoshino9.luogu
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.*
+import org.hoshino9.luogu.record.RecordStatus
+import org.hoshino9.luogu.record.RecordStatusAdapter
+import org.hoshino9.luogu.record.TestCase
+import org.hoshino9.luogu.record.TestCaseStatusAdapter
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.json.JSONObject
 import okhttp3.Callback as OkHttpCallback
@@ -9,6 +15,14 @@ const val baseUrl = "https://${LuoGuOnlyCookieJar.domain}"
 const val SEPARATOR = "&"
 const val EQUAL = "="
 const val USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
+
+val globalGson : Gson by lazy {
+	GsonBuilder()
+			.registerTypeAdapter(TestCase.Status::class.java, TestCaseStatusAdapter)
+			.registerTypeAdapter(RecordStatus.Status::class.java, RecordStatusAdapter)
+			.registerTypeAdapter(RecordStatus.Detail::class.java, RecordStatus.Detail.Adapter)
+			.create()
+}
 
 fun <K, V> Map<K, V>.params() : RequestBody {
 	return FormBody.Builder().apply {

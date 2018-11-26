@@ -1,0 +1,135 @@
+{
+  "_channel" : "record.track",
+  "_channel_param" : "14149207",
+  "_ws_type" : "join_result",
+  "client_number" : 1,
+  "result" : "success",
+  "type" : "result",
+  "welcome_message" : {
+    "detail" : {
+      "case1" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 0.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 800,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 3
+      },
+      "case10" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 8.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 804,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 2
+      },
+      "case2" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 4.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 684,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 3
+      },
+      "case3" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 0.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 824,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 3
+      },
+      "case4" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 5.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 940,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 2
+      },
+      "case5" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 0.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 508,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 2
+      },
+      "case6" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 2.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 672,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 3
+      },
+      "case7" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 1.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 812,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 2
+      },
+      "case8" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 4.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 804,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 2
+      },
+      "case9" : {
+        "desc" : "wrong answer On line 1 column 1, read W, expected 6.",
+        "exit_code" : 0,
+        "flag" : 6,
+        "memory" : 808,
+        "score" : 0,
+        "signal" : 0,
+        "subtask" : 0,
+        "time" : 2
+      },
+      "compile" : {
+        "content" : "",
+        "flag" : 12
+      },
+      "final" : [],
+      "finishedCaseCount" : 10,
+      "init" : {
+        "version" : "4"
+      },
+      "subtasks" : [
+        {
+          "judger" : 1,
+          "memory" : 940,
+          "score" : 0,
+          "status" : 14,
+          "time" : 24
+        }
+      ]
+    },
+    "memory" : "940",
+    "score" : "0",
+    "status" : 14,
+    "time" : "24",
+    "type" : "status_push"
+  }
+}

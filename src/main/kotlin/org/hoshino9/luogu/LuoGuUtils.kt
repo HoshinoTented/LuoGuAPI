@@ -1,6 +1,6 @@
 package org.hoshino9.luogu
 
-import org.hoshino9.luogu.record.Record
+import org.hoshino9.luogu.record.RecordStatus
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
@@ -57,10 +57,10 @@ object LuoGuUtils {
 	 * @return 返回一个评测记录列表
 	 *
 	 * @see Document
-	 * @see Record
+	 * @see RecordStatus
 	 */
 	@Suppress("unused", "UNUSED_PARAMETER")
-	inline fun getRecordsFromPage(page : Document, filter : (Record) -> Boolean = { true }) : List<Record> {
+	inline fun getRecordsFromPage(page : Document, filter : (RecordStatus) -> Boolean = { true }) : List<RecordStatus> {
 		TODO("""评测记录相关页面不欢迎一切爬虫行为。
 我相信如果你正在制作爬虫，一定能够看到本段文字。
 请勿再制作任何爬取评测记录的爬虫。""")
