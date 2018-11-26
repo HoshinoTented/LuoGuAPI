@@ -3,7 +3,6 @@ package org.hoshino9.luogu.record
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import org.hoshino9.luogu.globalGson
-import sun.net.idn.StringPrep
 import java.lang.reflect.Type
 
 object RecordStatusAdapter : JsonSerializer<RecordStatus.Status>, JsonDeserializer<RecordStatus.Status> {
@@ -44,7 +43,7 @@ interface RecordStatus {
 					val subTasks = context.deserialize<List<SubTask>>(this["subtasks"], (object : TypeToken<List<SubTask>>() {}).type) ?: emptyList()
 					val testCases = keySet().mapNotNull {
 						if (it.startsWith("case")) {
-							context.deserialize<TestCaseBeen>(this[it], TestCaseBeen::class.java)
+							TestCase.Builder().context(context).name(it).json(this[it]).build()
 						} else null
 					}
 
@@ -87,9 +86,9 @@ interface RecordStatus {
 
 	val rid : String
 	val status : RecordStatus.Status
-	val memory : Int
-	val score : Int
-	val time : Int
+	val memory : String
+	val score : String
+	val time : String
 	val detail : Detail
 }
 
@@ -112,9 +111,9 @@ abstract class AbstractRecordStatus : RecordStatus {
 
 data class RecordStatusBeen(
 		override val status : RecordStatus.Status,
-		override val memory : Int,
-		override val score : Int,
-		override val time : Int,
+		override val memory : String,
+		override val score : String,
+		override val time : String,
 		override val detail : RecordStatus.Detail
 ) : AbstractRecordStatus() {
 	override lateinit var rid : String

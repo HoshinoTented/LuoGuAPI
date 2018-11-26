@@ -36,11 +36,21 @@ interface TestCase {
 	val time : Int
 
 	class Builder {
+		private var mContext : JsonDeserializationContext? = null
 		private lateinit var mJson : String
 		private lateinit var mName : String
+		private lateinit var mElem : JsonElement
+
+		fun context(context : JsonDeserializationContext) : Builder = apply {
+			this.mContext = context
+		}
 
 		fun json(json : String) : Builder = apply {
 			this.mJson = json
+		}
+
+		fun json(elem : JsonElement) : Builder = apply {
+			this.mElem = elem
 		}
 
 		fun name(name : String) : Builder = apply {
@@ -48,9 +58,20 @@ interface TestCase {
 		}
 
 		fun build() : TestCase {
-			return globalGson.fromJson<TestCaseBeen>(mJson, TestCaseBeen::class.java).apply {
-				name = mName
+			return when {
+				::mJson.isInitialized -> globalGson.fromJson<TestCaseBean>(mJson, TestCaseBean::class.java).apply {
+					name = mName
+				}
+
+				::mElem.isInitialized -> {
+					(mContext?.deserialize<TestCaseBean>(mElem, TestCaseBean::class.java) ?: globalGson.fromJson<TestCaseBean>(mElem, TestCaseBean::class.java)).apply {
+						name = mName
+					}
+				}
+
+				else -> throw UninitializedPropertyAccessException("mJson or mElem has not been initialized")
 			}
+
 		}
 	}
 }
@@ -72,7 +93,7 @@ abstract class AbstractTestCase : TestCase {
 	}
 }
 
-data class TestCaseBeen(
+data class TestCaseBean(
 		@SerializedName("desc") override val description : String,
 		@SerializedName("exit_code") override val exitCode : Int,
 		@SerializedName("flag") override val status : TestCase.Status,
