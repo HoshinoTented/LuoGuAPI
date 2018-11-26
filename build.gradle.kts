@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
 	compile(kotlin("stdlib"))
+	compile(kotlin("script-util"))
 //	compile("org.apache.httpcomponents:httpclient:4.5.6")
 //	compile("org.apache.httpcomponents:httpmime:4.5.6")
 	compile("com.squareup.okhttp3:okhttp:3.11.0")

@@ -13,15 +13,15 @@ import kotlin.system.measureTimeMillis
 
 class LuoGuLoginTest {
 	companion object {
-		private val testRoot = Paths.get("src/test/resources")
-		private val verifyPath by lazy { testRoot.resolve("verify.png") }
-		//	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
-		private val configPath by lazy { testRoot.resolve("user.properties") }
-		private val config by lazy {
+		internal val testRoot = Paths.get("src/test/resources")
+		internal val verifyPath by lazy { testRoot.resolve("verify.png") }
+		internal val configPath by lazy { testRoot.resolve("user.properties") }
+		internal val config by lazy {
 			Properties().apply {
 				load(configPath.toFile().inputStream())
 			}
 		}
+		//	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
 
 		@JvmStatic
 		fun main(args : Array<String>) {
