@@ -35,7 +35,14 @@ val sourcesJar = task<Jar>("sourcesJar") {
 	classifier = "sources"
 }
 
+val dependenciesJar = task<Jar>("dependenciesJar") {
+	from(sourceSets.getByName("main").kotlin)
+	from(configurations.compile.map { if (it.isDirectory) it else zipTree(it) })
+	classifier = "all"
+}
+
 artifacts {
 	operator fun String.invoke(obj : Any) = add(this, obj)
 	"archives"(sourcesJar)
+	"archives"(dependenciesJar)
 }
