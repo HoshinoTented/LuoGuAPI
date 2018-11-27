@@ -24,7 +24,7 @@ jobs:
     steps:
     - checkout
 
-    - run: gradle assemble --info --warning-mode=all
+    - run: ./gradlew assemble --info --warning-mode=all
 
     - store_artifacts:
         path: 'build/libs'

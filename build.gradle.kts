@@ -37,7 +37,7 @@ val sourcesJar = task<Jar>("sourcesJar") {
 
 val dependenciesJar = task<Jar>("dependenciesJar") {
 	from(configurations.compile.map { if (it.isDirectory) it else zipTree(it) })
-	classifier = "all"
+	classifier = "dependencies"
 }
 
 artifacts {
