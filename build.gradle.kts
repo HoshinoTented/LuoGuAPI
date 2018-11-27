@@ -36,7 +36,6 @@ val sourcesJar = task<Jar>("sourcesJar") {
 }
 
 val dependenciesJar = task<Jar>("dependenciesJar") {
-	from(sourceSets.getByName("main").kotlin)
 	from(configurations.compile.map { if (it.isDirectory) it else zipTree(it) })
 	classifier = "all"
 }
