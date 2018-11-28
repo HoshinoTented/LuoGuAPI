@@ -11,28 +11,29 @@ import java.util.Properties
 import java.util.Scanner
 import kotlin.system.measureTimeMillis
 
-class LuoGuLoginTest {
+fun main(args : Array<String>) {
+	LuoGuTest().run {
+		login()
+		println("logged in")
+
+		saveCookie()
+		println("save cookie")
+	}
+}
+
+class LuoGuTest {
 	companion object {
-		internal val testRoot = Paths.get("src/test/resources")
-		internal val verifyPath by lazy { testRoot.resolve("verify.png") }
-		internal val configPath by lazy { testRoot.resolve("user.properties") }
+		private val testRoot = Paths.get("src/test/resources")
+		private val verifyPath by lazy { testRoot.resolve("verify.png") }
+		private val configPath by lazy { testRoot.resolve("user.properties") }
 		internal val config by lazy {
 			Properties().apply {
 				load(configPath.toFile().inputStream())
 			}
 		}
-		//	private val cookiePath by lazy { testRoot.resolve("cookie.obj") }
-
-		@JvmStatic
-		fun main(args : Array<String>) {
-			LuoGuLoginTest().run {
-				login()
-				saveCookie()
-			}
-		}
 	}
 
-	private lateinit var luogu : LuoGu
+	internal lateinit var luogu : LuoGu
 
 	private val user by lazy { this.luogu.loggedUser }
 
@@ -48,7 +49,7 @@ class LuoGuLoginTest {
 
 	}
 
-	private fun login() {
+	internal fun login() {
 		luogu = LuoGu()
 		luogu.verifyCode(verifyPath.toFile().run(::FileOutputStream))
 		println("Please input verify code")
@@ -56,7 +57,7 @@ class LuoGuLoginTest {
 		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
 	}
 
-	private fun saveCookie() {
+	internal fun saveCookie() {
 		val id = luogu.client.cookieJar().loadForRequest(HttpUrl.get("https://www.luogu.org"))
 				.first { it.name() == "__client_id" }.value()
 
@@ -138,14 +139,14 @@ ${it.source}
 	fun sliderPhotoTest() {
 		luogu.sliderPhotos.forEach {
 			println(it)
-			val time = measureTimeMillis {
-				defaultClient.getExecute(it.img) { resp ->
-					resp.assert()
-					resp.body() !!.byteStream().copyTo(testRoot.resolve(it.img.hashCode().toString() + ".png").toFile().outputStream())
-				}
-			}
-
-			println("used $time ms")
+//			val time = measureTimeMillis {
+//				defaultClient.getExecute(it.img) { resp ->
+//					resp.assert()
+//					resp.body() !!.byteStream().copyTo(testRoot.resolve(it.img.hashCode().toString() + ".png").toFile().outputStream())
+//				}
+//			}
+//
+//			println("used $time ms")
 		}
 	}
 

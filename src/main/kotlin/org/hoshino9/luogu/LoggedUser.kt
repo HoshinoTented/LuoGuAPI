@@ -3,6 +3,8 @@ package org.hoshino9.luogu
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.hoshino9.luogu.bean.CodeObject
+import org.hoshino9.luogu.bean.StatusObject
 import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.BenbenUtils
@@ -113,15 +115,10 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 			resp.assert()
 
 			val content = resp.data !!
-			json(content) {
-				val mStatusCode = optInt("status")
-				val mData = optString("data")
-				if (optInt("status") == 200) {
-					mData.run(::DefaultPaste)
-				} else {
-					throw IllegalAPIStatusCodeException(mStatusCode, mData)
-				}
-			}
+			val data = globalGson.fromJson(content, StatusObject::class.java)
+
+			if (data.status != 200) throw IllegalAPIStatusCodeException(data.status, data.data)
+			DefaultPaste(data.data)
 		}
 	}
 
@@ -210,10 +207,9 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 			resp.assert()
 			val content = resp.data !!
 
-			json(content) {
-				val code = optInt("code")
-				if (code != 201) throw IllegalAPIStatusCodeException(code)
-			}
+			val data = globalGson.fromJson(content, CodeObject::class.java)
+
+			if (data.code != 201) throw IllegalAPIStatusCodeException(data)
 		}
 	}
 

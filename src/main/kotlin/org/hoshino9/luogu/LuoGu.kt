@@ -3,6 +3,7 @@
 package org.hoshino9.luogu
 
 import okhttp3.*
+import org.hoshino9.luogu.bean.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.training.DefaultTrainingPage
@@ -34,6 +35,11 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			refresh()
 		}
 	}
+
+	val clientId : String
+		get() {
+			return client.cookieJar().loadForRequest(LuoGuOnlyCookieJar.domaiUrl).firstOrNull()?.value() ?: ""
+		}
 
 	/**
 	 * 返回 **你谷** 主页源代码
@@ -129,13 +135,11 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 				.execute().let { resp ->
 					resp.assert()
 					val content = resp.data !!
-					json(content) {
-						val code : Int = getInt("code")
-						val msg : String = getString("message")
 
-						if (code != 200) throw IllegalAPIStatusCodeException(code, msg)
-						refresh()
-					}
+					val data = globalGson.fromJson(content, CodeObject::class.java)
+
+					if (data.code != 200) throw IllegalAPIStatusCodeException(data.code, data.message)
+					refresh()
 				}
 	}
 

@@ -14,6 +14,8 @@ import java.net.HttpCookie
 open class LuoGuOnlyCookieJar : CookieJar {
 	companion object {
 		const val domain = "www.luogu.org"
+
+		val domaiUrl : HttpUrl get() = HttpUrl.get("https://$domain")
 	}
 
 	private val cookieManager = CookieManager()

@@ -44,7 +44,14 @@ fun getRequest(url : String = "") : Request = Request.Builder()
 		.addHeader("User-Agent", USER_AGENT)
 		.build()
 
-inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMap<String, String>().params(), action : (Response) -> T) : T = client.newCall(postRequest(url, body)).execute().run(action)
+inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMap<String, String>().params(), action : (Response) -> T) : T {
+	return client.newCall(postRequest(url, body)).execute().let { resp ->
+		resp.run(action).apply {
+			resp.close()
+		}
+	}
+}
+
 inline fun <T> LuoGu.getExecute(url : String = "", action : (Response) -> T) : T = client.getExecute("$baseUrl/$url", action)
 inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) -> T) : T {
 	return newCall(getRequest(url)).execute().let { resp ->
@@ -63,7 +70,7 @@ val defaultClient : OkHttpClient = OkHttpClient.Builder()
 		.build()
 
 fun Response.assert() {
-	if (! isSuccessful) throw StatusCodeException(this)
+	if (! isSuccessful) throw IllegalStatusCodeException(this)
 }
 
 val Response.data : String? get() = this.body()?.string()
