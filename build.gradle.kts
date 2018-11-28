@@ -1,6 +1,7 @@
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlin.reflect.full.allSuperclasses
 
 plugins {
 	kotlin("jvm") version "1.3.0"
@@ -36,7 +37,7 @@ val sourcesJar = task<Jar>("sourcesJar") {
 }
 
 val dependenciesJar = task<Jar>("dependenciesJar") {
-	from(configurations.compile.map { if (it.isDirectory) it else zipTree(it) })
+	from(configurations.getByName("compile").map { if (it.isDirectory) it else zipTree(it) })
 	classifier = "dependencies"
 }
 
