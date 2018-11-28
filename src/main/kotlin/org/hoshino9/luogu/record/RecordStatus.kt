@@ -78,7 +78,7 @@ interface RecordStatus {
 		}
 
 		fun build() : RecordStatus {
-			return globalGson.fromJson(mJson, RecordStatusBeen::class.java).apply {
+			return globalGson.fromJson(mJson, RecordStatusBean::class.java).apply {
 				this.rid = mRid
 			}
 		}
@@ -109,7 +109,7 @@ abstract class AbstractRecordStatus : RecordStatus {
 	}
 }
 
-data class RecordStatusBeen(
+data class RecordStatusBean(
 		override val status : RecordStatus.Status,
 		override val memory : String,
 		override val score : String,
