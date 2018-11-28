@@ -3,10 +3,7 @@ package org.hoshino9.luogu
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.*
-import org.hoshino9.luogu.record.RecordStatus
-import org.hoshino9.luogu.record.RecordStatusAdapter
-import org.hoshino9.luogu.record.TestCase
-import org.hoshino9.luogu.record.TestCaseStatusAdapter
+import org.hoshino9.luogu.record.*
 import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.json.JSONObject
 import okhttp3.Callback as OkHttpCallback
@@ -19,8 +16,9 @@ const val USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTM
 val globalGson : Gson by lazy {
 	GsonBuilder()
 			.registerTypeAdapter(TestCase.Status::class.java, TestCaseStatusAdapter)
-			.registerTypeAdapter(RecordStatus.Status::class.java, RecordStatusAdapter)
+			.registerTypeAdapter(RecordStatus.Status::class.java, RecordStatusStatusAdapter)
 			.registerTypeAdapter(RecordStatus.Detail::class.java, RecordStatus.Detail.Adapter)
+			.registerTypeAdapter(RecordStatus::class.java, RecordStatusAdapter)
 			.create()
 }
 

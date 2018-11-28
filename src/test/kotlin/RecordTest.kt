@@ -134,7 +134,7 @@ class RecordTest {
 
 	@Test
 	fun deserialization() {
-		val status = RecordStatus.Builder().rid("14149207").json(recordJson).build()
+		val status = RecordStatus.Builder().json(recordJson).build()
 		status.run {
 			assertEquals("940", memory)
 			assertEquals("0", score)

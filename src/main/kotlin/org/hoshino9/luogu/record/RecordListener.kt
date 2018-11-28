@@ -5,7 +5,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
 typealias OnOpenType = (WebSocket, Response) -> Unit
-typealias OnMessageType = (WebSocket, String) -> Unit
+typealias OnMessageType = (WebSocket, RecordResponse) -> Unit
 
 abstract class AbstractRecordListener : WebSocketListener() {
 	class Builder {
@@ -42,6 +42,6 @@ open class DefaultRecordListener : AbstractRecordListener() {
 	}
 
 	override fun onMessage(webSocket : WebSocket, text : String) {
-		onMessageClosure(webSocket, text)
+		onMessageClosure(webSocket, RecordResponse.Builder().json(text).build())
 	}
 }

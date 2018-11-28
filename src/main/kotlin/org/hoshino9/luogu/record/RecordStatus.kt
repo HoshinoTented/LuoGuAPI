@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken
 import org.hoshino9.luogu.globalGson
 import java.lang.reflect.Type
 
-object RecordStatusAdapter : JsonSerializer<RecordStatus.Status>, JsonDeserializer<RecordStatus.Status> {
+object RecordStatusStatusAdapter : JsonSerializer<RecordStatus.Status>, JsonDeserializer<RecordStatus.Status> {
 	override fun serialize(src : RecordStatus.Status?, typeOfSrc : Type?, context : JsonSerializationContext?) : JsonElement {
 		return JsonPrimitive(src?.value ?: return JsonNull.INSTANCE)
 	}
@@ -14,6 +14,12 @@ object RecordStatusAdapter : JsonSerializer<RecordStatus.Status>, JsonDeserializ
 		return json.run {
 			RecordStatus.Status.values().first { it.value == asInt }
 		}
+	}
+}
+
+object RecordStatusAdapter : JsonDeserializer<RecordStatus> {
+	override fun deserialize(json : JsonElement, typeOfT : Type?, context : JsonDeserializationContext?) : RecordStatus {
+		return RecordStatus.Builder().json(json).build()
 	}
 }
 
@@ -66,25 +72,27 @@ interface RecordStatus {
 	}
 
 	class Builder {
-		private lateinit var mRid : String
 		private lateinit var mJson : String
-
-		fun rid(rid : String) = apply {
-			this.mRid = rid
-		}
+		private lateinit var mElem : JsonElement
 
 		fun json(json : String) = apply {
 			this.mJson = json
 		}
 
+		fun json(elem : JsonElement) : Builder = apply {
+			this.mElem = elem
+		}
+
 		fun build() : RecordStatus {
-			return globalGson.fromJson(mJson, RecordStatusBean::class.java).apply {
-				this.rid = mRid
+			return when {
+				::mJson.isInitialized -> globalGson.fromJson(mJson, RecordStatusBean::class.java)
+				::mElem.isInitialized -> globalGson.fromJson(mElem, RecordStatusBean::class.java)
+
+				else -> throw NullPointerException("mJson or mElem == null")
 			}
 		}
 	}
 
-	val rid : String
 	val status : RecordStatus.Status
 	val memory : String
 	val score : String
@@ -92,22 +100,7 @@ interface RecordStatus {
 	val detail : Detail
 }
 
-abstract class AbstractRecordStatus : RecordStatus {
-	override fun equals(other : Any?) : Boolean {
-		if (this === other) return true
-		if (other !is AbstractRecordStatus) return false
-
-		return other.rid == rid
-	}
-
-	override fun hashCode() : Int {
-		return rid.hashCode()
-	}
-
-	override fun toString() : String {
-		return rid
-	}
-}
+abstract class AbstractRecordStatus : RecordStatus
 
 data class RecordStatusBean(
 		override val status : RecordStatus.Status,
@@ -115,6 +108,4 @@ data class RecordStatusBean(
 		override val score : String,
 		override val time : String,
 		override val detail : RecordStatus.Detail
-) : AbstractRecordStatus() {
-	override lateinit var rid : String
-}
+) : AbstractRecordStatus()
