@@ -90,7 +90,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 */
 	@JvmOverloads
 	@Throws(IllegalStatusCodeException::class)
-	fun benben(type : BenBenType, page : Int = 1) : List<Comment> {
+	fun getBenben(type : BenBenType, page : Int = 1) : List<Comment> {
 		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!

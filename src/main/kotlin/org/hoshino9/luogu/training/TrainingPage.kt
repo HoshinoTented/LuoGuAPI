@@ -11,15 +11,20 @@ import org.hoshino9.luogu.splitWith
 import org.jsoup.nodes.TextNode
 
 interface TrainingPage {
+	companion object {
+		@JvmName("newInstance")
+		operator fun invoke(luogu : LuoGu) : TrainingPage {
+			return DefaultTrainingPage(luogu)
+		}
+	}
+
 	val trainingBlocks : List<TrainingBlock>
 	val passedCount : String
 	val lastPassedTime : String
 	val skipPercent : Pair<String, String>
 }
 
-abstract class AbstractTrainingPage : TrainingPage {
-
-}
+abstract class AbstractTrainingPage : TrainingPage
 
 open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasElement {
 	override val elem : Element by lazy {
@@ -45,7 +50,7 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 				elem.appendChild(node)
 			}
 
-			if (elem.children().isEmpty()) null else DefaultTrainingBlock(elem, luogu)
+			if (elem.children().isEmpty()) null else TrainingBlock(elem, luogu)
 		}
 	}
 	override val passedCount : String

@@ -19,7 +19,7 @@ object RecordStatusStatusAdapter : JsonSerializer<RecordStatus.Status>, JsonDese
 
 object RecordStatusAdapter : JsonDeserializer<RecordStatus> {
 	override fun deserialize(json : JsonElement, typeOfT : Type?, context : JsonDeserializationContext?) : RecordStatus {
-		return RecordStatus.Builder().json(json).build()
+		return RecordStatus(json)
 	}
 }
 
@@ -49,7 +49,7 @@ interface RecordStatus {
 					val subTasks = context.deserialize<List<SubTask>>(this["subtasks"], (object : TypeToken<List<SubTask>>() {}).type) ?: emptyList()
 					val testCases = keySet().mapNotNull {
 						if (it.startsWith("case")) {
-							TestCase.Builder().context(context).name(it).json(this[it]).build()
+							TestCase(context, it, this[it])
 						} else null
 					}
 
@@ -71,25 +71,15 @@ interface RecordStatus {
 		}
 	}
 
-	class Builder {
-		private lateinit var mJson : String
-		private lateinit var mElem : JsonElement
-
-		fun json(json : String) = apply {
-			this.mJson = json
+	companion object {
+		@JvmName("newInstance")
+		operator fun invoke(json : String) : RecordStatus {
+			return globalGson.fromJson(json, RecordStatusBean::class.java)
 		}
 
-		fun json(elem : JsonElement) : Builder = apply {
-			this.mElem = elem
-		}
-
-		fun build() : RecordStatus {
-			return when {
-				::mJson.isInitialized -> globalGson.fromJson(mJson, RecordStatusBean::class.java)
-				::mElem.isInitialized -> globalGson.fromJson(mElem, RecordStatusBean::class.java)
-
-				else -> throw NullPointerException("mJson or mElem == null")
-			}
+		@JvmName("newInstance")
+		operator fun invoke(elem : JsonElement) : RecordStatus {
+			return globalGson.fromJson(elem, RecordStatusBean::class.java)
 		}
 	}
 

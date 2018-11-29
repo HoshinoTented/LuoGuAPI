@@ -18,6 +18,13 @@ interface Training {
 		SKIP("暂时跳过"),
 	}
 
+	companion object {
+		@JvmName("newInstance")
+		operator fun invoke(mid : String, luogu : LuoGu) : Training {
+			return DefaultTraining(mid, luogu)
+		}
+	}
+
 	val mid : String
 	val name : String
 	val status : Status

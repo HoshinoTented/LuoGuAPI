@@ -10,14 +10,9 @@ interface RecordResponse {
 	val recordStatus : RecordStatus
 	val clientNumber : Int
 
-	class Builder {
-		private lateinit var json : String
-
-		fun json(json : String) : Builder = apply {
-			this.json = json
-		}
-
-		fun build() : RecordResponse {
+	companion object {
+		@JvmName("newInstance")
+		operator fun invoke(json : String) : RecordResponse {
 			return globalGson.fromJson(json, RecordResponseBean::class.java)
 		}
 	}

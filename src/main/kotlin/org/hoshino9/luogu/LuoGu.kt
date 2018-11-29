@@ -150,7 +150,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @see Comment
 	 */
 	@JvmOverloads
-	fun publicBenben(page : Int = 1) : List<Comment> = LoggedUser(this, "Internal").benben(BenBenType.ALL, page)
+	fun publicBenben(page : Int = 1) : List<Comment> = LoggedUser(this, "Internal").getBenben(BenBenType.ALL, page)
 
 	/**
 	 * 题目列表

@@ -42,6 +42,6 @@ open class DefaultRecordListener : AbstractRecordListener() {
 	}
 
 	override fun onMessage(webSocket : WebSocket, text : String) {
-		onMessageClosure(webSocket, RecordResponse.Builder().json(text).build())
+		onMessageClosure(webSocket, RecordResponse(text))
 	}
 }

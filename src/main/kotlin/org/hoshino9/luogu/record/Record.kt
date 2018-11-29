@@ -1,33 +1,27 @@
 package org.hoshino9.luogu.record
 
 import okhttp3.Request
+import okhttp3.WebSocket
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.USER_AGENT
 
 interface Record {
 	companion object {
-		fun message(rid : String) = """{"type":"join_channel","channel":"record.track","channel_param":"$rid"}"""
-	}
+		internal fun message(rid : String) = """{"type":"join_channel","channel":"record.track","channel_param":"$rid"}"""
 
-	class Builder {
-		private lateinit var rid : String
-
-		fun recordId(id : String) : Builder = apply {
-			this.rid = id
-		}
-
-		fun build() : Record {
+		@JvmName("newInstance")
+		operator fun invoke(rid : String) : Record {
 			return DefaultRecord(rid)
 		}
 	}
 
 	val rid : String
-	fun listen(client : LuoGu, listener : OnMessageType)
+	fun listen(client : LuoGu, listener : OnMessageType) : WebSocket
 }
 
 abstract class AbstractRecord : Record {
-	override fun listen(client : LuoGu, listener : OnMessageType) {
-		client.client.newWebSocket(
+	override fun listen(client : LuoGu, listener : OnMessageType) : WebSocket {
+		return client.client.newWebSocket(
 				Request.Builder()
 						.url("wss://ws.luogu.org/ws")
 						.addHeader("User-Agent", USER_AGENT)

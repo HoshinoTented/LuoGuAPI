@@ -9,7 +9,6 @@ import java.io.FileOutputStream
 import java.nio.file.Paths
 import java.util.Properties
 import java.util.Scanner
-import kotlin.system.measureTimeMillis
 
 fun main(args : Array<String>) {
 	LuoGuTest().run {
@@ -118,8 +117,8 @@ ${it.content}
 """
 		}
 
-		user.benben(BenBenType.ALL).joinToString(separator = separator, transform = toString).run(::println)
-		user.benben(BenBenType.WATCHING).joinToString(separator = separator, transform = toString).run(::println)
+		user.getBenben(BenBenType.ALL).joinToString(separator = separator, transform = toString).run(::println)
+		user.getBenben(BenBenType.WATCHING).joinToString(separator = separator, transform = toString).run(::println)
 	}
 
 	@Test

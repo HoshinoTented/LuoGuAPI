@@ -35,43 +35,26 @@ interface TestCase {
 	val subTask : Int
 	val time : Int
 
-	class Builder {
-		private var mContext : JsonDeserializationContext? = null
-		private lateinit var mJson : String
-		private lateinit var mName : String
-		private lateinit var mElem : JsonElement
-
-		fun context(context : JsonDeserializationContext) : Builder = apply {
-			this.mContext = context
-		}
-
-		fun json(json : String) : Builder = apply {
-			this.mJson = json
-		}
-
-		fun json(elem : JsonElement) : Builder = apply {
-			this.mElem = elem
-		}
-
-		fun name(name : String) : Builder = apply {
-			this.mName = name
-		}
-
-		fun build() : TestCase {
-			return when {
-				::mJson.isInitialized -> globalGson.fromJson<TestCaseBean>(mJson, TestCaseBean::class.java).apply {
-					name = mName
-				}
-
-				::mElem.isInitialized -> {
-					(mContext?.deserialize<TestCaseBean>(mElem, TestCaseBean::class.java) ?: globalGson.fromJson<TestCaseBean>(mElem, TestCaseBean::class.java)).apply {
-						name = mName
-					}
-				}
-
-				else -> throw UninitializedPropertyAccessException("mJson or mElem has not been initialized")
+	companion object {
+		@JvmName("newInstance")
+		operator fun invoke(name : String, json : String) : TestCase {
+			return globalGson.fromJson<TestCaseBean>(json, TestCaseBean::class.java).apply {
+				this.name = name
 			}
+		}
 
+		@JvmName("newInstance")
+		operator fun invoke(name : String, elem : JsonElement) : TestCase {
+			return globalGson.fromJson<TestCaseBean>(elem, TestCaseBean::class.java).apply {
+				this.name = name
+			}
+		}
+
+		@JvmName("newInstance")
+		operator fun invoke(context : JsonDeserializationContext, name : String, elem : JsonElement) : TestCase {
+			return context.deserialize<TestCaseBean>(elem, TestCaseBean::class.java).apply {
+				this.name = name
+			}
 		}
 	}
 }
