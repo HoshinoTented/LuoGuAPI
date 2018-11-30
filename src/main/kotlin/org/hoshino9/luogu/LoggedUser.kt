@@ -13,6 +13,7 @@ import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.photo.Photo
 import org.hoshino9.luogu.photo.PhotoUtils
 import org.hoshino9.luogu.problems.Solution
+import org.hoshino9.luogu.record.Record
 import org.hoshino9.luogu.results.SignedInStatus
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -34,7 +35,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 		 *
 		 * @see LuoGuUtils.getUserIdFromPage
 		 */
-		@Throws(IllegalStatusCodeException::class)
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LoggedUser {
 			luogu.getExecute { resp ->
@@ -53,7 +53,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 *
 	 * @see SignedInStatus
 	 */
-	@get:Throws(IllegalStateException::class)
 	val signInStatus : SignedInStatus
 		get() {
 			val doc = luogu.homePage.run(Jsoup::parse)
@@ -72,7 +71,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	/**
 	 * **你谷**签到
 	 */
-	@Throws(IllegalStatusCodeException::class)
 	fun signIn() {
 		return luogu.getExecute("index/ajax_punch") { resp ->
 			resp.assert()
@@ -89,7 +87,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 * @see BenBenType
 	 */
 	@JvmOverloads
-	@Throws(IllegalStatusCodeException::class)
 	fun getBenben(type : BenBenType, page : Int = 1) : List<Comment> {
 		luogu.getExecute("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
@@ -105,7 +102,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 * @return 返回剪切板的代码
 	 */
 	@JvmOverloads
-	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun postPaste(code : String, public : Boolean = true) : Paste {
 		return luogu.postExecute("paste/post", mapOf(
 				"content" to code,
@@ -144,7 +140,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 * 发射犇犇
 	 * @param text 犇犇内容
 	 */
-	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun postBenben(text : String) {
 		luogu.postExecute("api/feed/postBenben", mapOf("content" to text).params()) { resp ->
 			resp.assert()
@@ -161,12 +156,12 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	/**
 	 * 提交题解
 	 * @param solution 题解对象
-	 * @return 返回评测结果id
+	 * @return 返回 Record 对象
 	 *
 	 * @see Solution
+	 * @see Record
 	 */
-	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
-	fun postSolution(solution : Solution) : String {
+	fun postSolution(solution : Solution) : Record {
 		return luogu.postExecute("api/problem/submit/${solution.pid}",
 				mapOf(
 						"code" to solution.code,
@@ -184,7 +179,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 
 				if (status == 200) {
 					data as JSONObject
-					data.get("rid").toString()
+					Record(data.get("rid").toString())
 				} else throw IllegalAPIStatusCodeException(status, data.toString())
 			}
 		}
@@ -198,7 +193,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 *
 	 * @see File
 	 */
-	@Throws(IllegalStatusCodeException::class, IllegalAPIStatusCodeException::class)
 	fun postPhoto(file : File) {
 		luogu.postExecute("app/upload", MultipartBody.Builder()
 				.setType(MultipartBody.FORM)
@@ -213,6 +207,12 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 		}
 	}
 
+	/**
+	 * 图床列表
+	 * @return 返回一个图片的列表
+	 *
+	 * @see Photo
+	 */
 	fun photoList() : List<Photo> {
 		luogu.getExecute("app/upload") { resp ->
 			resp.assert()

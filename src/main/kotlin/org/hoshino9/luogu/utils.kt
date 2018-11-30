@@ -25,7 +25,7 @@ val globalGson : Gson by lazy {
 fun <K, V> Map<K, V>.params() : RequestBody {
 	return FormBody.Builder().apply {
 		forEach { k, v ->
-			addEncoded(k.toString(), v.toString())
+			add(k.toString(), v.toString())
 		}
 	}.build()
 }

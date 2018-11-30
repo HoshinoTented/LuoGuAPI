@@ -18,6 +18,11 @@ data class Solution(val pid : String, val language : Language, val code : String
 		Rust(15),
 		PHP7(16),
 		CS(17),		// Mono
-		VB(18)		// Mono
+		VB(18),        // Mono
+		Haskell(19),
+		KotlinNative(20),
+		KotlinJVM(21),
+		Scala(22),
+		Perl5(23),
 	}						//What is the mean of mono
 }
