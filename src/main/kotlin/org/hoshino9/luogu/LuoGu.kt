@@ -24,7 +24,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(clientId : String) : LuoGu = LuoGu().apply {
-			client.cookieJar().saveFromResponse(HttpUrl.get(baseUrl), listOf(
+			client.cookieJar().saveFromResponse(LuoGuOnlyCookieJar.domainUrl, listOf(
 					Cookie.Builder()
 							.domain(LuoGuOnlyCookieJar.domain)
 							.name("__client_id")
@@ -38,7 +38,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 
 	val clientId : String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuOnlyCookieJar.domaiUrl).firstOrNull()?.value() ?: ""
+			return client.cookieJar().loadForRequest(LuoGuOnlyCookieJar.domainUrl).firstOrNull { it.name() == "__client_id" }?.value() ?: ""
 		}
 
 	/**

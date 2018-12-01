@@ -60,10 +60,9 @@ inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) ->
 }
 
 
-fun <T : CharSequence> Iterable<T>.firstNotBlackOrNull() : T? = firstOrNull { it.isNotBlank() }
-
-val emptyClient : OkHttpClient = OkHttpClient()
-val defaultClient : OkHttpClient = OkHttpClient.Builder()
+val emptyClient : OkHttpClient get() = OkHttpClient()
+val defaultClient : OkHttpClient
+	get() = OkHttpClient.Builder()
 		.cookieJar(LuoGuOnlyCookieJar())
 		.build()
 

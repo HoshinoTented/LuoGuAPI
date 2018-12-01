@@ -1,5 +1,6 @@
-import okhttp3.HttpUrl
-import org.hoshino9.luogu.*
+@file:Suppress("MemberVisibilityCanBePrivate")
+
+import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.results.SignedInStatus
@@ -32,11 +33,11 @@ class LuoGuTest {
 		}
 	}
 
-	internal lateinit var luogu : LuoGu
+	lateinit var luogu : LuoGu
 
-	private val user by lazy { this.luogu.loggedUser }
+	val user by lazy { this.luogu.loggedUser }
 
-	private val separator = "${"=".repeat(100)}\n"
+	val separator = "${"=".repeat(100)}\n"
 
 	@Before
 	fun loadCookie() {
@@ -48,7 +49,7 @@ class LuoGuTest {
 
 	}
 
-	internal fun login() {
+	fun login() {
 		luogu = LuoGu()
 		luogu.verifyCode(verifyPath.toFile().run(::FileOutputStream))
 		println("Please input verify code")
@@ -56,9 +57,8 @@ class LuoGuTest {
 		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
 	}
 
-	internal fun saveCookie() {
-		val id = luogu.client.cookieJar().loadForRequest(HttpUrl.get("https://www.luogu.org"))
-				.first { it.name() == "__client_id" }.value()
+	fun saveCookie() {
+		val id = luogu.clientId
 
 		config.setProperty("__client_id", id)
 		config.store(configPath.toFile().outputStream(), null)
