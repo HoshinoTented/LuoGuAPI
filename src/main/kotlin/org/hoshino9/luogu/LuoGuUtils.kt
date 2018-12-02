@@ -1,9 +1,17 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package org.hoshino9.luogu
 
+import okhttp3.HttpUrl
 import org.hoshino9.luogu.record.RecordStatus
+import org.hoshino9.okhttp.HoshinoCookieJar
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
+	const val domain = "www.luogu.org"
+	const val baseUrl = "https://$domain"
+	val httpUrl : HttpUrl get() = HttpUrl.get(baseUrl)
+
 	fun getUserFromUrl(url : String) : User {
 		return url.substring(url.lastIndexOf('=') + 1).run(::User)
 	}

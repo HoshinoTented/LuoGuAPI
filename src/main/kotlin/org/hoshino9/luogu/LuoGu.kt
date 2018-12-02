@@ -3,6 +3,7 @@
 package org.hoshino9.luogu
 
 import okhttp3.*
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.bean.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.Comment
@@ -11,7 +12,7 @@ import org.hoshino9.luogu.training.TrainingPage
 import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemListPage
 import org.hoshino9.luogu.problems.ProblemSearchConfig
-import org.hoshino9.okhttp.LuoGuOnlyCookieJar
+import org.hoshino9.okhttp.HoshinoCookieJar
 import org.jsoup.Jsoup
 import java.io.OutputStream
 
@@ -24,9 +25,9 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(clientId : String) : LuoGu = LuoGu().apply {
-			client.cookieJar().saveFromResponse(LuoGuOnlyCookieJar.domainUrl, listOf(
+			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(
 					Cookie.Builder()
-							.domain(LuoGuOnlyCookieJar.domain)
+							.domain(LuoGuUtils.domain)
 							.name("__client_id")
 							.value(clientId)
 							.build()
@@ -38,7 +39,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 
 	val clientId : String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuOnlyCookieJar.domainUrl).firstOrNull { it.name() == "__client_id" }?.value() ?: ""
+			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value() ?: ""
 		}
 
 	/**
@@ -127,7 +128,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 				"verify" to verifyCode
 		).params()
 
-		return Request.Builder()
+		Request.Builder()
 				.url("$baseUrl/login/loginpage")
 				.post(params)
 				.build()

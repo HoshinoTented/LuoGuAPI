@@ -2,15 +2,15 @@
 
 package org.hoshino9.luogu
 
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.problems.Problem
-import org.hoshino9.okhttp.LuoGuOnlyCookieJar
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 open class User(val uid : String) {
 	private val page : Document by lazy {
-		defaultClient.getExecute("https://${LuoGuOnlyCookieJar.domain}/space/show?uid=$uid") { resp ->
+		defaultClient.getExecute("$baseUrl/space/show?uid=$uid") { resp ->
 			resp.assert()
 			Jsoup.parse(resp.data !!)
 		}

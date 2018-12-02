@@ -18,6 +18,8 @@ fun main(args : Array<String>) {
 
 		saveCookie()
 		println("save cookie")
+
+		user.postBenben("QAQ")
 	}
 }
 

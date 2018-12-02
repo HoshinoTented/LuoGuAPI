@@ -113,8 +113,8 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 			val content = resp.data !!
 			val data = globalGson.fromJson(content, StatusObject::class.java)
 
-			if (data.status != 200) throw IllegalAPIStatusCodeException(data.status, data.data)
-			DefaultPaste(data.data)
+			if (data.status != 200) throw IllegalAPIStatusCodeException(data.status, data.data ?: "")
+			DefaultPaste(data.data !!)
 		}
 	}
 
