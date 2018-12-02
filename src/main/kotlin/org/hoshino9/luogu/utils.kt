@@ -15,6 +15,7 @@ const val SEPARATOR = "&"
 const val EQUAL = "="
 const val USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
 
+// Utils
 val globalGson : Gson by lazy {
 	GsonBuilder()
 			.registerTypeAdapter(TestCase.Status::class.java, TestCaseStatusAdapter)
@@ -24,6 +25,7 @@ val globalGson : Gson by lazy {
 			.create()
 }
 
+// Params
 fun <K, V> Map<K, V>.params() : RequestBody {
 	return FormBody.Builder().apply {
 		forEach { k, v ->
@@ -32,10 +34,15 @@ fun <K, V> Map<K, V>.params() : RequestBody {
 	}.build()
 }
 
-fun LuoGu.postRequest(url : String, body : RequestBody = emptyMap<String, String>().params()) : Request = Request.Builder()
+// Headers
+fun referer(url : String = "") : Headers = Headers.Builder().add("referer", "$baseUrl/$url").build()
+
+// Request
+fun LuoGu.postRequest(url : String, body : RequestBody, headers : Headers) : Request = Request.Builder()
 		.url("$baseUrl/$url")
 		.addHeader("x-csrf-token", csrfToken)
 		.post(body)
+		.headers(headers)
 		.build()
 
 @JvmOverloads
@@ -44,8 +51,8 @@ fun getRequest(url : String = "") : Request = Request.Builder()
 		.addHeader("User-Agent", USER_AGENT)
 		.build()
 
-inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMap<String, String>().params(), action : (Response) -> T) : T {
-	return client.newCall(postRequest(url, body)).execute().let { resp ->
+inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMap<String, String>().params(), headers : Headers = Headers.Builder().build(), action : (Response) -> T) : T {
+	return client.newCall(postRequest(url, body, headers)).execute().let { resp ->
 		resp.run(action).apply {
 			resp.close()
 		}
@@ -61,19 +68,21 @@ inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) ->
 	}
 }
 
-
+// Client
 val emptyClient : OkHttpClient get() = OkHttpClient()
 val defaultClient : OkHttpClient
 	get() = OkHttpClient.Builder()
 			.cookieJar(HoshinoCookieJar())
 			.build()
 
+// Response
 fun Response.assert() {
 	if (! isSuccessful) throw IllegalStatusCodeException(this)
 }
 
 val Response.data : String? get() = this.body()?.string()
 
+// Json
 inline fun <T> json(content : String, init : JSONObject.() -> T) : T {
 	return JSONObject(content).run(init)
 }
@@ -82,6 +91,7 @@ fun json(content : String) : JSONObject {
 	return JSONObject(content)
 }
 
+// Utils
 inline fun <T> Iterable<T>.splitWith(block : (T) -> Boolean) : List<List<T>> {
 	val result = ArrayList<List<T>>()
 	var tmpList = ArrayList<T>()

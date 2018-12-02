@@ -18,6 +18,7 @@ import org.hoshino9.luogu.results.SignedInStatus
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.io.File
+import java.lang.IllegalStateException
 
 /**
  * **你谷**用户类
@@ -37,12 +38,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 		 */
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LoggedUser {
-			luogu.getExecute { resp ->
-				resp.assert()
-				val content = resp.data !!
-
-				return LoggedUser(luogu, Jsoup.parse(content).run(LuoGuUtils::getUserIdFromPage) ?: throw IllegalStateException("no logged in"))
-			}
+			return LoggedUser(luogu, luogu.myuid)
 		}
 	}
 
@@ -107,7 +103,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 				"content" to code,
 				"verify" to "",
 				"public" to if (public) "1" else "0"
-		).params()) { resp ->
+		).params(), referer("paste")) { resp ->
 			resp.assert()
 
 			val content = resp.data !!
@@ -119,7 +115,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	}
 
 	fun deletePaste(paste : Paste) {
-		luogu.postExecute("paste/delete/${paste.id}") { resp ->
+		luogu.postExecute("paste/delete/${paste.id}", headers = referer("paste/${paste.id}")) { resp ->
 			resp.assert()
 		}
 	}
@@ -141,7 +137,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 	 * @param text 犇犇内容
 	 */
 	fun postBenben(text : String) {
-		luogu.postExecute("api/feed/postBenben", mapOf("content" to text).params()) { resp ->
+		luogu.postExecute("api/feed/postBenben", mapOf("content" to text).params(), referer()) { resp ->
 			resp.assert()
 			val content = resp.data !!
 

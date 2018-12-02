@@ -14,12 +14,10 @@ import java.util.Scanner
 fun main(args : Array<String>) {
 	LuoGuTest().run {
 		login()
-		println("logged in")
+		println("logged in: $user")
 
 		saveCookie()
 		println("save cookie")
-
-		user.postBenben("QAQ")
 	}
 }
 
@@ -44,9 +42,10 @@ class LuoGuTest {
 	@Before
 	fun loadCookie() {
 		val id : String? = config.getProperty("__client_id")
+		val uid : String? = config.getProperty("_uid")
 
-		if (id != null) {
-			luogu = LuoGu(id)
+		if (id != null && uid != null) {
+			luogu = LuoGu(id, uid)
 		} else throw IllegalStateException("No logged in")
 
 	}
@@ -60,9 +59,8 @@ class LuoGuTest {
 	}
 
 	fun saveCookie() {
-		val id = luogu.clientId
-
-		config.setProperty("__client_id", id)
+		config.setProperty("__client_id", luogu.clientId)
+		config.setProperty("_uid", luogu.myuid)
 		config.store(configPath.toFile().outputStream(), null)
 	}
 

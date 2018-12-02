@@ -24,22 +24,28 @@ import java.io.OutputStream
 open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultClient) {
 	companion object {
 		@JvmName("newInstance")
-		operator fun invoke(clientId : String) : LuoGu = LuoGu().apply {
-			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(
-					Cookie.Builder()
-							.domain(LuoGuUtils.domain)
-							.name("__client_id")
-							.value(clientId)
-							.build()
-			))
+		operator fun invoke(clientId : String, uid : String) : LuoGu = LuoGu().apply {
+			this.clientId = clientId
+			this.myuid = uid
 
 			refresh()
 		}
 	}
 
-	val clientId : String
+	var myuid : String
+		get() {
+			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" && it.domain() == "luogu.org" }?.value() ?: ""
+		}
+		set(value) {
+			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(Cookie.Builder().domain("luogu.org").name("_uid").value(value).build()))
+		}
+
+	var clientId : String
 		get() {
 			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value() ?: ""
+		}
+		set(value) {
+			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(Cookie.Builder().domain("luogu.org").name("__client_id").value(value).build()))
 		}
 
 	/**
