@@ -1,8 +1,9 @@
-package org.hoshino9.luogu
+package org.hoshino9.luogu.user
 
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.hoshino9.luogu.*
 import org.hoshino9.luogu.bean.CodeObject
 import org.hoshino9.luogu.bean.StatusObject
 import org.hoshino9.luogu.benben.Comment
@@ -63,6 +64,8 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 					?.getOrNull(1) ?: throw NoSuchElementException()
 			return SignedInStatus(node.children())
 		}
+
+	override val spacePage : UserSpacePage by lazy { UserSpacePage(this, luogu.client) }
 
 	/**
 	 * **你谷**签到

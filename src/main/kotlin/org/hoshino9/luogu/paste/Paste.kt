@@ -5,6 +5,7 @@ import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.user.User
 
 interface Paste {
 	val id : String

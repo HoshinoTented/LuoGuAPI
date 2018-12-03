@@ -1,8 +1,9 @@
 package org.hoshino9.luogu.problems
 
+import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuTag
 
-class ProblemFromId(override val id : String) : AbstractProblem() {
+open class ProblemFromId(override val id : String, val client : OkHttpClient) : AbstractProblem() {
 	override val difficulty : Problem.Difficulty
 		get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 	override val name : String

@@ -12,7 +12,7 @@ import org.hoshino9.luogu.training.TrainingPage
 import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemListPage
 import org.hoshino9.luogu.problems.ProblemSearchConfig
-import org.hoshino9.okhttp.HoshinoCookieJar
+import org.hoshino9.luogu.user.LoggedUser
 import org.jsoup.Jsoup
 import java.io.OutputStream
 
@@ -34,7 +34,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 
 	var myuid : String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" && it.domain() == "luogu.org" }?.value() ?: ""
+			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" }?.value() ?: ""
 		}
 		set(value) {
 			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(Cookie.Builder().domain("luogu.org").name("_uid").value(value).build()))

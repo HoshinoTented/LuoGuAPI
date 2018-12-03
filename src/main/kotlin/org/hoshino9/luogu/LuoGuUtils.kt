@@ -4,7 +4,7 @@ package org.hoshino9.luogu
 
 import okhttp3.HttpUrl
 import org.hoshino9.luogu.record.RecordStatus
-import org.hoshino9.okhttp.HoshinoCookieJar
+import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {

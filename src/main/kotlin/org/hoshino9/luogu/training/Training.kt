@@ -75,7 +75,7 @@ open class DefaultTraining(override val mid : String, val luogu : LuoGu) : Abstr
 			return elem.getElementsByClass(className).map {
 				val id = it.child(0).text()
 
-				ProblemFromId(id)
+				ProblemFromId(id, luogu.client)
 			}
 		}
 

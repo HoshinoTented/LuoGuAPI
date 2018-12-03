@@ -171,4 +171,10 @@ ${it.source}
 			println(separator)
 		}
 	}
+
+	@Test
+	fun userProblems() {
+		user.spacePage.passedProblems.run(::println)
+		user.spacePage.triedProblems.run(::println)
+	}
 }

@@ -1,8 +1,12 @@
 @file:Suppress("unused")
 
-package org.hoshino9.luogu
+package org.hoshino9.luogu.user
 
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.assert
+import org.hoshino9.luogu.data
+import org.hoshino9.luogu.defaultClient
+import org.hoshino9.luogu.getExecute
 import org.hoshino9.luogu.problems.Problem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -16,35 +20,7 @@ open class User(val uid : String) {
 		}
 	}
 
-	/**
-	 * 用户名
-	 */
-	val username : String get() = TODO()
-
-	/**
-	 * 用户的签名
-	 * **Nullable**
-	 */
-	val introduction : Element get() = TODO()
-
-	/**
-	 * 通过的题目
-	 * 返回一个 List
-	 * 题目的pid
-	 */
-	val passedProblems : List<Problem> get() = TODO()
-
-	/**
-	 * 尝试过的题目
-	 * 返回一个 List
-	 * 题目的pid
-	 */
-	val triedProblems : List<Problem> get() = TODO()
-
-	/**
-	 * 咕值
-	 */
-	val gugugu : Int get() = TODO()
+	open val spacePage : UserSpacePage by lazy { UserSpacePage(this) }
 
 	override fun equals(other : Any?) : Boolean {
 		if (this === other) return true

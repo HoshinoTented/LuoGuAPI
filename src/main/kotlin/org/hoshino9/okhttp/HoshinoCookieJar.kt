@@ -18,12 +18,12 @@ open class HoshinoCookieJar : CookieJar {
 
 	override fun saveFromResponse(url : HttpUrl, cookies : MutableList<Cookie>) {
 		cookies.forEach {
-			if (it.domain() == "www.luogu.org") return@forEach        //FIXME: 太暴力了, 这样是不行的!
+			//			if (it.domain() == "www.luogu.org") return@forEach        //FIXME: 太暴力了, 这样是不行的!
 
 			cookieManager.cookieStore.add(
 					url.uri(),
 					HttpCookie(it.name(), it.value()).apply {
-						domain = it.domain()
+						domain = (if (HttpUrl.get("https://" + it.domain()).topPrivateDomain() == it.domain()) "www." else "") + it.domain()
 					}
 			)
 		}

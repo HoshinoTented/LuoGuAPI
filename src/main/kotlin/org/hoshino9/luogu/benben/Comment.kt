@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.benben
 
 import org.hoshino9.luogu.LuoGuUtils
-import org.hoshino9.luogu.User
+import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.interfaces.HasElement
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node

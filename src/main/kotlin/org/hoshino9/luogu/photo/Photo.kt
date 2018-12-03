@@ -2,6 +2,7 @@ package org.hoshino9.luogu.photo
 
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.interfaces.HasElement
+import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Element
 
 interface Photo {
