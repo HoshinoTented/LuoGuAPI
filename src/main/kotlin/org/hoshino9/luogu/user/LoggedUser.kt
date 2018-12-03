@@ -167,7 +167,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 						"lang" to solution.language.value.toString(),
 						"enableO2" to if (solution.enableO2) "1" else "0",
 						"verify" to ""
-				).params()
+				).params(), referer("problemnew/show/${solution.pid}")
 		) { resp ->
 			resp.assert()
 			val content = resp.data !!
@@ -196,7 +196,8 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 		luogu.postExecute("app/upload", MultipartBody.Builder()
 				.setType(MultipartBody.FORM)
 				.addFormDataPart("picupload", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
-				.build()) { resp ->
+				.build(),
+				referer("app/upload")) { resp ->
 			resp.assert()
 			val content = resp.data !!
 

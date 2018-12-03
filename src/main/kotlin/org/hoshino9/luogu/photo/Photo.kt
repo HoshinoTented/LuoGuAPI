@@ -36,7 +36,7 @@ abstract class AbstractPhoto : Photo {
 	}
 
 	override fun delete(luogu : LuoGu) {
-		luogu.postExecute("app/upload?delete=1&uploadid=$id") {
+		luogu.postExecute("app/upload?delete=1&uploadid=$id", headers = referer("app/upload")) {
 			it.assert()
 		}
 	}

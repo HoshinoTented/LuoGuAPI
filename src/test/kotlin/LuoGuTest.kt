@@ -65,11 +65,6 @@ class LuoGuTest {
 	}
 
 	@Test
-	fun userTest() {
-		println(user)
-	}
-
-	@Test
 	fun signInTest() {
 		val toString : (SignedInStatus.Thing) -> String = {
 			"${it.name}: ${it.description}"
@@ -173,7 +168,8 @@ ${it.source}
 	}
 
 	@Test
-	fun userProblems() {
+	fun userTest() {
+		println("$user: ${user.spacePage.username}")
 		user.spacePage.passedProblems.run(::println)
 		user.spacePage.triedProblems.run(::println)
 	}

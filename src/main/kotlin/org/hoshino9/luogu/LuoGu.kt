@@ -150,6 +150,12 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 				}
 	}
 
+	fun logout() {
+		getExecute("login/logout?uid=$myuid") { resp ->
+			resp.assert()
+		}
+	}
+
 	/**
 	 * 公开的犇犇列表
 	 * @param page 页面序号
