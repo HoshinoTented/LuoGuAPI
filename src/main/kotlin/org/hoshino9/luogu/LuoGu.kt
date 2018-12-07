@@ -37,7 +37,9 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" }?.value() ?: ""
 		}
 		set(value) {
-			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(Cookie.Builder().domain("luogu.org").name("_uid").value(value).build()))
+			client.cookieJar().saveFromResponse(
+					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "_uid=$value"))
+			)
 		}
 
 	var clientId : String
@@ -45,7 +47,9 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value() ?: ""
 		}
 		set(value) {
-			client.cookieJar().saveFromResponse(LuoGuUtils.httpUrl, listOf(Cookie.Builder().domain("luogu.org").name("__client_id").value(value).build()))
+			client.cookieJar().saveFromResponse(
+					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "__client_id=$value"))
+			)
 		}
 
 	/**

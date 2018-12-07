@@ -13,3 +13,6 @@ src/test/resources/
 
 # wiki
 wiki
+
+# internal test
+internal-*

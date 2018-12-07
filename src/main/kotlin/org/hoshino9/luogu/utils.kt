@@ -40,9 +40,9 @@ fun referer(url : String = "") : Headers = Headers.Builder().add("referer", "$ba
 // Request
 fun LuoGu.postRequest(url : String, body : RequestBody, headers : Headers) : Request = Request.Builder()
 		.url("$baseUrl/$url")
-		.addHeader("x-csrf-token", csrfToken)
 		.post(body)
 		.headers(headers)
+		.addHeader("x-csrf-token", csrfToken)
 		.build()
 
 @JvmOverloads
