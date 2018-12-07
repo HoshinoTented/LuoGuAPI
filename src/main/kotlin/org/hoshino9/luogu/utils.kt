@@ -7,6 +7,9 @@ import com.google.gson.GsonBuilder
 import okhttp3.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.record.*
+import org.hoshino9.luogu.record.status.RecordStatus
+import org.hoshino9.luogu.record.status.RecordStatusAdapter
+import org.hoshino9.luogu.record.status.RecordStatusStatusAdapter
 import org.hoshino9.okhttp.HoshinoCookieJar
 import org.json.JSONObject
 import okhttp3.Callback as OkHttpCallback

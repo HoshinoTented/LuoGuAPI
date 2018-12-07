@@ -5,7 +5,7 @@ package org.hoshino9.luogu.user
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.interfaces.HasElement
+import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.problems.Problem
 import org.hoshino9.luogu.problems.ProblemFromId
 import org.jsoup.Jsoup

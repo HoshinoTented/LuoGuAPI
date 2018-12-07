@@ -1,13 +1,8 @@
-package org.hoshino9.luogu.record
+package org.hoshino9.luogu.record.listener
 
-import okhttp3.Response
-import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 
-typealias OnOpenType = (WebSocket, Response) -> Unit
-typealias OnMessageType = (WebSocket, RecordResponse) -> Unit
-
-abstract class AbstractRecordListener : WebSocketListener() {
+abstract class RecordListener : WebSocketListener() {
 	class Builder {
 		private val socket = DefaultRecordListener()
 
@@ -19,7 +14,7 @@ abstract class AbstractRecordListener : WebSocketListener() {
 			socket.onOpen(closure)
 		}
 
-		fun build() : AbstractRecordListener {
+		fun build() : RecordListener {
 			return socket
 		}
 	}
@@ -36,12 +31,3 @@ abstract class AbstractRecordListener : WebSocketListener() {
 	}
 }
 
-open class DefaultRecordListener : AbstractRecordListener() {
-	override fun onOpen(webSocket : WebSocket, response : Response) {
-		onOpenClosure(webSocket, response)
-	}
-
-	override fun onMessage(webSocket : WebSocket, text : String) {
-		onMessageClosure(webSocket, RecordResponse(text))
-	}
-}

@@ -1,27 +1,10 @@
-package org.hoshino9.luogu.record
+package org.hoshino9.luogu.record.status
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import org.hoshino9.luogu.globalGson
+import org.hoshino9.luogu.record.TestCase
 import java.lang.reflect.Type
-
-object RecordStatusStatusAdapter : JsonSerializer<RecordStatus.Status>, JsonDeserializer<RecordStatus.Status> {
-	override fun serialize(src : RecordStatus.Status?, typeOfSrc : Type?, context : JsonSerializationContext?) : JsonElement {
-		return JsonPrimitive(src?.value ?: return JsonNull.INSTANCE)
-	}
-
-	override fun deserialize(json : JsonElement, typeOfT : Type?, context : JsonDeserializationContext?) : RecordStatus.Status {
-		return json.run {
-			RecordStatus.Status.values().first { it.value == asInt }
-		}
-	}
-}
-
-object RecordStatusAdapter : JsonDeserializer<RecordStatus> {
-	override fun deserialize(json : JsonElement, typeOfT : Type?, context : JsonDeserializationContext?) : RecordStatus {
-		return RecordStatus(json)
-	}
-}
 
 interface RecordStatus {
 	enum class Status(val value : Int) {
@@ -39,7 +22,7 @@ interface RecordStatus {
 		val successful : Boolean get() = flag == 12
 	}
 
-	data class SubTask(val judger : Int, val memory : Int, val score : Int, val status : RecordStatus.Status, val time : Int)
+	data class SubTask(val judger : Int, val memory : Int, val score : Int, val status : Status, val time : Int)
 
 	data class Detail(val testCases : List<TestCase>, val compileMessage : CompileMessage, val subTasks : List<SubTask>) {
 		companion object Adapter : JsonDeserializer<Detail>, JsonSerializer<Detail> {
@@ -83,19 +66,11 @@ interface RecordStatus {
 		}
 	}
 
-	val status : RecordStatus.Status
+	val status : Status
 	val memory : String
 	val score : String
 	val time : String
 	val detail : Detail
 }
 
-abstract class AbstractRecordStatus : RecordStatus
 
-data class RecordStatusBean(
-		override val status : RecordStatus.Status,
-		override val memory : String,
-		override val score : String,
-		override val time : String,
-		override val detail : RecordStatus.Detail
-) : AbstractRecordStatus()

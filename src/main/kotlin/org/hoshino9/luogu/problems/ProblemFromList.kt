@@ -3,7 +3,7 @@
 package org.hoshino9.luogu.problems
 
 import org.hoshino9.luogu.LuoGuTag
-import org.hoshino9.luogu.interfaces.HasElement
+import org.hoshino9.luogu.utils.HasElement
 import org.jsoup.nodes.Element
 
 /**

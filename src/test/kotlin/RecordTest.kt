@@ -1,4 +1,4 @@
-import org.hoshino9.luogu.record.RecordStatus
+import org.hoshino9.luogu.record.status.RecordStatus
 import org.hoshino9.luogu.record.TestCase
 import org.junit.Test
 import kotlin.test.assertEquals
