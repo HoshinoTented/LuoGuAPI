@@ -1,8 +1,8 @@
 @file:Suppress("unused")
 
-package org.hoshino9.luogu.problems.tags
+package org.hoshino9.luogu.problem.tags
 
-import org.hoshino9.luogu.LuoGuTag
+import org.hoshino9.luogu.tag.LuoGuTag
 
 sealed class ProblemStore(text : String, data : Int) : LuoGuTag(text, data)
 

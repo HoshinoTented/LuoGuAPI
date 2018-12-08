@@ -13,7 +13,7 @@ import org.hoshino9.luogu.paste.DefaultPaste
 import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.photo.Photo
 import org.hoshino9.luogu.photo.PhotoUtils
-import org.hoshino9.luogu.problems.Solution
+import org.hoshino9.luogu.problem.Solution
 import org.hoshino9.luogu.record.Record
 import org.hoshino9.luogu.results.SignedInStatus
 import org.json.JSONObject

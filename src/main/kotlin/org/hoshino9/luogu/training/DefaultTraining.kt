@@ -2,8 +2,8 @@ package org.hoshino9.luogu.training
 
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.utils.HasElement
-import org.hoshino9.luogu.problems.Problem
-import org.hoshino9.luogu.problems.ProblemFromId
+import org.hoshino9.luogu.problem.Problem
+import org.hoshino9.luogu.problem.ProblemFromId
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.lang.IllegalArgumentException

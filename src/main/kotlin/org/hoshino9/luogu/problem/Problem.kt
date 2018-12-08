@@ -1,6 +1,6 @@
-package org.hoshino9.luogu.problems
+package org.hoshino9.luogu.problem
 
-import org.hoshino9.luogu.LuoGuTag
+import org.hoshino9.luogu.tag.LuoGuTag
 
 interface Problem {
 	abstract class Difficulty(text : String) : LuoGuTag(text, - 1)

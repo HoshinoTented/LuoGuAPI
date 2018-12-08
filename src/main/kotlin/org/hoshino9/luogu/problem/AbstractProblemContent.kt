@@ -1,4 +1,4 @@
-package org.hoshino9.luogu.problems
+package org.hoshino9.luogu.problem
 
 abstract class AbstractProblemContent : ProblemContent {
 	override fun equals(other : Any?) : Boolean {

@@ -1,8 +1,8 @@
 @file:Suppress("unused")
 
-package org.hoshino9.luogu.problems
+package org.hoshino9.luogu.problem
 
-import org.hoshino9.luogu.LuoGuTag
+import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.utils.HasElement
 import org.jsoup.nodes.Element
 

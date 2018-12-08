@@ -7,10 +7,8 @@ import org.hoshino9.luogu.assert
 import org.hoshino9.luogu.data
 import org.hoshino9.luogu.defaultClient
 import org.hoshino9.luogu.getExecute
-import org.hoshino9.luogu.problems.Problem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 
 open class User(val uid : String) {
 	private val page : Document by lazy {

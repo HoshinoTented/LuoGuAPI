@@ -1,9 +1,9 @@
-package org.hoshino9.luogu.problems
+package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.EQUAL
 import org.hoshino9.luogu.SEPARATOR
-import org.hoshino9.luogu.LuoGuTag
-import org.hoshino9.luogu.problems.tags.ProblemStore
+import org.hoshino9.luogu.tag.LuoGuTag
+import org.hoshino9.luogu.problem.tags.ProblemStore
 
 /**
  * **你谷** 题目列表搜索配置

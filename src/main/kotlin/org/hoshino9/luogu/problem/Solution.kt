@@ -1,4 +1,4 @@
-package org.hoshino9.luogu.problems
+package org.hoshino9.luogu.problem
 
 data class Solution(val pid : String, val language : Language, val code : String, val enableO2 : Boolean = false) {
 	enum class Language(val value : Int) {

@@ -7,11 +7,12 @@ import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.Comment
+import org.hoshino9.luogu.data.SliderPhoto
 import org.hoshino9.luogu.training.DefaultTrainingPage
 import org.hoshino9.luogu.training.TrainingPage
-import org.hoshino9.luogu.problems.Problem
-import org.hoshino9.luogu.problems.ProblemListPage
-import org.hoshino9.luogu.problems.ProblemSearchConfig
+import org.hoshino9.luogu.problem.Problem
+import org.hoshino9.luogu.problem.ProblemListPage
+import org.hoshino9.luogu.problem.ProblemSearchConfig
 import org.hoshino9.luogu.user.LoggedUser
 import org.jsoup.Jsoup
 import java.io.OutputStream

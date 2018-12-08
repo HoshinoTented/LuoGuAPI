@@ -1,7 +1,7 @@
-package org.hoshino9.luogu.problems
+package org.hoshino9.luogu.problem
 
 import okhttp3.OkHttpClient
-import org.hoshino9.luogu.LuoGuTag
+import org.hoshino9.luogu.tag.LuoGuTag
 
 open class ProblemFromId(override val id : String, val client : OkHttpClient) : AbstractProblem() {
 	override val difficulty : Problem.Difficulty
