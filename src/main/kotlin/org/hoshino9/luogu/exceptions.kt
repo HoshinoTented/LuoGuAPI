@@ -3,8 +3,8 @@
 package org.hoshino9.luogu
 
 import okhttp3.Response
-import org.hoshino9.luogu.bean.CodeObject
-import org.hoshino9.luogu.bean.StatusObject
+import org.hoshino9.luogu.data.CodeObject
+import org.hoshino9.luogu.data.StatusObject
 import org.jsoup.nodes.Node
 
 open class IllegalStatusCodeException(val code : Int, msg : String = "") : IllegalStateException("$code: $msg")

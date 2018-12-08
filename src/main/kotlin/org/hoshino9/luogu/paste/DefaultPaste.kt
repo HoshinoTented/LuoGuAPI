@@ -34,6 +34,10 @@ open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement 
 		body.children().last().text()
 	}
 
+	override fun toString() : String {
+		return id
+	}
+
 	override fun equals(other : Any?) : Boolean {
 		if (this === other) return true
 		if (other !is DefaultPaste) return false
@@ -46,6 +50,4 @@ open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement 
 	override fun hashCode() : Int {
 		return id.hashCode()
 	}
-
-
 }

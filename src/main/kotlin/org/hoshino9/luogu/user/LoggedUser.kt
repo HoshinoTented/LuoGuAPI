@@ -4,8 +4,8 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.bean.CodeObject
-import org.hoshino9.luogu.bean.StatusObject
+import org.hoshino9.luogu.data.CodeObject
+import org.hoshino9.luogu.data.StatusObject
 import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.BenbenUtils
@@ -204,6 +204,25 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 			val data = globalGson.fromJson(content, CodeObject::class.java)
 
 			if (data.code != 201) throw IllegalAPIStatusCodeException(data)
+		}
+	}
+
+	/**
+	 * 获取未阅读列表(就是右上角的新通知)
+	 * @return 返回一个 Message 和 Notice 数量的Pair
+	 */
+	fun getUnread() : Pair<Int, Int> {
+		return luogu.getExecute("space/ajax_getchatnum") { resp ->
+			resp.assert()
+
+			json(resp.data !!) {
+				getInt("code").let { code ->
+					if (code != 200) throw IllegalAPIStatusCodeException(code, getString("message"))
+					getJSONObject("more").let { more ->
+						more.getInt("messagenum") to more.getInt("noticenum")
+					}
+				}
+			}
 		}
 	}
 

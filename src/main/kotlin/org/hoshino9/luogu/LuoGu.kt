@@ -4,7 +4,7 @@ package org.hoshino9.luogu
 
 import okhttp3.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.bean.CodeObject
+import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.Comment
 import org.hoshino9.luogu.training.DefaultTrainingPage
