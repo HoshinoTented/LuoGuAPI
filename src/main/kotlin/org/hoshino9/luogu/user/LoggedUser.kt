@@ -16,6 +16,7 @@ import org.hoshino9.luogu.photo.PhotoUtils
 import org.hoshino9.luogu.problem.Solution
 import org.hoshino9.luogu.record.Record
 import org.hoshino9.luogu.results.SignedInStatus
+import org.hoshino9.luogu.utils.*
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import java.io.File

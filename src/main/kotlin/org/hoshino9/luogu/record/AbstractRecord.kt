@@ -3,7 +3,7 @@ package org.hoshino9.luogu.record
 import okhttp3.Request
 import okhttp3.WebSocket
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.USER_AGENT
+import org.hoshino9.luogu.utils.USER_AGENT
 import org.hoshino9.luogu.record.listener.OnMessageType
 import org.hoshino9.luogu.record.listener.RecordListener
 

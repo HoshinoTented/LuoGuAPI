@@ -3,7 +3,6 @@
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.Comment
-import org.hoshino9.luogu.postExecute
 import org.hoshino9.luogu.results.SignedInStatus
 import org.junit.Before
 import org.junit.Test

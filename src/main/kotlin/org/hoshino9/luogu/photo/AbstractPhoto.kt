@@ -1,6 +1,9 @@
 package org.hoshino9.luogu.photo
 
 import org.hoshino9.luogu.*
+import org.hoshino9.luogu.utils.assert
+import org.hoshino9.luogu.utils.postExecute
+import org.hoshino9.luogu.utils.referer
 
 abstract class AbstractPhoto : Photo {
 	private val urlRegex = Regex("""https://cdn.luogu.org/upload/pic/(\d+)\.(jpg|png|gif)""")

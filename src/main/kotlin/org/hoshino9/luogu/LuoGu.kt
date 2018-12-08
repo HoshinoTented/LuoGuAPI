@@ -14,6 +14,7 @@ import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.ProblemListPage
 import org.hoshino9.luogu.problem.ProblemSearchConfig
 import org.hoshino9.luogu.user.LoggedUser
+import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import java.io.OutputStream
 

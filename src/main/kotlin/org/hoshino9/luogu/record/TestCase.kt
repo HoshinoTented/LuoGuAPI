@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.record
 
 import com.google.gson.*
-import org.hoshino9.luogu.globalGson
+import org.hoshino9.luogu.utils.globalGson
 
 interface TestCase {
 	enum class Status(val value : Int) {

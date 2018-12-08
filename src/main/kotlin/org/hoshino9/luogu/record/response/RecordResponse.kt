@@ -1,6 +1,6 @@
 package org.hoshino9.luogu.record.response
 
-import org.hoshino9.luogu.globalGson
+import org.hoshino9.luogu.utils.globalGson
 import org.hoshino9.luogu.record.status.RecordStatus
 
 interface RecordResponse {

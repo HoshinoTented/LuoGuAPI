@@ -2,7 +2,7 @@ package org.hoshino9.luogu.record.status
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import org.hoshino9.luogu.globalGson
+import org.hoshino9.luogu.utils.globalGson
 import org.hoshino9.luogu.record.TestCase
 import java.lang.reflect.Type
 

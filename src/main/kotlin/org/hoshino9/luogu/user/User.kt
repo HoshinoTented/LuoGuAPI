@@ -3,10 +3,10 @@
 package org.hoshino9.luogu.user
 
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.assert
-import org.hoshino9.luogu.data
-import org.hoshino9.luogu.defaultClient
-import org.hoshino9.luogu.getExecute
+import org.hoshino9.luogu.utils.assert
+import org.hoshino9.luogu.utils.data
+import org.hoshino9.luogu.utils.defaultClient
+import org.hoshino9.luogu.utils.getExecute
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 

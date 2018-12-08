@@ -1,8 +1,8 @@
 package org.hoshino9.luogu.paste
 
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.user.User
+import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
