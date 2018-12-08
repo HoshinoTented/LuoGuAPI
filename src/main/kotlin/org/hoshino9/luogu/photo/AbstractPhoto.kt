@@ -14,12 +14,6 @@ abstract class AbstractPhoto : Photo {
 		} ?: throw MatchException(urlRegex, url)
 	}
 
-	override fun delete(luogu : LuoGu) {
-		luogu.postExecute("app/upload?delete=1&uploadid=$id", headers = referer("app/upload")) {
-			it.assert()
-		}
-	}
-
 	override fun equals(other : Any?) : Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false

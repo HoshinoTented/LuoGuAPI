@@ -13,8 +13,16 @@ object LuoGuUtils {
 	const val baseUrl = "https://$domain"
 	val httpUrl : HttpUrl get() = HttpUrl.get(baseUrl)
 
+	fun lastValueFromUrl(url : String) : String {
+		return url.substringAfterLast('=')
+	}
+
+	fun nameFromUrl(url : String) : String {
+		return url.substringAfterLast('/')
+	}
+
 	fun getUserFromUrl(url : String) : User {
-		return url.substring(url.lastIndexOf('=') + 1).run(::User)
+		return User(lastValueFromUrl(url))
 	}
 
 	/**

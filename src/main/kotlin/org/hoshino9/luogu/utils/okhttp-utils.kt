@@ -48,7 +48,7 @@ inline fun <T> LuoGu.postExecute(url : String = "", body : RequestBody = emptyMa
 }
 
 inline fun <T> LuoGu.getExecute(url : String = "", action : (Response) -> T) : T = client.getExecute("${LuoGuUtils.baseUrl}/$url", action)
-inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) -> T) : T {
+inline fun <T> HttpClient.getExecute(url : String = "", action : (Response) -> T) : T {
 	return newCall(getRequest(url)).execute().let { resp ->
 		resp.run(action).apply {
 			resp.close()
@@ -57,8 +57,8 @@ inline fun <T> OkHttpClient.getExecute(url : String = "", action : (Response) ->
 }
 
 // Client
-val emptyClient : OkHttpClient get() = OkHttpClient()
-val defaultClient : OkHttpClient
+val emptyClient : HttpClient get() = OkHttpClient()
+val defaultClient : HttpClient
 	get() = OkHttpClient.Builder()
 			.cookieJar(HoshinoCookieJar())
 			.build()

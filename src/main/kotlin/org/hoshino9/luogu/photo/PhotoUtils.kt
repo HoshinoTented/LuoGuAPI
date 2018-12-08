@@ -12,7 +12,7 @@ object PhotoUtils {
 	 */
 	fun getPhotos(list : Element) : List<Photo> {
 		return list.getElementsByClass("lg-table-row").map {
-			Photo.Builder().element(it).build()
+			Photo(it)
 		}
 	}
 }

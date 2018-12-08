@@ -6,7 +6,7 @@ import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Element
 
-open class ParsedPhoto(override val elem : Element) : AbstractPhoto(), HasElement {
+open class DefaultPhoto(override val elem : Element) : AbstractPhoto(), HasElement {
 	private val leftElem : Element by lazy { elem.child(0) }
 	private val rightElem : Element by lazy { elem.child(1) }
 

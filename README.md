@@ -12,3 +12,18 @@ AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/l66p8yqgxg
 您可以在 `JVM` 平台上使用  
 目前这个项目没有跨平台的打算(如编译到 JavaScript)  
 ~~没人用要跨什么平台QAQ~~
+
+# How to use (Real)
+您需要准备以下工具: 
+* [JDK](https://oracle.com)
+* [Gradle](https://gradle.org)
+
+在项目根目录下执行以下命令:
+```bash
+./gradlew assemble
+```
+会在 `build/libs` 下生成三个 `.jar` 文件  
+其中:
+* `luogu-<version number>.jar` 为本体  
+* `luogu-<version number>-dependencies.jar` 为运行时依赖  
+* `luogu-<version number>-sources.jar` 为源码

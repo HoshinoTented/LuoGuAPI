@@ -6,11 +6,11 @@ import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-open class DefaultPaste(override val id : String) : AbstractPaste(), HasElement {
+open class DefaultPaste(override val id : String, val client : HttpClient = defaultClient) : AbstractPaste(), HasElement {
 	private val body : Element by lazy { elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem) }
 
 	override val elem : Element by lazy {
-		defaultClient.getExecute(url) { resp ->
+		client.getExecute(url) { resp ->
 			resp.assert()
 			val content = resp.data !!
 

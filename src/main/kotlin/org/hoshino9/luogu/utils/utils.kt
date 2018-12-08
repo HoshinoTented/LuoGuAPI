@@ -2,7 +2,10 @@
 
 package org.hoshino9.luogu.utils
 
+import okhttp3.OkHttpClient
 import okhttp3.Callback as OkHttpCallback
+
+typealias HttpClient = OkHttpClient
 
 const val SEPARATOR = "&"
 const val EQUAL = "="

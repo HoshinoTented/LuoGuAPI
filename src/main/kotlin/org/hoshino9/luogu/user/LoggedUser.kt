@@ -29,7 +29,7 @@ import java.lang.IllegalStateException
  * 等到 Kotlin1.3 可以改用 `inline class`
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
-open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
+open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client) {
 	companion object {
 		/**
 		 * 实例化一个 LoggedUser 对象
@@ -114,7 +114,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 			val data = globalGson.fromJson(content, StatusObject::class.java)
 
 			if (data.status != 200) throw IllegalAPIStatusCodeException(data.status, data.data ?: "")
-			DefaultPaste(data.data !!)
+			DefaultPaste(data.data !!, luogu.client)
 		}
 	}
 
@@ -131,7 +131,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 			val content = resp.data !!
 
 			return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
-				DefaultPaste(it.groupValues[1])
+				DefaultPaste(it.groupValues[1], luogu.client)
 			}.toList()
 		}
 	}
@@ -239,6 +239,18 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid) {
 
 			val page = resp.data !!
 			return PhotoUtils.getPhotos(Jsoup.parse(page))
+		}
+	}
+
+	/**
+	 * 删除图片
+	 * @param photo 需要删除的图片
+	 */
+	fun deletePhoto(photo : Photo) {
+		photo.run {
+			luogu.postExecute("app/upload?delete=1&uploadid=$id", headers = referer("app/upload")) {
+				it.assert()
+			}
 		}
 	}
 }
