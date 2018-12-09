@@ -6,7 +6,7 @@ import okhttp3.RequestBody
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.data.StatusObject
-import org.hoshino9.luogu.benben.Comment
+import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.BenbenUtils
 import org.hoshino9.luogu.paste.DefaultPaste

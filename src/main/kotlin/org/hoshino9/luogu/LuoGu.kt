@@ -6,7 +6,7 @@ import okhttp3.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.benben.Comment
+import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.data.SliderPhoto
 import org.hoshino9.luogu.training.DefaultTrainingPage
 import org.hoshino9.luogu.training.TrainingPage

@@ -23,5 +23,5 @@ interface DiscussNode : HasUrl {
 	val postDate : String
 	val lastCommentUser : User?
 	val lastCommentDate : String
-	val info : DiscussInfo
+	val infoPage : DiscussInfoPage
 }

@@ -1,5 +1,6 @@
 package org.hoshino9.luogu.benben
 
+import org.hoshino9.luogu.comment.Comment
 import org.jsoup.nodes.Element
 
 object BenbenUtils {

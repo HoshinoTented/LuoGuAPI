@@ -2,8 +2,10 @@
 
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.benben.Comment
+import org.hoshino9.luogu.comment.Comment
+import org.hoshino9.luogu.discuss.DiscussListPage
 import org.hoshino9.luogu.results.SignedInStatus
+import org.hoshino9.luogu.user.HasBadgeUser
 import org.junit.Before
 import org.junit.Test
 import java.io.FileOutputStream
@@ -104,8 +106,10 @@ ${it.user}
 	@Test
 	fun benbenTest() {
 		val toString : (Comment) -> String = {
+			val user = it.user
+
 			//language=TEXT
-			"""user: ${it.user}
+			"""user: ${if (user is HasBadgeUser) "${user.uid}[${user.badge.text}]"  else user.uid}
 date: ${it.date}
 content:
 ${it.content}
@@ -174,12 +178,26 @@ ${it.source}
 		user.spacePage.triedProblems.run(::println)
 	}
 
-	@Test
+//	@Test
 	fun paste() {
 		"LuoGu API Test".let { content ->
 			user.postPaste(content).let { paste ->
 				println(paste.source)
 				user.deletePaste(paste)
+			}
+		}
+	}
+
+	@Test
+	fun discuss() {
+		DiscussListPage("", client = luogu.client).let { list ->
+			list.discusses.first().infoPage.let { info ->
+				info.mainComment.run {
+					"""User: $user
+Date: $date
+Content: $content
+					""".run(::println)
+				}
 			}
 		}
 	}

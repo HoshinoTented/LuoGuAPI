@@ -1,9 +1,7 @@
 package org.hoshino9.luogu.discuss
 
-import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.user.HasBadgeUser
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.utils.HttpClient
@@ -25,8 +23,8 @@ open class DefaultDiscussNode(override val elem : Element, val client : HttpClie
 		DiscussListPage(midBottom.child(0).attr("href").run(LuoGuUtils::lastValueFromUrl), client = client)
 	}
 
-	override val info : DiscussInfo by lazy {
-		TODO()
+	override val infoPage : DiscussInfoPage by lazy {
+		DiscussInfoPage(id, client = client)
 	}
 
 	override val postDate : String by lazy {
