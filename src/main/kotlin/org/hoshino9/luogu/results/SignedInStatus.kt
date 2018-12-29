@@ -23,7 +23,7 @@ data class SignedInStatus(val qian : Qian, val goods : List<Thing>, val bads : L
 			val body = page.lastOrNull() ?: throw NoSuchElementException("last element of $page")
 
 			if (head.tagName() == "span") {
-				val headText = head.text().substring(2..3)
+				val headText = head.text().run { substring(2 until length - 2) }
 				val qian = Qian.values().firstOrNull { it.show == headText } ?: throw NoSuchElementException(headText)
 
 				val goods = body.children().getOrNull(0) ?: throw NoSuchElementException("first element of $body")

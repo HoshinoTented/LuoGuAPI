@@ -19,8 +19,8 @@ abstract class RecordListener : WebSocketListener() {
 		}
 	}
 
-	protected var onOpenClosure : OnOpenType = { _, _ -> TODO("Please implement `onOpen`") }
-	protected var onMessageClosure : OnMessageType = { _, _ -> TODO("Please implement `onMessage`") }
+	protected var onOpenClosure : OnOpenType = { _, _ -> }
+	protected var onMessageClosure : OnMessageType = { _, _ -> }
 
 	fun onMessage(closure : OnMessageType) {
 		this.onMessageClosure = closure
