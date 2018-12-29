@@ -5,7 +5,7 @@ import org.hoshino9.luogu.utils.*
  * # 画板绘画函数  
  * 如果成功, 则会打印出一串 `Json`  
  * 类似: `{data:[], status:200}`  
-  * 如果失败, 则会打印`failed`  
+ * 如果失败, 则会打印`failed`  
  *
  * @param x 格子的横坐标(左上为0)
  * @param y 格子的纵坐标(左上为0)
