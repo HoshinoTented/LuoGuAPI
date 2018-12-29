@@ -27,3 +27,8 @@ AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/l66p8yqgxg
 * `luogu-<version number>.jar` 为本体  
 * `luogu-<version number>-dependencies.jar` 为运行时依赖  
 * `luogu-<version number>-sources.jar` 为源码
+
+# 超新手教程
+首先您需要一个 [Kotlin](https://kotlinlang.org) 编译器  
+之后在命令行执行以下命令 
+
