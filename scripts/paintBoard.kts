@@ -1,6 +1,12 @@
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.utils.*
 
+/*
+操作实例(Kotlin REPL, 已登录, 客户端对象名为 luogu):
+
+luogu.draw(0, 0, 0)			//在 (0, 0) 的格子上画上黑色
+ */
+
 /**
  * # 画板绘画函数  
  * 如果成功, 则会打印出一串 `Json`  

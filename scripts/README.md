@@ -6,7 +6,7 @@
 ## 我要怎么使用呢？
 您需要在本目录下执行以下命令(Linux):   
 ```bash
-kotlinc -cp luogu-<version of luogu-api>.jar:luogu-<version of luogu-api>-dependencies.jar
+kotlinc -cp luogu-<version number>.jar:luogu-<version number>-dependencies.jar
 ```  
 进入到 `REPL` 之后执行:  
 ```
