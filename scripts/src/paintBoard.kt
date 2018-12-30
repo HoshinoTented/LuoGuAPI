@@ -3,8 +3,10 @@ import org.hoshino9.luogu.utils.*
 import java.awt.Color
 import java.io.OutputStream
 import java.awt.image.BufferedImage
-import java.io.InputStream
+import java.io.File
+import java.nio.Buffer
 import javax.imageio.ImageIO
+import kotlin.math.abs
 
 enum class DrawStatus {
 	SUCCESSFUL,
@@ -52,7 +54,7 @@ val colorList = arrayOf(
  *
  * @param x 格子的横坐标(左上为0)
  * @param y 格子的纵坐标(左上为0)
- * @param color 颜色的代码(请自行 F12 查看 data-cid 属性 或 使用先进的IDE在上方的 colorList 预览颜色)
+ * @param color 颜色的代码(请自行 F12 查看 data-cid 属性 或 使用先进的 IDE 在上方的 [colorList] 预览颜色)
  */
 fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
 	return executePost("paintBoard/paint",
@@ -63,7 +65,7 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
 			).params(), referer("paintBoard")) { resp ->
 		resp.assert()
 
-		json (resp.data!!) {
+		json(resp.data !!) {
 			when (this["status"]) {
 				200 -> DrawStatus.SUCCESSFUL
 				500 -> DrawStatus.FAILED
@@ -80,19 +82,18 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
  * @receiver 用户(客户端)列表
  * @param beginX 开始的 x 坐标
  * @param beginY 开始的 y 坐标
- * @param input 图片输入流
- * @param timeLimit 自己看签名谢谢
+ * @param width 图片宽
+ * @param height 图片高
+ * @param timeLimit 自己看类型签名谢谢
+ * @param getColor 根据传入的 x 和 y 返回一个 [colorList] 的索引
  */
-fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 }) {
+inline fun List<LuoGu>.draw(beginX : Int, beginY : Int, width : Int, height : Int, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 }, getColor : (Int, Int) -> Int) {
 	val clients = toMutableList()
 	var it = 0
 
-	val image = ImageIO.read(input)
-
-	(0 until image.width).forEach { x ->
-		(0 until image.height).forEach { y ->
-			val color = colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != -1 }
-					?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y).run(::Color)}")
+	(0 until width).forEach { x ->
+		(0 until height).forEach { y ->
+			val color = getColor(x, y)
 
 			loop@ while (true) {
 				when (clients[it].draw(x + beginX, y + beginY, color)) {
@@ -117,7 +118,13 @@ fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, t
 	}
 }
 
-fun LuoGu.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000}) = listOf(this).drawFromImage(beginX, beginY, input, timeLimit)
+inline fun LuoGu.draw(beginX : Int, beginY : Int, width : Int, height : Int, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 }, getColor : (Int, Int) -> Int) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor)
+
+fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = draw(beginX, beginY, image.width, image.height) { x, y ->
+	colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+}
+
+fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
 
 /**
  * 获取画板图片
@@ -140,4 +147,29 @@ fun LuoGu.board(out : OutputStream) {
 			}
 		}
 	}
+}
+
+/**
+ * # 寻找最相似色块
+ * 原理就是找到 r g b 三者的差和最小的那个色块
+ *
+ * @param rgb 被寻找的色块
+ * @return 最相似色块在 [colorList] 内的索引
+ */
+fun findSimilarColor(rgb : Int) : Int {
+	fun diff(a : Color, b : Color) : Int {
+		return abs(a.red - b.red) + abs(a.green - b.green) + abs(a.blue - b.blue)
+	}
+
+	val color = Color(rgb)
+	var minDiff = 0 to diff(color, colorList[0])
+
+	(1 until colorList.size).forEach { it ->
+		val cur = colorList[it]
+		val nowDiff = diff(color, cur)
+
+		if (nowDiff < minDiff.second) minDiff = it to nowDiff
+	}
+
+	return minDiff.first
 }
