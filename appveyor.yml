@@ -7,5 +7,5 @@ build_script:
 #
 
 artifacts:
-  - path: "build/libs"
+  - path: "luogu/build/libs"
     name: "luogu"

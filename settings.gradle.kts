@@ -1,2 +1,1 @@
-rootProject.name = "luogu"
-
+include(":scripts", ":luogu")
