@@ -8,10 +8,7 @@ luogu.draw(0, 0, 0)			//在 (0, 0) 的格子上画上黑色
  */
 
 /**
- * # 画板绘画函数  
- * 如果成功, 则会打印出一串 `Json`  
- * 类似: `{data:[], status:200}`  
- * 如果失败, 则会打印`failed`  
+ * 画板绘画函数
  *
  * @param x 格子的横坐标(左上为0)
  * @param y 格子的纵坐标(左上为0)
@@ -21,11 +18,7 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) {
 	postExecute("paintBoard/paint", mapOf("x" to x.toString(), "y" to y.toString(), "color" to color.toString()).params(), referer("paintBoard")) { resp ->
 		resp.assert()
 		json (resp.data!!) {
-			if (getInt("status") == 200) {
-				println(this)
-			} else {
-				println(("failed"))
-			}
+			println(this)
 		}
 	}
 }
