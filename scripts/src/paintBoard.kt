@@ -1,10 +1,11 @@
+@file:Suppress("unused")
+
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.utils.*
 import java.awt.Color
 import java.io.OutputStream
 import java.awt.image.BufferedImage
 import java.io.File
-import java.nio.Buffer
 import javax.imageio.ImageIO
 import kotlin.math.abs
 
@@ -49,6 +50,16 @@ val colorList = arrayOf(
 		Color(121, 85, 72)
 )
 
+inline fun <T> iterateMatrix(width : Int, height : Int, matrix : T, action : (T, Int, Int) -> Unit) {
+	(0 until width).forEach { x ->
+		(0 until height).forEach { y ->
+			action(matrix, x, y)
+		}
+	}
+}
+
+inline fun BufferedImage.iterate(action : (BufferedImage, Int, Int) -> Unit) = iterateMatrix(width, height, this, action)
+
 /**
  * 画板绘画函数
  *
@@ -56,7 +67,7 @@ val colorList = arrayOf(
  * @param y 格子的纵坐标(左上为0)
  * @param color 颜色的代码(请自行 F12 查看 data-cid 属性 或 使用先进的 IDE 在上方的 [colorList] 预览颜色)
  */
-fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
+fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
 	return executePost("paintBoard/paint",
 			listOf(
 					"x" to x,
@@ -71,7 +82,7 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
 				500 -> DrawStatus.FAILED
 
 				else -> DrawStatus.UNKNOWN
-			}
+			} to this.toString()
 		}
 	}
 }
@@ -96,11 +107,18 @@ inline fun List<LuoGu>.draw(beginX : Int, beginY : Int, width : Int, height : In
 			val color = getColor(x, y)
 
 			loop@ while (true) {
-				when (clients[it].draw(x + beginX, y + beginY, color)) {
+				val status = clients[it].draw(x + beginX, y + beginY, color)
+				when (status) {
 					DrawStatus.SUCCESSFUL -> break@loop
-					DrawStatus.FAILED -> continue@loop
+					DrawStatus.FAILED -> {
+						println("Failed, try again...(${status.second})")
+						Thread.sleep(timeLimit(clients))
+
+						continue@loop
+					}
+
 					DrawStatus.UNKNOWN -> {
-						println("Removed user: ${clients[it].loggedUser}")
+						println("Failed, removed user: ${clients[it].loggedUser}(${status.second})")
 
 						clients.removeAt(it)
 						if (it == clients.size) it = 0
@@ -172,4 +190,26 @@ fun findSimilarColor(rgb : Int) : Int {
 	}
 
 	return minDiff.first
+}
+
+/**
+ * 转换图片内色块为相似相似色块
+ */
+fun transform(image : BufferedImage) {
+	image.iterate { img, x, y ->
+		img.setRGB(x, y, colorList[findSimilarColor(img.getRGB(x, y))].rgb)
+	}
+}
+
+/**
+ * 检查图片色块
+ */
+fun checkImage(image : BufferedImage) : Boolean {
+	image.iterate { img, x, y ->
+		val color = img.getRGB(x, y)
+
+		if (colorList.firstOrNull { it.rgb != color } == null) return false
+	}
+
+	return true
 }
