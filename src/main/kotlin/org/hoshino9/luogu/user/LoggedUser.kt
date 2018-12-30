@@ -147,9 +147,9 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 			val content = resp.data !!
 
 			json(content) {
-				val status = getInt("status")
-				val data = get("data")
-				if (status != 200) throw IllegalAPIStatusCodeException(status, data.toString())
+				val status = this["status"]
+				val data = this["data"]
+				if (status != 200) throw IllegalAPIStatusCodeException(status, data)
 			}
 		}
 	}
@@ -176,13 +176,13 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 			val content = resp.data !!
 
 			json(content) {
-				val status = optInt("status")
-				val data = get("data")
+				val status = this["status"] //optInt("status")
+				val data = this["data"]
 
 				if (status == 200) {
 					data as JSONObject
 					Record(data.get("rid").toString())
-				} else throw IllegalAPIStatusCodeException(status, data.toString())
+				} else throw IllegalAPIStatusCodeException(status, data)
 			}
 		}
 	}
@@ -203,10 +203,9 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 				referer("app/upload")) { resp ->
 			resp.assert()
 			val content = resp.data !!
-
-			val data = globalGson.fromJson(content, CodeObject::class.java)
-
-			if (data.code != 201) throw IllegalAPIStatusCodeException(data)
+			json (content) {
+				if (this["code"] != 201) throw IllegalAPIStatusCodeException(this["code"])
+			}
 		}
 	}
 
