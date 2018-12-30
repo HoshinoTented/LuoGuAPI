@@ -97,13 +97,25 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
  * @param height 图片高
  * @param timeLimit 自己看类型签名谢谢
  * @param getColor 根据传入的 x 和 y 返回一个 [colorList] 的索引
+ * @param getBoard
  */
-inline fun List<LuoGu>.draw(beginX : Int, beginY : Int, width : Int, height : Int, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 }, getColor : (Int, Int) -> Int) {
+inline fun List<LuoGu>.draw(
+		beginX : Int,
+		beginY : Int,
+		width : Int,
+		height : Int,
+		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
+		getColor : (Int, Int) -> Int,
+		getBoard : () -> BufferedImage
+) {
 	val clients = toMutableList()
 	var it = 0
 
-	(0 until width).forEach { x ->
-		(0 until height).forEach { y ->
+	(0 until width).forEach x@{ x ->
+		(0 until height).forEach y@{ y ->
+			val board = getBoard()
+			if (board.getRGB(x, y) == getColor(x, y)) return@y
+
 			val color = getColor(x, y)
 
 			loop@ while (true) {
@@ -136,7 +148,16 @@ inline fun List<LuoGu>.draw(beginX : Int, beginY : Int, width : Int, height : In
 	}
 }
 
-inline fun LuoGu.draw(beginX : Int, beginY : Int, width : Int, height : Int, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 }, getColor : (Int, Int) -> Int) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor)
+inline fun LuoGu.draw(
+		beginX : Int,
+		beginY : Int,
+		width : Int,
+		height : Int,
+		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
+		getColor : (Int, Int) -> Int
+) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor) {
+	board()
+}
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = draw(beginX, beginY, image.width, image.height) { x, y ->
 	colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
@@ -144,27 +165,29 @@ fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = dra
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
 
-/**
- * 获取画板图片
- *
- * @param out 输出的流
- */
-fun LuoGu.board(out : OutputStream) {
-	executeGet("paintBoard/board") { resp ->
+fun LuoGu.board() : BufferedImage {
+	return executeGet("paintBoard/board") { resp ->
 		resp.assert()
 
-		resp.data?.let { board ->
+		resp.data!!.let { board ->
 			BufferedImage(800, 400, BufferedImage.TYPE_INT_RGB).also { image ->
 				board.split('\n').forEachIndexed { x, line ->
 					line.forEachIndexed { y, char ->
 						image.setRGB(x, y, colorList[char.toString().toInt(32)].rgb)
 					}
 				}
-			}.let { image ->
-				ImageIO.write(image, "PNG", out)
 			}
 		}
 	}
+}
+
+/**
+ * 获取画板图片
+ *
+ * @param out 输出的流
+ */
+fun LuoGu.board(out : OutputStream) {
+	ImageIO.write(board(), "png", out)
 }
 
 /**
