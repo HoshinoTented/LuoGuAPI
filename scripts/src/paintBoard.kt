@@ -3,7 +3,14 @@ import org.hoshino9.luogu.utils.*
 import java.awt.Color
 import java.io.OutputStream
 import java.awt.image.BufferedImage
+import java.io.InputStream
 import javax.imageio.ImageIO
+
+enum class DrawStatus {
+	SUCCESSFUL,
+	FAILED,
+	ERROR
+}
 
 val colorList = arrayOf(
 		Color(0, 0, 0),
@@ -47,17 +54,59 @@ val colorList = arrayOf(
  * @param y 格子的纵坐标(左上为0)
  * @param color 颜色的代码(请自行 F12 查看 data-cid 属性 或 使用先进的IDE在上方的 colorList 预览颜色)
  */
-fun LuoGu.draw(x : Int, y : Int, color : Int) {
-	executePost("paintBoard/paint",
+fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
+	return executePost("paintBoard/paint",
 			mapOf(
 					"x" to x.toString(),
 					"y" to y.toString(),
 					"color" to color.toString()
 			).params(), referer("paintBoard")) { resp ->
 		resp.assert()
-		println(resp.data)
+
+		json (resp.data!!) {
+			when (this["status"]) {
+				200 -> DrawStatus.SUCCESSFUL
+				500 -> DrawStatus.FAILED
+
+				else -> DrawStatus.ERROR
+			}
+		}
 	}
 }
+
+fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timelimied : Long = 30 * 1000L) {
+	val clients = toMutableList()
+	var it = 0
+
+	val image = ImageIO.read(input)
+
+	(0 until image.width).forEach { x ->
+		(0 until image.height).forEach { y ->
+			val color = colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != -1 }
+					?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y).run(::Color)}")
+
+			loop@ while (true) {
+				when (clients[it].draw(x + beginX, y + beginY, color)) {
+					DrawStatus.SUCCESSFUL -> break@loop
+					DrawStatus.FAILED -> continue@loop
+					DrawStatus.ERROR -> {
+						println("Removed user: ${clients[it].loggedUser}")
+
+						clients.removeAt(it)
+						if (it == clients.size) it = 0
+					}
+				}
+			}
+
+			println("User ${clients[it].loggedUser} drew ${x + beginX to y + beginY} with color $color")
+
+			++ it
+			if (it == clients.size) it = 0
+		}
+	}
+}
+
+fun LuoGu.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timelimied : Long = 30 * 1000L) = listOf(this).drawFromImage(beginX, beginY, input, timelimied)
 
 /**
  * 获取画板图片
