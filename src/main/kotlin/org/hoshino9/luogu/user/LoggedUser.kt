@@ -102,10 +102,10 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 * @return 返回剪切板的代码
 	 */
 	@JvmOverloads
-	fun postPaste(code : String, public : Boolean = true) : Paste {
+	fun postPaste(code : String, public : Boolean = true, verifyCode : String = "") : Paste {
 		return luogu.postExecute("paste/post", mapOf(
 				"content" to code,
-				"verify" to "",
+				"verify" to verifyCode,
 				"public" to if (public) "1" else "0"
 		).params(), referer("paste")) { resp ->
 			resp.assert()
@@ -161,13 +161,13 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 * @see Solution
 	 * @see Record
 	 */
-	fun postSolution(solution : Solution) : Record {
+	fun postSolution(solution : Solution, verifyCode : String = "") : Record {
 		return luogu.postExecute("api/problem/submit/${solution.pid}",
 				mapOf(
 						"code" to solution.code,
 						"lang" to solution.language.value.toString(),
 						"enableO2" to if (solution.enableO2) "1" else "0",
-						"verify" to ""
+						"verify" to verifyCode
 				).params(), referer("problemnew/show/${solution.pid}")
 		) { resp ->
 			resp.assert()

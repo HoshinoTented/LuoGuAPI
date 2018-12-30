@@ -7,5 +7,6 @@ package org.hoshino9.luogu.benben
  */
 enum class BenBenType {
 	WATCHING,
-	ALL
+	ALL,
+	MY
 }
