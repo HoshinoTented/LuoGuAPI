@@ -74,7 +74,16 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
 	}
 }
 
-fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timelimied : Long = 30 * 1000L) {
+/**
+ * 从图片中读取像素并绘画
+ *
+ * @receiver 用户(客户端)列表
+ * @param beginX 开始的 x 坐标
+ * @param beginY 开始的 y 坐标
+ * @param input 图片输入流
+ * @param timeLimit 自己看签名谢谢
+ */
+fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 }) {
 	val clients = toMutableList()
 	var it = 0
 
@@ -102,11 +111,13 @@ fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, t
 
 			++ it
 			if (it == clients.size) it = 0
+
+			Thread.sleep(timeLimit(clients))
 		}
 	}
 }
 
-fun LuoGu.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timelimied : Long = 30 * 1000L) = listOf(this).drawFromImage(beginX, beginY, input, timelimied)
+fun LuoGu.drawFromImage(beginX : Int, beginY : Int, input : InputStream, timeLimit : (List<LuoGu>) -> Long = { 30 * 1000}) = listOf(this).drawFromImage(beginX, beginY, input, timeLimit)
 
 /**
  * 获取画板图片
