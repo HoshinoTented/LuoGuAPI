@@ -8,10 +8,14 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils
 import org.hoshino9.okhttp.HoshinoCookieJar
 
+fun emptyParams() : RequestBody {
+	return FormBody.Builder().build()
+}
+
 // Params
-fun <K, V> Map<K, V>.params() : RequestBody {
+fun <K : Any, V : Any> Iterable<Pair<K, V>>.params() : RequestBody {
 	return FormBody.Builder().apply {
-		forEach { k, v ->
+		forEach { (k, v) ->
 			add(k.toString(), v.toString())
 		}
 	}.build()
@@ -35,24 +39,20 @@ fun getRequest(url : String = "") : Request = Request.Builder()
 		.build()
 
 @Deprecated("Request without referer will be refused", ReplaceWith("executePost"))
-inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyMap<String, String>().params(), action : (Response) -> T) : T {
+inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyParams(), action : (Response) -> T) : T {
 	return executePost(url, body, Headers.Builder().build(), action)
 }
 
-inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyMap<String, String>().params(), headers : Headers, action : (Response) -> T) : T {
-	return client.newCall(postRequest(url, body, headers)).execute().let { resp ->
-		resp.run(action).apply {
-			resp.close()
-		}
+inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyParams(), headers : Headers, action : (Response) -> T) : T {
+	return client.newCall(postRequest(url, body, headers)).execute().use { resp ->
+		resp.run(action)
 	}
 }
 
 inline fun <T> LuoGu.executeGet(url : String = "", action : (Response) -> T) : T = client.executeGet("${LuoGuUtils.baseUrl}/$url", action)
 inline fun <T> HttpClient.executeGet(url : String = "", action : (Response) -> T) : T {
-	return newCall(getRequest(url)).execute().let { resp ->
-		resp.run(action).apply {
-			resp.close()
-		}
+	return newCall(getRequest(url)).execute().use { resp ->
+		resp.run(action)
 	}
 }
 

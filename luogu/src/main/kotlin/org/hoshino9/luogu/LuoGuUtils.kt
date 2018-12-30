@@ -35,12 +35,12 @@ object LuoGuUtils {
 	fun getSliderPhotosFromPage(page : Document) : List<SliderPhoto> {
 		val name = "lg-slider"
 		return page.getElementById(name)?.run {
-			children().first()?.run {
+			children().firstOrNull()?.run {
 				children().filter {
 					it.className() != "clone"
 				}.mapNotNull {
-					val linkElement = it.children().first() ?: return@mapNotNull null
-					val imgElement = linkElement.children().first() ?: null
+					val linkElement = it.children().firstOrNull() ?: return@mapNotNull null
+					val imgElement = linkElement.children().firstOrNull()
 					if (imgElement == null) {
 						SliderPhoto(null, linkElement.attr("src"))
 					} else {
@@ -61,8 +61,9 @@ object LuoGuUtils {
 	fun getUserIdFromPage(document : Document) : String? {
 		return (document.body()
 				.getElementsByAttribute("myuid")
-				.first()
-				?.attr("myuid") ?: "").takeIf { it != "" }
+				.firstOrNull()
+				?.attr("myuid")
+				.orEmpty()).takeIf { it.isNotEmpty() }
 	}
 
 	/**

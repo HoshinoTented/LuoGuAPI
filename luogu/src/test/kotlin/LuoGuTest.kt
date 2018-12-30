@@ -9,11 +9,12 @@ import org.hoshino9.luogu.user.HasBadgeUser
 import org.junit.Before
 import org.junit.Test
 import java.io.FileOutputStream
+import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Properties
 import java.util.Scanner
 
-fun main(args : Array<String>) {
+fun main() {
 	LuoGuTest().run {
 		login()
 		println("logged in: $user")
@@ -25,12 +26,12 @@ fun main(args : Array<String>) {
 
 class LuoGuTest {
 	companion object {
-		private val testRoot = Paths.get("src/test/resources")
+		private val testRoot = Paths.get("src", "test", "resources")
 		private val verifyPath by lazy { testRoot.resolve("verify.png") }
 		private val configPath by lazy { testRoot.resolve("user.properties") }
 		internal val config by lazy {
 			Properties().apply {
-				load(configPath.toFile().inputStream())
+				load(Files.newInputStream(configPath))
 			}
 		}
 	}
@@ -54,7 +55,7 @@ class LuoGuTest {
 
 	fun login() {
 		luogu = LuoGu()
-		luogu.verifyCode(verifyPath.toFile().run(::FileOutputStream))
+		luogu.verifyCode(Files.newOutputStream(verifyPath))
 		println("Please input verify code")
 		val verifyCode : String = Scanner(System.`in`).next()
 		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
@@ -63,7 +64,7 @@ class LuoGuTest {
 	fun saveCookie() {
 		config.setProperty("__client_id", luogu.clientId)
 		config.setProperty("_uid", luogu.myuid)
-		config.store(configPath.toFile().outputStream(), null)
+		config.store(Files.newOutputStream(configPath), null)
 	}
 
 	@Test
@@ -75,7 +76,7 @@ class LuoGuTest {
 		val status = try {
 			user.signInStatus
 		} catch (e : IllegalStateException) {
-			println("failed, trying signing...")
+			println("failed, trying signing in...")
 			user.signIn()
 			user.signInStatus
 		}

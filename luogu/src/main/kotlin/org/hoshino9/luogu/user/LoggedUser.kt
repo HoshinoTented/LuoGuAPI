@@ -102,7 +102,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 */
 	@JvmOverloads
 	fun postPaste(code : String, public : Boolean = true, verifyCode : String = "") : Paste {
-		return luogu.executePost("paste/post", mapOf(
+		return luogu.executePost("paste/post", listOf(
 				"content" to code,
 				"verify" to verifyCode,
 				"public" to if (public) "1" else "0"
@@ -125,7 +125,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 
 	@JvmOverloads
 	fun pasteList(page : Int = 1) : List<Paste> {
-		val regex = Regex("""https://www.luogu.org/paste/(\w+)""")
+		val regex = Regex("""https://www\.luogu\.org/paste/(\w+)""")
 		luogu.executeGet("paste?page=$page") { resp ->
 			resp.assert()
 			val content = resp.data !!
@@ -141,7 +141,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 * @param text 犇犇内容
 	 */
 	fun postBenben(text : String) {
-		luogu.executePost("api/feed/postBenben", mapOf("content" to text).params(), referer()) { resp ->
+		luogu.executePost("api/feed/postBenben", listOf("content" to text).params(), referer()) { resp ->
 			resp.assert()
 			val content = resp.data !!
 
@@ -164,7 +164,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	@JvmOverloads
 	fun postSolution(solution : Solution, verifyCode : String = "") : Record {
 		return luogu.executePost("api/problem/submit/${solution.pid}",
-				mapOf(
+				listOf(
 						"code" to solution.code,
 						"lang" to solution.language.value.toString(),
 						"enableO2" to if (solution.enableO2) "1" else "0",

@@ -2,23 +2,6 @@ package org.hoshino9.luogu.color
 
 import java.awt.Color
 
-internal val classMap by lazy {
-	mapOf(
-			"ping" to LuoGuColor.Pink,
-			"red" to LuoGuColor.Red,
-			"yellow" to LuoGuColor.Yellow,
-			"orange" to LuoGuColor.Orange,
-			"purple" to LuoGuColor.Purple,
-			"green" to LuoGuColor.Green,
-			"bluedark" to LuoGuColor.BlueDark,
-			"bluelight" to LuoGuColor.BlueLight,
-			"black" to LuoGuColor.Black,
-			"gray" to LuoGuColor.Gray,
-			"brown" to LuoGuColor.Brown,
-			"greendark" to LuoGuColor.GreenDark
-	)
-}
-
 enum class LuoGuColor(val color : String) {
 	Pink("F495A0"),
 	Red("E74C3C"),
@@ -39,5 +22,6 @@ enum class LuoGuColor(val color : String) {
 }
 
 fun colorFromClass(className : String) : LuoGuColor {
-	return classMap[className.substring(6)] ?: throw NoSuchElementException(className)
+	return LuoGuColor.values().firstOrNull { it.name.equals(className.substring(6), true) }
+			?: throw NoSuchElementException(className)
 }

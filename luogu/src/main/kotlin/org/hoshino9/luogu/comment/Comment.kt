@@ -11,11 +11,11 @@ interface Comment {
 		@JvmName("newInstance")
 		operator fun invoke(elem : Element) : Comment {
 			return if (elem.tagName() == "article") {
-				when (elem.className()) {
+				when (val className = elem.className()) {
 					"am-comment am-comment-danger" -> ::MainComment
 					"am-comment am-comment-primary" -> ::DiscussComment
 
-					else -> throw IllegalArgumentException()
+					else -> throw IllegalArgumentException("Unexpected className: $className")
 				}.invoke(elem)
 			} else DefaultComment(elem)
 		}

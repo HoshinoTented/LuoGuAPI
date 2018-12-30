@@ -9,7 +9,7 @@ import javax.imageio.ImageIO
 enum class DrawStatus {
 	SUCCESSFUL,
 	FAILED,
-	ERROR
+	UNKNOWN
 }
 
 val colorList = arrayOf(
@@ -56,10 +56,10 @@ val colorList = arrayOf(
  */
 fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
 	return executePost("paintBoard/paint",
-			mapOf(
-					"x" to x.toString(),
-					"y" to y.toString(),
-					"color" to color.toString()
+			listOf(
+					"x" to x,
+					"y" to y,
+					"color" to color
 			).params(), referer("paintBoard")) { resp ->
 		resp.assert()
 
@@ -68,7 +68,7 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : DrawStatus {
 				200 -> DrawStatus.SUCCESSFUL
 				500 -> DrawStatus.FAILED
 
-				else -> DrawStatus.ERROR
+				else -> DrawStatus.UNKNOWN
 			}
 		}
 	}
@@ -98,7 +98,7 @@ fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, input : InputStream, t
 				when (clients[it].draw(x + beginX, y + beginY, color)) {
 					DrawStatus.SUCCESSFUL -> break@loop
 					DrawStatus.FAILED -> continue@loop
-					DrawStatus.ERROR -> {
+					DrawStatus.UNKNOWN -> {
 						println("Removed user: ${clients[it].loggedUser}")
 
 						clients.removeAt(it)

@@ -36,7 +36,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 
 	var myuid : String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" }?.value() ?: ""
+			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" }?.value().orEmpty()
 		}
 		set(value) {
 			client.cookieJar().saveFromResponse(
@@ -46,7 +46,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 
 	var clientId : String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value() ?: ""
+			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value().orEmpty()
 		}
 		set(value) {
 			client.cookieJar().saveFromResponse(
@@ -120,10 +120,10 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * 登录**你谷**
 	 * @param account 账号
 	 * @param password 密码
-	 * @param verifyCode 验证码, 通过 LuoGu::verifyCode 获得
+	 * @param verifyCode 验证码, 通过 [LuoGu.verifyCode] 获得
 	 * @throws IllegalAPIStatusCodeException 当登录失败时抛出
 	 * @throws IllegalStatusCodeException 当请求码错误时抛出
-	 * @return 返回一个 LuoGuLoginResule 对象
+	 * @return 返回一个 LuoGuLoginResult 对象
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LoggedUser
@@ -131,7 +131,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @see IllegalStatusCodeException
 	 */
 	fun login(account : String, password : String, verifyCode : String) {
-		val params = mapOf(
+		val params = listOf(
 				"username" to account,
 				"password" to password,
 				"cookie" to "0",
