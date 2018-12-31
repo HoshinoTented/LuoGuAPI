@@ -1,1 +1,1 @@
-include(":scripts", ":luogu")
+include(":extensions", ":luogu")

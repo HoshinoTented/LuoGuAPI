@@ -8,16 +8,6 @@ plugins {
 group = "org.hoshino9"
 version = "0.0.1"
 
-sourceSets {
-	getByName("main") {
-		withConvention(KotlinSourceSet::class) {
-			kotlin.srcDir("src")
-		}
-
-		resources.srcDir("resources")
-	}
-}
-
 dependencies {
 	compile(project(":luogu"))
 }

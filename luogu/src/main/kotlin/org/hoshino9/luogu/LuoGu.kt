@@ -168,6 +168,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @return 返回一个评论列表
 	 * @see Comment
 	 */
+	@Deprecated("Benben was closed", ReplaceWith(""))
 	@JvmOverloads
 	fun publicBenben(page : Int = 1) : List<Comment> = LoggedUser(this, "Internal").getBenben(BenBenType.ALL, page)
 

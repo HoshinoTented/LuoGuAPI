@@ -85,6 +85,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 * @see Comment
 	 * @see BenBenType
 	 */
+	@Deprecated("Benben was closed", ReplaceWith(""))
 	@JvmOverloads
 	fun getBenben(type : BenBenType, page : Int = 1) : List<Comment> {
 		luogu.executeGet("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
@@ -140,6 +141,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 * 发射犇犇
 	 * @param text 犇犇内容
 	 */
+	@Deprecated("Benben was closed", ReplaceWith(""))
 	fun postBenben(text : String) {
 		luogu.executePost("api/feed/postBenben", listOf("content" to text).params(), referer()) { resp ->
 			resp.assert()
