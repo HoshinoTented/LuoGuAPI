@@ -123,7 +123,7 @@ fun List<LuoGu>.draw(
 	var it = 0
 
 	val removeUser : (String) -> Unit = { msg ->
-		println("Failed, removed user: ${clients[it].loggedUser}(${msg})")
+		println("Failed, removed user: ${clients[it].loggedUser}($msg)")
 
 		clients.removeAt(it)
 		if (it == clients.size) it = 0
