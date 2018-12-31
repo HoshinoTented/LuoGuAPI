@@ -115,18 +115,20 @@ class PaintBoard(
 	}
 
 	fun draw(x : Int, y : Int, color : Int) = runBlocking {
-		if (targetBoardColor(x, y) == color) {
-			println("Skipped ($x, $y)")
-		} else {
+		fun checkColor(x : Int, y : Int) : Boolean {
+			return if (targetBoardColor(x, y) == color) {
+				println("Skipped ($x, $y)")
+
+				true
+			} else false
+		}
+
+		if (checkColor(x, y).not()) {
 			loop@ while (true) {
 				println("Waiting...")
 				timer.await()
 
-				if (targetBoardColor(x, y) == color) {
-					println("Skipped ($x, $y)")
-
-					break@loop
-				}
+				if (checkColor(x, y)) break@loop
 
 				val status = clients[it].draw(x, y, color)
 				when (status.first) {
@@ -164,7 +166,7 @@ fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
 	).run {
 		image.iterate { _, x, y ->
 			draw(x + beginX, y + beginY,
-					colorList.indexOfFirst { it.rgb == image.getRGB(x - beginX, y - beginY) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+					colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
 			)
 		}
 	}
