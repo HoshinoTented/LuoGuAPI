@@ -117,6 +117,13 @@ inline fun List<LuoGu>.draw(
 	val clients = toMutableList()
 	var it = 0
 
+	val removeUser : (String) -> Unit = { msg ->
+		println("Failed, removed user: ${clients[it].loggedUser}(${msg})")
+
+		clients.removeAt(it)
+		if (it == clients.size) it = 0
+	}
+
 	iterateMatrixIndexed(width, height) { x, y ->
 		val board = getBoard()
 		val color = getColor(x, y)
@@ -129,18 +136,13 @@ inline fun List<LuoGu>.draw(
 				when (status.first) {
 					DrawStatus.SUCCESSFUL -> break@loop
 					DrawStatus.FAILED -> {
-						println("Failed, try again...(${status.second})")
-						Thread.sleep(timeLimit(clients))
-
-						continue@loop
+						if (status.second != "操作过于频繁") removeUser(status.second) else {
+							println("Failed, try again...(${status.second})")
+							Thread.sleep(timeLimit(clients))
+						}
 					}
 
-					DrawStatus.UNKNOWN -> {
-						println("Failed, removed user: ${clients[it].loggedUser}(${status.second})")
-
-						clients.removeAt(it)
-						if (it == clients.size) it = 0
-					}
+					DrawStatus.UNKNOWN -> removeUser(status.second)
 				}
 			}
 
@@ -161,9 +163,7 @@ inline fun LuoGu.draw(
 		height : Int,
 		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
 		getColor : (Int, Int) -> Int
-) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor) {
-	board()
-}
+) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor, ::board)
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = draw(beginX, beginY, image.width, image.height) { x, y ->
 	colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
