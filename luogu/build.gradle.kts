@@ -18,6 +18,7 @@ dependencies {
 	compile("org.json", "json", "20180813")
 	compile("com.google.code.gson", "gson", "2.8.5")
 	compile("org.jsoup", "jsoup", "1.11.3")
+	compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0")
 	testCompile(kotlin("test-junit", "1.3.10"))
 }
 

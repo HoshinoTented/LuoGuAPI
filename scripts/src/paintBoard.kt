@@ -183,6 +183,27 @@ fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = dra
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
 
+/**
+ * 将色块代码转化为图片
+ * @param vertical 是否水平(色块代码的一行是否对应图片的一行)
+ */
+fun List<String>.image(vertical : Boolean) : BufferedImage {
+	return BufferedImage(
+			if (vertical) first().length else size,
+			if (vertical) size else first().length,
+			BufferedImage.TYPE_INT_RGB).also { image ->
+		forEachIndexed { x, line ->
+			line.forEachIndexed { y, char ->
+				image.setRGB(if (vertical) y else x, if (vertical) x else y, colorList[char.toString().toInt(32)].rgb)
+			}
+		}
+	}
+}
+
+val List<String>.image : BufferedImage get() {
+	return image(true)
+}
+
 val LuoGu.boardMatrix : List<String> get() {
 	return executeGet("paintBoard/board") { resp ->
 		resp.assert()
@@ -191,13 +212,7 @@ val LuoGu.boardMatrix : List<String> get() {
 }
 
 val LuoGu.board : BufferedImage get() {
-	return BufferedImage(800, 400, BufferedImage.TYPE_INT_RGB).also { image ->
-		boardMatrix.forEachIndexed { x, line ->
-			line.forEachIndexed { y, char ->
-				image.setRGB(x, y, colorList[char.toString().toInt(32)].rgb)
-			}
-		}
-	}
+	return boardMatrix.image(false)
 }
 
 /**
@@ -288,4 +303,16 @@ fun checkImage(image : BufferedImage) : Boolean {
 	}
 
 	return true
+}
+
+fun transToIndex(image : BufferedImage, out : OutputStream) {
+	out.use {
+		(0 until image.height).forEach { y ->
+			(0 until image.width).forEach { x ->
+				it.write(findSimilarColor(image.getRGB(x, y)).toString(32).toByteArray())
+			}
+
+			if (y != image.height - 1) it.write("\n".toByteArray())
+		}
+	}
 }
