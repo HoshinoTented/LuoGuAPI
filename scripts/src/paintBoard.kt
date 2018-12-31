@@ -50,11 +50,17 @@ val colorList = arrayOf(
 		Color(121, 85, 72)
 )
 
-inline fun <T> iterateMatrix(width : Int, height : Int, matrix : T, action : (T, Int, Int) -> Unit) {
+inline fun iterateMatrixIndexed(width : Int, height : Int, action : (Int, Int) -> Unit) {
 	(0 until width).forEach { x ->
 		(0 until height).forEach { y ->
-			action(matrix, x, y)
+			action(x, y)
 		}
+	}
+}
+
+inline fun <T> iterateMatrix(width : Int, height : Int, matrix : T, action : (T, Int, Int) -> Unit) {
+	iterateMatrixIndexed(width, height) { x, y ->
+		action(matrix, x, y)
 	}
 }
 
@@ -111,42 +117,39 @@ inline fun List<LuoGu>.draw(
 	val clients = toMutableList()
 	var it = 0
 
-	(0 until width).forEach x@{ x ->
-		(0 until height).forEach y@{ y ->
-			val board = getBoard()
-			val color = getColor(x, y)
+	iterateMatrixIndexed(width, height) { x, y ->
+		val board = getBoard()
+		val color = getColor(x, y)
 
-			if (board.getRGB(x + beginX, y + beginY) == colorList[color].rgb) {
-				println("Skipped ($x, $y)")
-			} else {
+		if (board.getRGB(x + beginX, y + beginY) == colorList[color].rgb) {
+			println("Skipped ($x, $y)")
+		} else {
+			loop@ while (true) {
+				val status = clients[it].draw(x + beginX, y + beginY, color)
+				when (status.first) {
+					DrawStatus.SUCCESSFUL -> break@loop
+					DrawStatus.FAILED -> {
+						println("Failed, try again...(${status.second})")
+						Thread.sleep(timeLimit(clients))
 
-				loop@ while (true) {
-					val status = clients[it].draw(x + beginX, y + beginY, color)
-					when (status.first) {
-						DrawStatus.SUCCESSFUL -> break@loop
-						DrawStatus.FAILED -> {
-							println("Failed, try again...(${status.second})")
-							Thread.sleep(timeLimit(clients))
+						continue@loop
+					}
 
-							continue@loop
-						}
+					DrawStatus.UNKNOWN -> {
+						println("Failed, removed user: ${clients[it].loggedUser}(${status.second})")
 
-						DrawStatus.UNKNOWN -> {
-							println("Failed, removed user: ${clients[it].loggedUser}(${status.second})")
-
-							clients.removeAt(it)
-							if (it == clients.size) it = 0
-						}
+						clients.removeAt(it)
+						if (it == clients.size) it = 0
 					}
 				}
-
-				println("User ${clients[it].loggedUser} drew ${x + beginX to y + beginY} with color $color")
-
-				++ it
-				if (it == clients.size) it = 0
-
-				Thread.sleep(timeLimit(clients))
 			}
+
+			println("User ${clients[it].loggedUser} drew ${x + beginX to y + beginY} with color $color")
+
+			++ it
+			if (it == clients.size) it = 0
+
+			Thread.sleep(timeLimit(clients))
 		}
 	}
 }
@@ -219,7 +222,7 @@ fun findSimilarColor(rgb : Int) : Int {
 }
 
 /**
- * 转换图片内色块为相似相似色块
+ * 转换图片内色块为相似色块
  */
 fun transform(image : BufferedImage) {
 	image.iterate { img, x, y ->
