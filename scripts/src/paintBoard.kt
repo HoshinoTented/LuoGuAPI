@@ -124,6 +124,8 @@ class PaintBoard(
 		}
 
 		if (checkColor(x, y).not()) {
+			println("Try to draw ($x, $y)...")
+
 			loop@ while (true) {
 				println("Waiting...")
 				timer.await()
