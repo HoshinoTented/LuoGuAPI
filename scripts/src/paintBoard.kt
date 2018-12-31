@@ -384,27 +384,39 @@ fun transToIndex(image : BufferedImage, out : OutputStream) {
 }
 
 fun LuoGu.drawFromRemote(url : String, regex : Regex) {
-	var x : Int
-	var y : Int
 	var color = 0
+	var posList : MutableList<Triple<Int, Int, Int>> = arrayListOf()
 
 	draw(
 			getPos = {
-				println("Getting remote data...")
-				client.executeGet(url) { resp ->
-					resp.assert()
+				if (posList.isEmpty()) {
+					println("Getting remote data...")
+					client.executeGet(url) { resp ->
+						resp.assert()
 
-					val content = resp.data!!
+						val content = resp.data !!
 
-					println("[GET]: $content")
+						println("[GET]: $content")
 
-					regex.matchEntire(content)?.let {
-						x = it.groupValues[1].toInt()
-						y = it.groupValues[2].toInt()
-						color = it.groupValues[3].toInt()
+//						regex.matchEntire(content)?.let {
+//							x = it.groupValues[1].toInt()
+//							y = it.groupValues[2].toInt()
+//							color = it.groupValues[3].toInt()
+//
+//							x to y
+//						}
 
-						x to y
+						posList = regex.findAll(content).toList().map {
+							Triple(it.groupValues[1].toInt(), it.groupValues[2].toInt(), it.groupValues[3].toInt())
+						}.toMutableList()
 					}
+				}
+
+				posList.first().run {
+					posList.removeAt(0)
+					color = third
+
+					first to second
 				}
 			},
 
