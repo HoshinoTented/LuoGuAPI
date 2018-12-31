@@ -114,36 +114,39 @@ inline fun List<LuoGu>.draw(
 	(0 until width).forEach x@{ x ->
 		(0 until height).forEach y@{ y ->
 			val board = getBoard()
-			if (board.getRGB(x, y) == getColor(x, y)) return@y
-
 			val color = getColor(x, y)
 
-			loop@ while (true) {
-				val status = clients[it].draw(x + beginX, y + beginY, color)
-				when (status) {
-					DrawStatus.SUCCESSFUL -> break@loop
-					DrawStatus.FAILED -> {
-						println("Failed, try again...(${status.second})")
-						Thread.sleep(timeLimit(clients))
+			if (board.getRGB(x + beginX, y + beginY) == colorList[color].rgb) {
+				println("Skipped ($x, $y)")
+			} else {
 
-						continue@loop
-					}
+				loop@ while (true) {
+					val status = clients[it].draw(x + beginX, y + beginY, color)
+					when (status.first) {
+						DrawStatus.SUCCESSFUL -> break@loop
+						DrawStatus.FAILED -> {
+							println("Failed, try again...(${status.second})")
+							Thread.sleep(timeLimit(clients))
 
-					DrawStatus.UNKNOWN -> {
-						println("Failed, removed user: ${clients[it].loggedUser}(${status.second})")
+							continue@loop
+						}
 
-						clients.removeAt(it)
-						if (it == clients.size) it = 0
+						DrawStatus.UNKNOWN -> {
+							println("Failed, removed user: ${clients[it].loggedUser}(${status.second})")
+
+							clients.removeAt(it)
+							if (it == clients.size) it = 0
+						}
 					}
 				}
+
+				println("User ${clients[it].loggedUser} drew ${x + beginX to y + beginY} with color $color")
+
+				++ it
+				if (it == clients.size) it = 0
+
+				Thread.sleep(timeLimit(clients))
 			}
-
-			println("User ${clients[it].loggedUser} drew ${x + beginX to y + beginY} with color $color")
-
-			++ it
-			if (it == clients.size) it = 0
-
-			Thread.sleep(timeLimit(clients))
 		}
 	}
 }
