@@ -101,21 +101,19 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
  * 从图片中读取像素并绘画
  *
  * @receiver 用户(客户端)列表
- * @param beginX 开始的 x 坐标
- * @param beginY 开始的 y 坐标
- * @param width 图片宽
- * @param height 图片高
  * @param timeLimit 自己看类型签名谢谢
- * @param getColor 根据传入的 x 和 y 返回一个 [colorList] 的索引
+ * @param getPos 返回一个坐标, null 为不需要继续绘画
+ * @param getImageColor 根据传入的 x 和 y 返回一个 [colorList] 的索引
  * @param getBoardColor 返回画板的点信息 ([colorList] 索引)
  */
 fun List<LuoGu>.draw(
-		beginX : Int,
-		beginY : Int,
-		width : Int,
-		height : Int,
+//		beginX : Int,
+//		beginY : Int,
+//		width : Int,
+//		height : Int,
 		timeLimit : (List<LuoGu>) -> Long,
-		getColor : (Int, Int) -> Int,
+		getPos : () -> Pair<Int, Int>?,
+		getImageColor : (Int, Int) -> Int,
 		getBoardColor : (Int, Int) -> Int
 ) = runBlocking {
 	var timer : Deferred<Unit> = async { Unit }
@@ -129,18 +127,20 @@ fun List<LuoGu>.draw(
 		if (it == clients.size) it = 0
 	}
 
-	iterateMatrixIndexed(width, height) { x, y ->
-		val realX = x + beginX
-		val realY = y + beginY
-		val colorIx = getColor(x, y)
-		val boardColorIx = getBoardColor(realX, realY)
+//	iterateMatrixIndexed(width, height) { x, y ->
+	while (true) {
+		val pos = getPos() ?: break
+		val x = pos.first
+		val y = pos.second
+		val colorIx = getImageColor(x, y)
+		val boardColorIx = getBoardColor(x, y)
 
 		if (boardColorIx == colorIx) {
-			println("Skipped ($realX, $realY)")
+			println("Skipped ($x, $y)")
 		} else {
 			loop@ while (true) {
 				timer.await()
-				val status = clients[it].draw(realX, realY, colorIx)
+				val status = clients[it].draw(x, y, colorIx)
 				when (status.first) {
 					DrawStatus.SUCCESSFUL -> {
 						timer = async { delay(timeLimit(clients)) }
@@ -158,27 +158,43 @@ fun List<LuoGu>.draw(
 				}
 			}
 
-			println("User ${clients[it].loggedUser} drew ${realX to realY} with color $colorIx")
+			println("User ${clients[it].loggedUser} drew ${x to y} with color $colorIx")
 
 			++ it
 			if (it == clients.size) it = 0
 		}
 	}
+//	}
 }
 
 fun LuoGu.draw(
-		beginX : Int,
-		beginY : Int,
-		width : Int,
-		height : Int,
-		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
-		getColor : (Int, Int) -> Int
-) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor) { x, y ->
-	boardMatrix[x][y].toString().toInt(32)
-}
+		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000L },
+		getPos : () -> Pair<Int, Int>?,
+		getImageColor : (Int, Int) -> Int,
+		getBoardColor : (Int, Int) -> Int
+) = listOf(this).draw(timeLimit, getPos, getImageColor, getBoardColor)
 
-fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = draw(beginX, beginY, image.width, image.height) { x, y ->
-	colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+	var imgX = 0
+	var imgY = 0
+
+	draw(
+			getPos = {
+				if (imgX == -1) null else (imgX + beginX to imgY + beginY).apply {
+					++ imgY
+					if (imgY == image.height) ++ imgX
+					if (imgX == image.width) imgX = - 1
+				}
+			},
+
+			getImageColor = { x, y ->
+				colorList.indexOfFirst { it.rgb == image.getRGB(x - beginX, y - beginY) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+			},
+
+			getBoardColor = { x, y ->
+				boardMatrix[x][y].toString().toInt(32)
+			}
+	)
 }
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
@@ -200,20 +216,23 @@ fun List<String>.image(vertical : Boolean) : BufferedImage {
 	}
 }
 
-val List<String>.image : BufferedImage get() {
-	return image(true)
-}
-
-val LuoGu.boardMatrix : List<String> get() {
-	return executeGet("paintBoard/board") { resp ->
-		resp.assert()
-		resp.data !!.lines()
+val List<String>.image : BufferedImage
+	get() {
+		return image(true)
 	}
-}
 
-val LuoGu.board : BufferedImage get() {
-	return boardMatrix.image(false)
-}
+val LuoGu.boardMatrix : List<String>
+	get() {
+		return executeGet("paintBoard/board") { resp ->
+			resp.assert()
+			resp.data !!.lines()
+		}
+	}
+
+val LuoGu.board : BufferedImage
+	get() {
+		return boardMatrix.image(false)
+	}
 
 /**
  * 获取画板图片
@@ -305,6 +324,12 @@ fun checkImage(image : BufferedImage) : Boolean {
 	return true
 }
 
+/**
+ * 将图片转换为色块代码
+ *
+ * @param image 图片
+ * @param out 输出流
+ */
 fun transToIndex(image : BufferedImage, out : OutputStream) {
 	out.use {
 		(0 until image.height).forEach { y ->
