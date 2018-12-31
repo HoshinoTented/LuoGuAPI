@@ -161,7 +161,7 @@ fun List<LuoGu>.draw(
 	val clients = toMutableList()
 	var it = 0
 
-	val removeUser : (String) -> Unit = { msg ->
+	fun removeUser(msg : String) {
 		println("Failed, removed user: ${clients[it].loggedUser}($msg)")
 
 		clients.removeAt(it)
@@ -174,13 +174,20 @@ fun List<LuoGu>.draw(
 		val x = pos.first
 		val y = pos.second
 		val colorIx = getImageColor(x, y)
-		val boardColorIx = getBoardColor(x, y)
 
-		if (boardColorIx == colorIx) {
+		if (getBoardColor(x, y) == colorIx) {
 			println("Skipped ($x, $y)")
 		} else {
 			loop@ while (true) {
+				println("Waiting...")
 				timer.await()
+
+				if (getBoardColor(x, y) == colorIx) {
+					println("Skipped ($x, $y)")
+
+					break@loop
+				}
+
 				val status = clients[it].draw(x, y, colorIx)
 				when (status.first) {
 					DrawStatus.SUCCESSFUL -> {
