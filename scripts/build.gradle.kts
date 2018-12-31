@@ -13,6 +13,8 @@ sourceSets {
 		withConvention(KotlinSourceSet::class) {
 			kotlin.srcDir("src")
 		}
+
+		resources.srcDir("resources")
 	}
 }
 
