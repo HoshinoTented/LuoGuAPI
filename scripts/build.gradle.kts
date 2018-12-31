@@ -19,6 +19,7 @@ sourceSets {
 dependencies {
 	compile(project(":luogu"))
 	compile(kotlin("script-util", "1.3.10"))
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0")
 }
 
 tasks.withType<KotlinCompile> {

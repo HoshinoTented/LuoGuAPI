@@ -1,5 +1,9 @@
 @file:Suppress("unused")
 
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.utils.*
 import java.awt.Color
@@ -105,7 +109,7 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
  * @param getColor 根据传入的 x 和 y 返回一个 [colorList] 的索引
  * @param getBoardColor 返回画板的点信息 ([colorList] 索引)
  */
-inline fun List<LuoGu>.draw(
+fun List<LuoGu>.draw(
 		beginX : Int,
 		beginY : Int,
 		width : Int,
@@ -113,7 +117,8 @@ inline fun List<LuoGu>.draw(
 		timeLimit : (List<LuoGu>) -> Long,
 		getColor : (Int, Int) -> Int,
 		getBoardColor : (Int, Int) -> Int
-) {
+) = runBlocking {
+	var timer : Deferred<Unit> = async { Unit }
 	val clients = toMutableList()
 	var it = 0
 
@@ -134,13 +139,18 @@ inline fun List<LuoGu>.draw(
 			println("Skipped ($realX, $realY)")
 		} else {
 			loop@ while (true) {
+				timer.await()
 				val status = clients[it].draw(realX, realY, colorIx)
 				when (status.first) {
-					DrawStatus.SUCCESSFUL -> break@loop
+					DrawStatus.SUCCESSFUL -> {
+						timer = async { delay(timeLimit(clients)) }
+						break@loop
+					}
+
 					DrawStatus.FAILED -> {
 						if (status.second != "操作过于频繁") removeUser(status.second) else {
 							println("Failed, try again...(${status.second})")
-							Thread.sleep(timeLimit(clients))
+							timer = async { delay(timeLimit(clients)) }
 						}
 					}
 
@@ -152,13 +162,11 @@ inline fun List<LuoGu>.draw(
 
 			++ it
 			if (it == clients.size) it = 0
-
-			Thread.sleep(timeLimit(clients))
 		}
 	}
 }
 
-inline fun LuoGu.draw(
+fun LuoGu.draw(
 		beginX : Int,
 		beginY : Int,
 		width : Int,
@@ -201,6 +209,11 @@ fun LuoGu.board(out : OutputStream) {
 	ImageIO.write(board, "png", out)
 }
 
+/**
+ * 获取带框框的画板, 用于突出部分区域
+ * @param square 区块 ((beginX, beginY), (endX, endY))
+ * @param color 边框颜色
+ */
 fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color : Int) : BufferedImage {
 	return board.also { image ->
 		val (begin, end) = square
