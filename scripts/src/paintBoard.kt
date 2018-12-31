@@ -110,7 +110,7 @@ inline fun List<LuoGu>.draw(
 		beginY : Int,
 		width : Int,
 		height : Int,
-		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
+		timeLimit : (List<LuoGu>) -> Long,
 		getColor : (Int, Int) -> Int,
 		getBoard : () -> BufferedImage
 ) {
@@ -127,12 +127,14 @@ inline fun List<LuoGu>.draw(
 	iterateMatrixIndexed(width, height) { x, y ->
 		val board = getBoard()
 		val color = getColor(x, y)
+		val realX = x + beginX
+		val realY = y + beginY
 
-		if (board.getRGB(x + beginX, y + beginY) == colorList[color].rgb) {
-			println("Skipped ($x, $y)")
+		if (board.getRGB(realX, realY) == colorList[color].rgb) {
+			println("Skipped ($realX, $realY)")
 		} else {
 			loop@ while (true) {
-				val status = clients[it].draw(x + beginX, y + beginY, color)
+				val status = clients[it].draw(realX, realY, color)
 				when (status.first) {
 					DrawStatus.SUCCESSFUL -> break@loop
 					DrawStatus.FAILED -> {
@@ -146,7 +148,7 @@ inline fun List<LuoGu>.draw(
 				}
 			}
 
-			println("User ${clients[it].loggedUser} drew ${x + beginX to y + beginY} with color $color")
+			println("User ${clients[it].loggedUser} drew ${realX to realY} with color $color")
 
 			++ it
 			if (it == clients.size) it = 0
@@ -163,7 +165,9 @@ inline fun LuoGu.draw(
 		height : Int,
 		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
 		getColor : (Int, Int) -> Int
-) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor, ::board)
+) = listOf(this).draw(beginX, beginY, width, height, timeLimit, getColor) {
+	board()
+}
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) = draw(beginX, beginY, image.width, image.height) { x, y ->
 	colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
@@ -175,7 +179,7 @@ fun LuoGu.board() : BufferedImage {
 	return executeGet("paintBoard/board") { resp ->
 		resp.assert()
 
-		resp.data!!.let { board ->
+		resp.data !!.let { board ->
 			BufferedImage(800, 400, BufferedImage.TYPE_INT_RGB).also { image ->
 				board.split('\n').forEachIndexed { x, line ->
 					line.forEachIndexed { y, char ->
@@ -194,6 +198,35 @@ fun LuoGu.board() : BufferedImage {
  */
 fun LuoGu.board(out : OutputStream) {
 	ImageIO.write(board(), "png", out)
+}
+
+fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color : Int) : BufferedImage {
+	return board().also { image ->
+		val (begin, end) = square
+
+		fun Pair<Int, Int>.outBounds() : Boolean = first < 0 || second < 0 || first >= image.width || second >= image.height
+
+		fun drawVerticalLine(pos : Pair<Int, Int>, length : Int) {
+			(0 until length).forEach {
+				(pos.first + it to pos.second).let { p ->
+					if (p.outBounds().not()) image.setRGB(p.first, p.second, color)
+				}
+			}
+		}
+
+		fun drawHorizontalLine(pos : Pair<Int, Int>, length : Int) {
+			(0 until length).forEach {
+				(pos.first to pos.second + it).let { p ->
+					if (p.outBounds().not()) image.setRGB(p.first, p.second, color)
+				}
+			}
+		}
+
+		drawVerticalLine(begin.first - 1 to begin.second - 1, end.first - begin.first + 1)
+		drawVerticalLine(begin.first - 1 to end.second, end.first - begin.first + 1)
+		drawHorizontalLine(begin.first - 1 to begin.second, end.second - begin.second + 1)
+		drawHorizontalLine(end.first to begin.second - 1, end.second - begin.second + 2)
+	}
 }
 
 /**
