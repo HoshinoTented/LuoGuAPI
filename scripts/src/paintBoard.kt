@@ -180,7 +180,7 @@ fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
 
 	draw(
 			getPos = {
-				if (imgX == -1) null else (imgX + beginX to imgY + beginY).apply {
+				if (imgX == - 1) null else (imgX + beginX to imgY + beginY).apply {
 					++ imgY
 					if (imgY == image.height) ++ imgX
 					if (imgX == image.width) imgX = - 1
@@ -340,4 +340,34 @@ fun transToIndex(image : BufferedImage, out : OutputStream) {
 			if (y != image.height - 1) it.write("\n".toByteArray())
 		}
 	}
+}
+
+fun LuoGu.drawFromRemote(url : String, regex : Regex) {
+	var x : Int
+	var y : Int
+	var color = 0
+
+	draw(
+			getPos = {
+				client.executeGet(url) { resp ->
+					resp.assert()
+
+					regex.matchEntire(resp.data!!)?.let {
+						x = it.groupValues[1].toInt()
+						y = it.groupValues[2].toInt()
+						color = it.groupValues[3].toInt()
+
+						x to y
+					}
+				}
+			},
+
+			getImageColor = { _, _ ->
+				color
+			},
+
+			getBoardColor = { boardX, boardY ->
+				boardMatrix[boardX][boardY].toString().toInt(32)
+			}
+	)
 }
