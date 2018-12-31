@@ -1,9 +1,6 @@
 @file:Suppress("unused")
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.utils.*
 import java.awt.Color
@@ -12,47 +9,6 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import kotlin.math.abs
-
-/**
- * # 这是基于 `LuoGuAPI` 的绘板小扩展
- * ## 我需要如何使用?
- * 首先, 您需要准备以下工具:
- * JDK(请自行百度)
- * [Gradle](https://gradle.org)
- *
- * 之后, 在项目根目录下运行以下命令(Linux示例):
- * ```bash
- * ./gradlew build
- * ```
- * 以确保能够成功编译
- */
-//object PaintBoard {
-//	/**
-//	 * 在阅读下面的说明之前, 请先填好以下信息:
-//	 * * __client_id
-//	 * * _uid
-//	 *
-//	 * 这些信息都可以在已经登录 `LuoGu` 的浏览器(Chrome)中获得
-//	 */
-//	val luogu = LuoGu("您的 __client_id", "您的 _uid")
-//
-//	@JvmStatic
-//	fun main(args : Array<String>) {
-//
-//	}
-//
-//	fun example() {
-//		/**
-//		 * 如果您需要将本地图片文件绘画到绘板上
-//		 * 那么请向上方的 `main` 的尾部添加下面的代码
-//		 */
-//		luogu.drawFromImage(
-//				0,		// 开始的 x 坐标
-//				0,		// 开始的 y 坐标
-//				File("目标图片文件的绝对路径")
-//		)
-//	}
-//}
 
 enum class DrawStatus {
 	SUCCESSFUL,
@@ -138,67 +94,51 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
 	}
 }
 
-/**
- * 从图片中读取像素并绘画
- *
- * @receiver 用户(客户端)列表
- * @param timeLimit 自己看类型签名谢谢
- * @param getPos 返回一个坐标, null 为不需要继续绘画
- * @param getImageColor 根据传入的 x 和 y 返回一个 [colorList] 的索引
- * @param getBoardColor 返回画板的点信息 ([colorList] 索引)
- */
-fun List<LuoGu>.draw(
-//		beginX : Int,
-//		beginY : Int,
-//		width : Int,
-//		height : Int,
-		timeLimit : (List<LuoGu>) -> Long,
-		getPos : () -> Pair<Int, Int>?,
-		getImageColor : (Int, Int) -> Int,
-		getBoardColor : (Int, Int) -> Int
-) = runBlocking {
-	var timer : Deferred<Unit> = async { Unit }
-	val clients = toMutableList()
-	var it = 0
+@Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
+class PaintBoard(
+		clients : List<LuoGu>,
+		val timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
+		val targetBoardColor : (Int, Int) -> Int,
+		val coroutineScope : CoroutineScope = GlobalScope
+) {
+	private var it = 0
+	private var timer = coroutineScope.async { Unit }
 
-	fun removeUser(msg : String) {
+	val clients = clients.toMutableList()
+	val currentClient get() = clients[it].client
+
+	private fun removeUser(msg : String) {
 		println("Failed, removed user: ${clients[it].loggedUser}($msg)")
 
 		clients.removeAt(it)
 		if (it == clients.size) it = 0
 	}
 
-//	iterateMatrixIndexed(width, height) { x, y ->
-	while (true) {
-		val pos = getPos() ?: break
-		val x = pos.first
-		val y = pos.second
-		val colorIx = getImageColor(x, y)
-
-		if (getBoardColor(x, y) == colorIx) {
+	fun draw(x : Int, y : Int, color : Int) = runBlocking {
+		if (targetBoardColor(x, y) == color) {
 			println("Skipped ($x, $y)")
 		} else {
 			loop@ while (true) {
 				println("Waiting...")
 				timer.await()
 
-				if (getBoardColor(x, y) == colorIx) {
+				if (targetBoardColor(x, y) == color) {
 					println("Skipped ($x, $y)")
 
 					break@loop
 				}
 
-				val status = clients[it].draw(x, y, colorIx)
+				val status = clients[it].draw(x, y, color)
 				when (status.first) {
 					DrawStatus.SUCCESSFUL -> {
-						timer = async { delay(timeLimit(clients)) }
+						timer = coroutineScope.async { delay(timeLimit(clients)) }
 						break@loop
 					}
 
 					DrawStatus.FAILED -> {
 						if (status.second != """{"data":"操作过于频繁","status":500}""") removeUser(status.second) else {
 							println("Failed, try again...(${status.second})")
-							timer = async { delay(timeLimit(clients)) }
+							timer = coroutineScope.async { delay(timeLimit(clients)) }
 						}
 					}
 
@@ -206,43 +146,28 @@ fun List<LuoGu>.draw(
 				}
 			}
 
-			println("User ${clients[it].loggedUser} drew ${x to y} with color $colorIx")
+			println("User ${clients[it].loggedUser} drew ${x to y} with color $color")
 
 			++ it
 			if (it == clients.size) it = 0
 		}
 	}
-//	}
+
 }
 
-fun LuoGu.draw(
-		timeLimit : (List<LuoGu>) -> Long = { 30 * 1000L },
-		getPos : () -> Pair<Int, Int>?,
-		getImageColor : (Int, Int) -> Int,
-		getBoardColor : (Int, Int) -> Int
-) = listOf(this).draw(timeLimit, getPos, getImageColor, getBoardColor)
-
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
-	var imgX = 0
-	var imgY = 0
-
-	draw(
-			getPos = {
-				if (imgX == - 1) null else (imgX + beginX to imgY + beginY).apply {
-					++ imgY
-					if (imgY == image.height) ++ imgX
-					if (imgX == image.width) imgX = - 1
-				}
-			},
-
-			getImageColor = { x, y ->
-				colorList.indexOfFirst { it.rgb == image.getRGB(x - beginX, y - beginY) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
-			},
-
-			getBoardColor = { x, y ->
+	PaintBoard(
+			listOf(this),
+			targetBoardColor = { x, y ->
 				boardMatrix[x][y].toString().toInt(32)
 			}
-	)
+	).run {
+		image.iterate { _, x, y ->
+			draw(x + beginX, y + beginY,
+					colorList.indexOfFirst { it.rgb == image.getRGB(x - beginX, y - beginY) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+			)
+		}
+	}
 }
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
@@ -390,49 +315,36 @@ fun transToIndex(image : BufferedImage, out : OutputStream) {
 	}
 }
 
-fun LuoGu.drawFromRemote(url : String, regex : Regex) {
-	var color = 0
+fun List<LuoGu>.drawFromRemote(url : String, regex : Regex) {
 	var posList : MutableList<Triple<Int, Int, Int>> = arrayListOf()
 
-	draw(
-			getPos = {
-				if (posList.isEmpty()) {
-					println("Getting remote data...")
-					client.executeGet(url) { resp ->
-						resp.assert()
+	PaintBoard(
+			this,
+			timeLimit = { 30000L / this.size },
+			targetBoardColor = { x, y ->
+				first().boardMatrix[x][y].toString().toInt(32)
+			}).run {
+		while (true) {
+			if (posList.isEmpty()) {
+				println("Getting remote data...")
+				currentClient.executeGet(url) { resp ->
+					resp.assert()
 
-						val content = resp.data !!
+					val content = resp.data !!
 
-						println("[GET]: $content")
+					println("[GET]: $content")
 
-//						regex.matchEntire(content)?.let {
-//							x = it.groupValues[1].toInt()
-//							y = it.groupValues[2].toInt()
-//							color = it.groupValues[3].toInt()
-//
-//							x to y
-//						}
-
-						posList = regex.findAll(content).toList().map {
-							Triple(it.groupValues[1].toInt(), it.groupValues[2].toInt(), it.groupValues[3].toInt())
-						}.toMutableList()
-					}
+					posList = regex.findAll(content).toList().map {
+						Triple(it.groupValues[1].toInt(), it.groupValues[2].toInt(), it.groupValues[3].toInt())
+					}.toMutableList()
 				}
-
-				posList.first().run {
-					posList.removeAt(0)
-					color = third
-
-					first to second
-				}
-			},
-
-			getImageColor = { _, _ ->
-				color
-			},
-
-			getBoardColor = { boardX, boardY ->
-				boardMatrix[boardX][boardY].toString().toInt(32)
 			}
-	)
+
+			posList.first().run {
+				posList.removeAt(0)
+
+				draw(first, second, third)
+			}
+		}
+	}
 }
