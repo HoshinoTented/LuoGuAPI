@@ -1,6 +1,5 @@
 package org.hoshino9.luogu.extensions.paintboard
 
-import iterate
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.OutputStream
