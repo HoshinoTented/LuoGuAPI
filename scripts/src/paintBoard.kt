@@ -223,9 +223,9 @@ fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color :
 		}
 
 		drawVerticalLine(begin.first - 1 to begin.second - 1, end.first - begin.first + 1)
-		drawVerticalLine(begin.first - 1 to end.second, end.first - begin.first + 1)
+		drawVerticalLine(begin.first to end.second, end.first - begin.first + 1)
 		drawHorizontalLine(begin.first - 1 to begin.second, end.second - begin.second + 1)
-		drawHorizontalLine(end.first to begin.second - 1, end.second - begin.second + 2)
+		drawHorizontalLine(end.first to begin.second - 1, end.second - begin.second + 1)
 	}
 }
 
