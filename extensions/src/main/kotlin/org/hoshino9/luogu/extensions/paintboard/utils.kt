@@ -1,3 +1,5 @@
+package org.hoshino9.luogu.extensions.paintboard
+
 import java.awt.image.BufferedImage
 
 inline fun iterateMatrixIndexed(width : Int, height : Int, action : (Int, Int) -> Unit) {

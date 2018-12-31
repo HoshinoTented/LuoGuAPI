@@ -33,7 +33,7 @@ class PaintBoard(
 		}
 
 		if (checkColor(x, y).not()) {
-			println("Try to org.hoshino9.luogu.extensions.paintboard.draw ($x, $y)...")
+			println("Try to draw ($x, $y)...")
 
 			loop@ while (true) {
 				println("Waiting...")

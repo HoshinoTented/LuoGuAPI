@@ -67,24 +67,6 @@ object LuoGuUtils {
 	}
 
 	/**
-	 * **TODO** move to org.hoshino9.luogu.record
-	 * 因为**你谷**不让别人爬评测记录, 所以就不能爬了
-	 * 获取评测记录
-	 * @param page Document对象, 即**你谷**主站页面
-	 * @param filter 用于过滤的函数
-	 * @return 返回一个评测记录列表
-	 *
-	 * @see Document
-	 * @see RecordStatus
-	 */
-	@Suppress("unused", "UNUSED_PARAMETER")
-	inline fun getRecordsFromPage(page : Document, filter : (RecordStatus) -> Boolean = { true }) : List<RecordStatus> {
-		TODO("""评测记录相关页面不欢迎一切爬虫行为。
-我相信如果你正在制作爬虫，一定能够看到本段文字。
-请勿再制作任何爬取评测记录的爬虫。""")
-	}
-
-	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 * @param page 任意一个**你谷**页面
 	 * @return 返回 `csrf-token`, 若找不到则返回 **null**

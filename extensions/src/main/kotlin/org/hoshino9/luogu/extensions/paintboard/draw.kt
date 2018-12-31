@@ -1,6 +1,5 @@
 package org.hoshino9.luogu.extensions.paintboard
 
-import iterate
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.*
 import java.awt.Color
@@ -77,26 +76,40 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
 	}
 }
 
-fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
 	PaintBoard(
-			listOf(this),
+			this,
 			targetBoardColor = { x, y ->
-				boardMatrix[x][y].toString().toInt(32)
+				first().boardMatrix[x][y].toString().toInt(32)
 			}
 	).run {
 		image.iterate { _, x, y ->
-			draw(x + beginX, y + beginY,
-					colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
-			)
+			var c : Throwable?
+
+			do {
+				c = try {
+					draw(x + beginX, y + beginY,
+							colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+					)
+
+					null
+				} catch (e : Throwable) {
+					e
+				}
+			} while(c != null)
 		}
 	}
+}
+
+fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+	listOf(this).drawFromImage(beginX, beginY, image)
 }
 
 fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
 
 val LuoGu.boardMatrix : List<String>
 	get() {
-		return executeGet("paintBoard/org.hoshino9.luogu.extensions.paintboard.getBoard") { resp ->
+		return executeGet("paintBoard/board") { resp ->
 			resp.assert()
 			resp.data !!.lines()
 		}
