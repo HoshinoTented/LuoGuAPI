@@ -26,33 +26,33 @@ import kotlin.math.abs
  * ```
  * 以确保能够成功编译
  */
-object PaintBoard {
-	/**
-	 * 在阅读下面的说明之前, 请先填好以下信息:
-	 * * __client_id
-	 * * _uid
-	 *
-	 * 这些信息都可以在已经登录 `LuoGu` 的浏览器(Chrome)中获得
-	 */
-	val luogu = LuoGu("您的 __client_id", "您的 _uid")
-
-	@JvmStatic
-	fun main(args : Array<String>) {
-
-	}
-
-	fun example() {
-		/**
-		 * 如果您需要将本地图片文件绘画到绘板上
-		 * 那么请向上方的 `main` 的尾部添加下面的代码
-		 */
-		luogu.drawFromImage(
-				0,		// 开始的 x 坐标
-				0,		// 开始的 y 坐标
-				File("目标图片文件的绝对路径")
-		)
-	}
-}
+//object PaintBoard {
+//	/**
+//	 * 在阅读下面的说明之前, 请先填好以下信息:
+//	 * * __client_id
+//	 * * _uid
+//	 *
+//	 * 这些信息都可以在已经登录 `LuoGu` 的浏览器(Chrome)中获得
+//	 */
+//	val luogu = LuoGu("您的 __client_id", "您的 _uid")
+//
+//	@JvmStatic
+//	fun main(args : Array<String>) {
+//
+//	}
+//
+//	fun example() {
+//		/**
+//		 * 如果您需要将本地图片文件绘画到绘板上
+//		 * 那么请向上方的 `main` 的尾部添加下面的代码
+//		 */
+//		luogu.drawFromImage(
+//				0,		// 开始的 x 坐标
+//				0,		// 开始的 y 坐标
+//				File("目标图片文件的绝对路径")
+//		)
+//	}
+//}
 
 enum class DrawStatus {
 	SUCCESSFUL,
@@ -272,7 +272,7 @@ val LuoGu.boardMatrix : List<String>
 
 val LuoGu.board : BufferedImage
 	get() {
-		return boardMatrix.image(false)
+		return boardMatrix.dropLast(1).image(false)
 	}
 
 /**
@@ -390,6 +390,7 @@ fun LuoGu.drawFromRemote(url : String, regex : Regex) {
 
 	draw(
 			getPos = {
+				println("Getting remote data...")
 				client.executeGet(url) { resp ->
 					resp.assert()
 
