@@ -6,7 +6,6 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.*
 import java.awt.Color
 import java.awt.image.BufferedImage
-import java.io.File
 import java.io.OutputStream
 import javax.imageio.ImageIO
 
@@ -55,16 +54,13 @@ val colorList = arrayOf(
 fun List<PaintUser>.drawByScheme(beginX : Int, beginY : Int, scheme : DrawScheme) {
 	AutoPainting(this).run {
 		scheme.forEach {
-			var c : Throwable?
+			var result : Result<Unit>
 
 			do {
-				c = try {
-					draw(beginX, beginY, it)
-					null
-				} catch (e : Throwable) {
-					e
+				result = draw(beginX, beginY, it).runCatching {
+					Unit
 				}
-			} while (c != null)
+			} while (result.isFailure)
 		}
 	}
 }

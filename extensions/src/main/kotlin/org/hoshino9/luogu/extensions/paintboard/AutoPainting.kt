@@ -12,7 +12,6 @@ class AutoPainting(
 
 	val users = clients.toMutableList()
 	val currentUser get() = users[it]
-	val currentClient get() = currentUser.user.luogu.client
 
 	private fun removeUser(msg : String) {
 		println("Failed, removed user: ${users[it].user}($msg)")
@@ -52,10 +51,12 @@ class AutoPainting(
 
 				if (checkColor(x, y)) break@loop
 
-				val status = users[it].draw(x, y, color)
+				val status = currentUser.draw(x, y, color)
 				when (status.first) {
 					DrawStatus.SUCCESSFUL -> {
-						println("Successful! User ${users[it]} drew ${x to y} with color $color(${status.second})")
+						println("Successful! User $currentUser drew ${x to y} with color $color(${status.second})")
+						nextUser()
+
 						break@loop
 					}
 
@@ -68,8 +69,6 @@ class AutoPainting(
 					DrawStatus.NO_LOGIN, DrawStatus.UNKNOWN -> removeUser(status.second)
 				}
 			}
-
-			nextUser()
 		}
 	}
 
