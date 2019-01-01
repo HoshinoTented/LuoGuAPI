@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.hoshino9.luogu.extensions.paintboard
 
 import java.awt.Color

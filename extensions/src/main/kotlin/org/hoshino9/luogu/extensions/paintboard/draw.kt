@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.hoshino9.luogu.extensions.paintboard
 
 import org.hoshino9.luogu.LuoGu
@@ -76,11 +78,11 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
 	}
 }
 
-fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+fun List<PaintUser>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
 	PaintBoard(
 			this,
 			targetBoardColor = { x, y ->
-				first().boardMatrix[x][y].toString().toInt(32)
+				DefaultLuoGu.boardMatrix[x][y].toString().toInt(32)
 			}
 	).run {
 		image.iterate { _, x, y ->
@@ -101,11 +103,11 @@ fun List<LuoGu>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage)
 	}
 }
 
-fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+fun PaintUser.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
 	listOf(this).drawFromImage(beginX, beginY, image)
 }
 
-fun LuoGu.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
+fun PaintUser.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
 
 val LuoGu.boardMatrix : List<String>
 	get() {
@@ -162,14 +164,13 @@ fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color :
 	}
 }
 
-fun List<LuoGu>.drawFromRemote(url : String, regex : Regex) {
+fun List<PaintUser>.drawFromRemote(url : String, regex : Regex) {
 	var posList : MutableList<Triple<Int, Int, Int>> = arrayListOf()
 
 	PaintBoard(
 			this,
-			timeLimit = { 30000L / this.size },
 			targetBoardColor = { x, y ->
-				first().boardMatrix[x][y].toString().toInt(32)
+				DefaultLuoGu.boardMatrix[x][y].toString().toInt(32)
 			}).run {
 		while (true) {
 			if (posList.isEmpty()) {

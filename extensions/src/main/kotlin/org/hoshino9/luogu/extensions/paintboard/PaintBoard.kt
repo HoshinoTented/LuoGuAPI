@@ -5,22 +5,20 @@ import org.hoshino9.luogu.LuoGu
 
 @Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
 class PaintBoard(
-		clients : List<LuoGu>,
-		val timeLimit : (List<LuoGu>) -> Long = { 30 * 1000 },
-		val targetBoardColor : (Int, Int) -> Int,
-		val coroutineScope : CoroutineScope = GlobalScope
+		clients : List<PaintUser>,
+		val targetBoardColor : (Int, Int) -> Int
 ) {
 	private var it = 0
-	private var timer = coroutineScope.async { Unit }
 
-	val clients = clients.toMutableList()
-	val currentClient get() = clients[it].client
+	val users = clients.toMutableList()
+	val currentUser get() = users[it]
+	val currentClient get() = currentUser.user.luogu.client
 
 	private fun removeUser(msg : String) {
-		println("Failed, removed user: ${clients[it].loggedUser}($msg)")
+		println("Failed, removed user: ${users[it].user}($msg)")
 
-		clients.removeAt(it)
-		if (it == clients.size) it = 0
+		users.removeAt(it)
+		if (it == users.size) it = 0
 	}
 
 	fun draw(x : Int, y : Int, color : Int) = runBlocking {
@@ -37,21 +35,16 @@ class PaintBoard(
 
 			loop@ while (true) {
 				println("Waiting...")
-				timer.await()
+				currentUser.timer.await()
 
 				if (checkColor(x, y)) break@loop
 
-				val status = clients[it].draw(x, y, color)
+				val status = users[it].draw(x, y, color)
 				when (status.first) {
-					DrawStatus.SUCCESSFUL -> {
-						timer = coroutineScope.async { delay(timeLimit(clients)) }
-						break@loop
-					}
-
+					DrawStatus.SUCCESSFUL -> break@loop
 					DrawStatus.FAILED -> {
 						if (status.second != """{"data":"操作过于频繁","status":500}""") removeUser(status.second) else {
 							println("Failed, try again...(${status.second})")
-							timer = coroutineScope.async { delay(timeLimit(clients)) }
 						}
 					}
 
@@ -59,10 +52,10 @@ class PaintBoard(
 				}
 			}
 
-			println("User ${clients[it].loggedUser} drew ${x to y} with color $color")
+			println("User ${users[it].user} drew ${x to y} with color $color")
 
 			++ it
-			if (it == clients.size) it = 0
+			if (it == users.size) it = 0
 		}
 	}
 

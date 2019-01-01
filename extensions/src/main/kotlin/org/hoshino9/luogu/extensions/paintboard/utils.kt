@@ -1,6 +1,9 @@
 package org.hoshino9.luogu.extensions.paintboard
 
+import org.hoshino9.luogu.LuoGu
 import java.awt.image.BufferedImage
+
+internal object DefaultLuoGu : LuoGu()
 
 inline fun iterateMatrixIndexed(width : Int, height : Int, action : (Int, Int) -> Unit) {
 	(0 until width).forEach { x ->
