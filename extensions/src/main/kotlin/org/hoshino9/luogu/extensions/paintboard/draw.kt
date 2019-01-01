@@ -79,7 +79,7 @@ fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
 }
 
 fun List<PaintUser>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
-	PaintBoard(
+	AutoPainting(
 			this,
 			targetBoardColor = { x, y ->
 				DefaultLuoGu.boardMatrix[x][y].toString().toInt(32)
@@ -167,7 +167,7 @@ fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color :
 fun List<PaintUser>.drawFromRemote(url : String, regex : Regex) {
 	var posList : MutableList<Triple<Int, Int, Int>> = arrayListOf()
 
-	PaintBoard(
+	AutoPainting(
 			this,
 			targetBoardColor = { x, y ->
 				DefaultLuoGu.boardMatrix[x][y].toString().toInt(32)

@@ -4,7 +4,7 @@ import kotlinx.coroutines.*
 import org.hoshino9.luogu.LuoGu
 
 @Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
-class PaintBoard(
+class AutoPainting(
 		clients : List<PaintUser>,
 		val targetBoardColor : (Int, Int) -> Int
 ) {
