@@ -9,7 +9,7 @@ build/
 out/
 
 # test
-luogu/src/test/resources/
+*/src/test/resources/
 
 # wiki
 wiki
