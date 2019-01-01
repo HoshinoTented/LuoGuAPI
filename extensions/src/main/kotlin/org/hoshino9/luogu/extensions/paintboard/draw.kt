@@ -51,6 +51,14 @@ val colorList = arrayOf(
 		Color(121, 85, 72)
 )
 
+fun List<PaintUser>.drawByScheme(beginX : Int, beginY : Int, scheme : DrawScheme) {
+	AutoPainting(this).run {
+		scheme.forEach {
+			draw(beginX, beginY, it)
+		}
+	}
+}
+
 fun List<PaintUser>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
 	AutoPainting(this).run {
 		image.iterate { _, x, y ->

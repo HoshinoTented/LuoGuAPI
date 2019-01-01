@@ -28,6 +28,12 @@ class AutoPainting(
 		return currentUser
 	}
 
+	/**
+	 * 绘画
+	 * @param x 色块的 x 坐标
+	 * @param y 色块的 y 坐标
+	 * @param color 颜色在 [colorList] 中的索引
+	 */
 	fun draw(x : Int, y : Int, color : Int) = runBlocking {
 		fun checkColor(x : Int, y : Int) : Boolean {
 			return if (targetBoardColor(x, y) == color) {
@@ -67,4 +73,7 @@ class AutoPainting(
 		}
 	}
 
+	fun draw(beginX : Int, beginY : Int, pos : ColorPos) {
+		draw(pos.x + beginX, pos.y + beginY, pos.color)
+	}
 }
