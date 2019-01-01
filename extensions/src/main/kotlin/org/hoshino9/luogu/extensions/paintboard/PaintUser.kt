@@ -28,6 +28,7 @@ class PaintUser(val user : LoggedUser, val coroutineScope : CoroutineScope = Glo
 						DrawStatus.FAILED
 					}
 
+					401 -> DrawStatus.NO_LOGIN
 					else -> DrawStatus.UNKNOWN
 				} to this["data"].toString()
 			}

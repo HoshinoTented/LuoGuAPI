@@ -13,6 +13,7 @@ import javax.imageio.ImageIO
 enum class DrawStatus {
 	SUCCESSFUL,
 	FAILED,
+	NO_LOGIN,
 	UNKNOWN
 }
 
@@ -54,36 +55,46 @@ val colorList = arrayOf(
 fun List<PaintUser>.drawByScheme(beginX : Int, beginY : Int, scheme : DrawScheme) {
 	AutoPainting(this).run {
 		scheme.forEach {
-			draw(beginX, beginY, it)
-		}
-	}
-}
-
-fun List<PaintUser>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
-	AutoPainting(this).run {
-		image.iterate { _, x, y ->
 			var c : Throwable?
 
 			do {
 				c = try {
-					draw(x + beginX, y + beginY,
-							colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
-					)
-
+					draw(beginX, beginY, it)
 					null
 				} catch (e : Throwable) {
 					e
 				}
-			} while(c != null)
+			} while (c != null)
 		}
 	}
 }
 
-fun PaintUser.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
-	listOf(this).drawFromImage(beginX, beginY, image)
-}
-
-fun PaintUser.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
+//
+//fun List<PaintUser>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+//	AutoPainting(this).run {
+//		image.iterate { _, x, y ->
+//			var c : Throwable?
+//
+//			do {
+//				c = try {
+//					draw(x + beginX, y + beginY,
+//							colorList.indexOfFirst { it.rgb == image.getRGB(x, y) }.takeIf { it != - 1 } ?: throw IllegalArgumentException("Invalid color: ${image.getRGB(x, y)}")
+//					)
+//
+//					null
+//				} catch (e : Throwable) {
+//					e
+//				}
+//			} while(c != null)
+//		}
+//	}
+//}
+//
+//fun PaintUser.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
+//	listOf(this).drawFromImage(beginX, beginY, image)
+//}
+//
+//fun PaintUser.drawFromImage(beginX : Int, beginY : Int, image : File) = drawFromImage(beginX, beginY, ImageIO.read(image))
 
 val LuoGu.boardMatrix : List<String>
 	get() {
@@ -137,34 +148,5 @@ fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color :
 		drawVerticalLine(begin.first to end.second, end.first - begin.first + 1)
 		drawHorizontalLine(begin.first - 1 to begin.second, end.second - begin.second + 1)
 		drawHorizontalLine(end.first to begin.second - 1, end.second - begin.second + 1)
-	}
-}
-
-fun List<PaintUser>.drawFromRemote(url : String, regex : Regex) {
-	var posList : MutableList<Triple<Int, Int, Int>> = arrayListOf()
-
-	AutoPainting(this).run {
-		while (true) {
-			if (posList.isEmpty()) {
-				println("Getting remote data...")
-				currentClient.executeGet(url) { resp ->
-					resp.assert()
-
-					val content = resp.data !!
-
-					println("[GET]: $content")
-
-					posList = regex.findAll(content).toList().map {
-						Triple(it.groupValues[1].toInt(), it.groupValues[2].toInt(), it.groupValues[3].toInt())
-					}.toMutableList()
-				}
-			}
-
-			posList.first().run {
-				posList.removeAt(0)
-
-				draw(first, second, third)
-			}
-		}
 	}
 }

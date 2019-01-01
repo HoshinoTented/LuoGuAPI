@@ -65,7 +65,7 @@ class AutoPainting(
 						}
 					}
 
-					DrawStatus.UNKNOWN -> removeUser(status.second)
+					DrawStatus.NO_LOGIN, DrawStatus.UNKNOWN -> removeUser(status.second)
 				}
 			}
 

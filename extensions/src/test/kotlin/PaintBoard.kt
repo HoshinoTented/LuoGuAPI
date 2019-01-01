@@ -1,6 +1,7 @@
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.extensions.paintboard.ImageDrawScheme
 import org.hoshino9.luogu.extensions.paintboard.PaintUser
-import org.hoshino9.luogu.extensions.paintboard.drawFromImage
+import org.hoshino9.luogu.extensions.paintboard.drawByScheme
 import java.nio.file.Paths
 import java.util.Properties
 import javax.imageio.ImageIO
@@ -25,6 +26,6 @@ object PaintBoard {
 
 	@JvmStatic
 	fun main(args : Array<String>) {
-		while(true) loadFromCookies().drawFromImage(642, 0, ImageIO.read(imagePath.toFile()))
+		while(true) loadFromCookies().drawByScheme(642, 0, ImageDrawScheme(ImageIO.read(imagePath.toFile())))
 	}
 }
