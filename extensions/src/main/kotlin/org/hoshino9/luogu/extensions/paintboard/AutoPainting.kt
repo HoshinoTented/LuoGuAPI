@@ -6,7 +6,7 @@ import org.hoshino9.luogu.LuoGu
 @Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
 class AutoPainting(
 		clients : List<PaintUser>,
-		val targetBoardColor : (Int, Int) -> Int
+		val targetBoardColor : (Int, Int) -> Int = { x, y -> DefaultLuoGu.boardMatrix[x][y].toString().toInt(32) }
 ) {
 	private var it = 0
 
@@ -19,6 +19,13 @@ class AutoPainting(
 
 		users.removeAt(it)
 		if (it == users.size) it = 0
+	}
+
+	private fun nextUser() : PaintUser {
+		++ it
+		if (it == users.size) it = 0
+
+		return currentUser
 	}
 
 	fun draw(x : Int, y : Int, color : Int) = runBlocking {
@@ -41,10 +48,14 @@ class AutoPainting(
 
 				val status = users[it].draw(x, y, color)
 				when (status.first) {
-					DrawStatus.SUCCESSFUL -> break@loop
+					DrawStatus.SUCCESSFUL -> {
+						println("Successful! User ${users[it]} drew ${x to y} with color $color(${status.second})")
+						break@loop
+					}
+
 					DrawStatus.FAILED -> {
-						if (status.second != """{"data":"操作过于频繁","status":500}""") removeUser(status.second) else {
-							println("Failed, try again...(${status.second})")
+						if (status.second != "操作过于频繁") removeUser(status.second) else {
+							println("Failed, turn to next user: ${nextUser()} (${status.second})")
 						}
 					}
 
@@ -52,10 +63,7 @@ class AutoPainting(
 				}
 			}
 
-			println("User ${users[it].user} drew ${x to y} with color $color")
-
-			++ it
-			if (it == users.size) it = 0
+			nextUser()
 		}
 	}
 

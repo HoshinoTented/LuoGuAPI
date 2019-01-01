@@ -51,40 +51,8 @@ val colorList = arrayOf(
 		Color(121, 85, 72)
 )
 
-/**
- * 画板绘画函数
- *
- * @param x 格子的横坐标(左上为0)
- * @param y 格子的纵坐标(左上为0)
- * @param color 颜色的代码(请自行 F12 查看 data-cid 属性 或 使用先进的 IDE 在上方的 [colorList] 预览颜色)
- */
-fun LuoGu.draw(x : Int, y : Int, color : Int) : Pair<DrawStatus, String> {
-	return executePost("paintBoard/paint",
-			listOf(
-					"x" to x,
-					"y" to y,
-					"color" to color
-			).params(), referer("paintBoard")) { resp ->
-		resp.assert()
-
-		json(resp.data !!) {
-			when (this["status"]) {
-				200 -> DrawStatus.SUCCESSFUL
-				500 -> DrawStatus.FAILED
-
-				else -> DrawStatus.UNKNOWN
-			} to this.toString()
-		}
-	}
-}
-
 fun List<PaintUser>.drawFromImage(beginX : Int, beginY : Int, image : BufferedImage) {
-	AutoPainting(
-			this,
-			targetBoardColor = { x, y ->
-				DefaultLuoGu.boardMatrix[x][y].toString().toInt(32)
-			}
-	).run {
+	AutoPainting(this).run {
 		image.iterate { _, x, y ->
 			var c : Throwable?
 
@@ -167,11 +135,7 @@ fun LuoGu.boardWithSquare(square : Pair<Pair<Int, Int>, Pair<Int, Int>>, color :
 fun List<PaintUser>.drawFromRemote(url : String, regex : Regex) {
 	var posList : MutableList<Triple<Int, Int, Int>> = arrayListOf()
 
-	AutoPainting(
-			this,
-			targetBoardColor = { x, y ->
-				DefaultLuoGu.boardMatrix[x][y].toString().toInt(32)
-			}).run {
+	AutoPainting(this).run {
 		while (true) {
 			if (posList.isEmpty()) {
 				println("Getting remote data...")

@@ -29,8 +29,25 @@ class PaintUser(val user : LoggedUser, val coroutineScope : CoroutineScope = Glo
 					}
 
 					else -> DrawStatus.UNKNOWN
-				} to this.toString()
+				} to this["data"].toString()
 			}
 		}
+	}
+
+	override fun toString() : String {
+		return user.toString()
+	}
+
+	override fun equals(other : Any?) : Boolean {
+		if (this === other) return true
+		if (other !is PaintUser) return false
+
+		if (user != other.user) return false
+
+		return true
+	}
+
+	override fun hashCode() : Int {
+		return user.hashCode()
 	}
 }
