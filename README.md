@@ -1,3 +1,4 @@
+[![Join the chat at https://gitter.im/LuoGuAPI/Lobby](https://badges.gitter.im/LuoGuAPI/Lobby.svg)](https://gitter.im/LuoGuAPI/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 # LuoGuAPI
 [**你谷**](https://www.luogu.org) 的api ~~\(然而大部分都是解析HTML\)~~  
 
