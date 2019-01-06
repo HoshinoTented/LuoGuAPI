@@ -7,6 +7,7 @@ import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils
 import org.hoshino9.okhttp.HoshinoCookieJar
+import java.io.InputStream
 
 fun emptyParams() : RequestBody {
 	return FormBody.Builder().build()
@@ -68,4 +69,14 @@ fun Response.assert() {
 	if (! isSuccessful) throw IllegalStatusCodeException(this)
 }
 
-val Response.data : String? get() = this.body()?.string()
+val Response.strData : String
+	get() {
+		return this.body() !!.string().apply {
+			// TODO LOG
+		}
+	}
+
+val Response.dataStream : InputStream
+	get() {
+		return this.body() !!.byteStream()
+	}

@@ -82,7 +82,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	fun getBenben(type : BenBenType, page : Int = 1) : List<Comment> {
 		luogu.executeGet("feed/${type.toString().toLowerCase()}?page=$page") { resp ->
 			resp.assert()
-			val content = resp.data !!
+			val content = resp.strData
 			return BenbenUtils.getBenben(Jsoup.parse(content).body())
 		}
 	}
@@ -102,7 +102,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 		).params(), referer("paste")) { resp ->
 			resp.assert()
 
-			val content = resp.data !!
+			val content = resp.strData
 			val data = globalGson.fromJson(content, StatusObject::class.java)
 
 			if (data.status != 200) throw IllegalAPIStatusCodeException(data.status, data.data ?: "")
@@ -121,7 +121,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 		val regex = Regex("""https://www\.luogu\.org/paste/(\w+)""")
 		luogu.executeGet("paste?page=$page") { resp ->
 			resp.assert()
-			val content = resp.data !!
+			val content = resp.strData
 
 			return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
 				DefaultPaste(it.groupValues[1], luogu.client)
@@ -137,7 +137,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	fun postBenben(text : String) {
 		luogu.executePost("api/feed/postBenben", listOf("content" to text).params(), referer()) { resp ->
 			resp.assert()
-			val content = resp.data !!
+			val content = resp.strData
 
 			json(content) {
 				val status = this["status"]
@@ -166,7 +166,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 				).params(), referer("problemnew/show/${solution.pid}")
 		) { resp ->
 			resp.assert()
-			val content = resp.data !!
+			val content = resp.strData
 
 			json(content) {
 				val status = this["status"] //optInt("status")
@@ -195,7 +195,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 				.build(),
 				referer("app/upload")) { resp ->
 			resp.assert()
-			val content = resp.data !!
+			val content = resp.strData
 			json (content) {
 				if (this["code"] != 201) throw IllegalAPIStatusCodeException(this["code"])
 			}
@@ -210,7 +210,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 		return luogu.executeGet("space/ajax_getchatnum") { resp ->
 			resp.assert()
 
-			json(resp.data !!) {
+			json(resp.strData) {
 				getInt("code").let { code ->
 					if (code != 200) throw IllegalAPIStatusCodeException(code, getString("message"))
 					getJSONObject("more").let { more ->
@@ -231,7 +231,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 		luogu.executeGet("app/upload") { resp ->
 			resp.assert()
 
-			val page = resp.data !!
+			val page = resp.strData
 			return PhotoUtils.getPhotos(Jsoup.parse(page))
 		}
 	}

@@ -10,7 +10,7 @@ open class DefaultDiscussInfoPage(override val id : String, override val page : 
 	override val elem : Element by lazy {
 		client.executeGet(url) {
 			it.assert()
-			Jsoup.parse(it.data).body()
+			Jsoup.parse(it.strData).body()
 		}
 	}
 

@@ -22,7 +22,7 @@ open class User(val uid : String, val client : HttpClient = defaultClient) {
 	private val page : Document by lazy {
 		client.executeGet("$baseUrl/space/show?uid=$uid") { resp ->
 			resp.assert()
-			Jsoup.parse(resp.data !!)
+			Jsoup.parse(resp.strData)
 		}
 	}
 

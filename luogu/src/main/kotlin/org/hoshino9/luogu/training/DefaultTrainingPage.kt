@@ -11,7 +11,7 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 		luogu.executeGet("training/mainpage") { resp ->
 			resp.assert()
 
-			Jsoup.parse(resp.data).body()
+			Jsoup.parse(resp.strData).body()
 		}
 	}
 

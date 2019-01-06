@@ -9,7 +9,7 @@ open class DefaultDiscussListPage(override val forumName : String, override val 
 		client.executeGet(url) { resp ->
 			resp.assert()
 
-			Jsoup.parse(resp.data).body()
+			Jsoup.parse(resp.strData).body()
 		}
 	}
 

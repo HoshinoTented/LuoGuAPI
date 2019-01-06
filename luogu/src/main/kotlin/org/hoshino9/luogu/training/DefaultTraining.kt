@@ -12,7 +12,7 @@ open class DefaultTraining(override val mid : String, val luogu : LuoGu) : Abstr
 	override val elem : Element by lazy {
 		luogu.executeGet("training/ajax_get_detail?missionid=$mid") { resp ->
 			resp.assert()
-			val content = resp.data
+			val content = resp.strData
 
 			if (content.isNullOrEmpty()) throw HTMLParseException(null, "no data")
 

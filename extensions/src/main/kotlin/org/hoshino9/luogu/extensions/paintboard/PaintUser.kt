@@ -15,7 +15,7 @@ class PaintUser(val user : LoggedUser, val coroutineScope : CoroutineScope = Glo
 				).params(), referer("paintBoard")) { resp ->
 			resp.assert()
 
-			json(resp.data !!) {
+			json(resp.strData) {
 				when (this["status"]) {
 					200 -> {
 						timer = coroutineScope.async { delay(30 * 1000) }

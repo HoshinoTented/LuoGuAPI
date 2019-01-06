@@ -12,7 +12,7 @@ open class DefaultPaste(override val id : String, val client : HttpClient = defa
 	override val elem : Element by lazy {
 		client.executeGet(url) { resp ->
 			resp.assert()
-			val content = resp.data !!
+			val content = resp.strData
 
 			Jsoup.parse(content)
 		}

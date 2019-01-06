@@ -15,7 +15,7 @@ open class UserSpacePage(val user : User, val client : OkHttpClient = defaultCli
 	override val elem : Element by lazy {
 		client.executeGet("$baseUrl/space/show?uid=${user.uid}") { resp ->
 			resp.assert()
-			resp.data !!.run(Jsoup::parse).body()
+			resp.strData.run(Jsoup::parse).body()
 		}
 	}
 

@@ -96,7 +96,7 @@ val LuoGu.boardMatrix : List<String>
 	get() {
 		return executeGet("paintBoard/board") { resp ->
 			resp.assert()
-			resp.data !!.lines()
+			resp.strData.lines()
 		}
 	}
 val LuoGu.board : BufferedImage

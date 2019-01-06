@@ -60,7 +60,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	val homePage : String
 		get() = executeGet { resp ->
 			if (resp.isSuccessful) {
-				resp.data !!
+				resp.strData
 			} else throw IllegalStatusCodeException(resp.code())
 		}
 
@@ -71,7 +71,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 		get() {
 			return executeGet { resp ->
 				resp.assert()
-				LuoGuUtils.getCsrfTokenFromPage(Jsoup.parse(resp.data !!))
+				LuoGuUtils.getCsrfTokenFromPage(Jsoup.parse(resp.strData))
 			}
 		}
 
@@ -83,7 +83,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			return executeGet { resp ->
 				resp.assert()
 
-				resp.data !!.run(Jsoup::parse).run(LuoGuUtils::getSliderPhotosFromPage)
+				resp.strData.run(Jsoup::parse).run(LuoGuUtils::getSliderPhotosFromPage)
 			}
 		}
 
@@ -112,7 +112,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	fun verifyCode(out : OutputStream) {
 		executeGet("download/captcha") { resp ->
 			resp.assert()
-			resp.body() !!.byteStream().copyTo(out)
+			resp.dataStream.copyTo(out)
 		}
 	}
 
@@ -147,7 +147,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 				.run(client::newCall)
 				.execute().let { resp ->
 					resp.assert()
-					val content = resp.data !!
+					val content = resp.strData
 
 					val data = globalGson.fromJson(content, CodeObject::class.java)
 
@@ -168,8 +168,9 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 * @return 返回一个评论列表
 	 * @see Comment
 	 */
-	@Deprecated("Benben was closed", ReplaceWith(""))
 	@JvmOverloads
+	@Suppress("DEPRECATION")
+	@Deprecated("Benben was closed", ReplaceWith(""))
 	fun publicBenben(page : Int = 1) : List<Comment> = LoggedUser(this, "Internal").getBenben(BenBenType.ALL, page)
 
 	/**
@@ -186,7 +187,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
 		return executeGet("problemnew/lists?$filter&page=$page") { resp ->
 			resp.assert()
-			ProblemListPage(Jsoup.parse(resp.data !!)).list()
+			ProblemListPage(Jsoup.parse(resp.strData)).list()
 		}
 	}
 }
