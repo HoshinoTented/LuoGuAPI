@@ -12,8 +12,7 @@ abstract class AbstractProblem : Problem {
 	open val url : String get() = "$baseUrl/problemnew/show/$id"
 
 	override val content : ProblemContent by lazy {
-		//		DefaultProblemContent(id)
-		TODO()
+		ProblemContent.parse(id)
 	}
 
 	override fun equals(other : Any?) : Boolean {

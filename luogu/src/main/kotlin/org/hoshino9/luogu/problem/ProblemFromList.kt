@@ -29,6 +29,7 @@ open class ProblemFromList(override val elem : Element) : AbstractProblem(), Has
 				?.trim() ?: throw NoSuchElementException()
 	}
 
+	// 获取最后一个 tag
 	override val difficulty : Problem.Difficulty by lazy { TODO() }
 	override val name : String by lazy { TODO() }
 	override val passPercent : Pair<String, String> by lazy {
@@ -36,5 +37,7 @@ open class ProblemFromList(override val elem : Element) : AbstractProblem(), Has
 			it.groupValues[1] to it.groupValues[2]
 		} ?: "" to ""
 	}
+
+
 	override val tags : List<LuoGuTag> by lazy { TODO() }
 }

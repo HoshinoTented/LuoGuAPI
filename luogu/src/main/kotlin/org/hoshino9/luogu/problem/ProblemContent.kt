@@ -8,11 +8,13 @@ import org.jsoup.select.Elements
 
 interface ProblemContent {
 	companion object Parser {
+		const val className = "lg-article am-g"
+
 		fun parse(id : String) : ProblemContent {
 			return emptyClient.executeGet("${LuoGuUtils.baseUrl}/problemnew/show/$id") {
 				it.assert()
 
-				Jsoup.parse(it.strData).getElementsByClass("lg-article am-g").first() !!
+				Jsoup.parse(it.strData).getElementsByClass(className).first() !!
 			}.run { parse(id, this) }
 		}
 
