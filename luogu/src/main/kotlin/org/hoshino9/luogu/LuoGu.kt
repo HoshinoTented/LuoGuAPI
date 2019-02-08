@@ -8,6 +8,7 @@ import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.data.SliderPhoto
+import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.training.DefaultTrainingPage
 import org.hoshino9.luogu.training.TrainingPage
 import org.hoshino9.luogu.problem.Problem
@@ -16,6 +17,7 @@ import org.hoshino9.luogu.problem.ProblemSearchConfig
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.io.OutputStream
 
 /**
@@ -23,7 +25,7 @@ import java.io.OutputStream
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultClient) {
+open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultClient) : AbstractLuoGuPage() {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(clientId : String, uid : String) : LuoGu = LuoGu().apply {
@@ -53,6 +55,8 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "__client_id=$value"))
 			)
 		}
+
+	override val page : Document get() = Jsoup.parse(homePage)
 
 	/**
 	 * 返回 **你谷** 主页源代码
@@ -185,9 +189,6 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	 */
 	@JvmOverloads
 	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
-		return executeGet("problemnew/lists?$filter&page=$page") { resp ->
-			resp.assert()
-			ProblemListPage(Jsoup.parse(resp.strData)).list()
-		}
+		return ProblemListPage(page, filter, client).list()
 	}
 }

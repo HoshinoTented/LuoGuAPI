@@ -2,9 +2,14 @@
 
 package org.hoshino9.luogu.problem
 
+import okhttp3.OkHttpClient
 import org.hoshino9.luogu.color.luoguColor
+import org.hoshino9.luogu.problem.tags.parseTags
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.utils.HasElement
+import org.hoshino9.luogu.utils.HttpClient
+import org.hoshino9.luogu.utils.emptyClient
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 /**
@@ -12,13 +17,17 @@ import org.jsoup.nodes.Element
  *
  * @param elem 题目的 html 元素(题目列表)
  */
-open class ProblemFromList(override val elem : Element) : AbstractProblem(), HasElement {
+open class ProblemFromList(override val elem : Element, val client : HttpClient) : AbstractProblem(), HasElement {
 	companion object {
 		private val passPercentRegex = Regex("""(\d+) /(\d+)""")
 	}
 
 	private val elemMain : Element by lazy { elem.child(0) }
 	private val passBlock : Element by lazy { elem.child(1) }
+
+	override val page : Document by lazy {
+		ProblemFromId(id, client).page
+	}
 
 	override val id : String by lazy {
 		elem
@@ -41,10 +50,6 @@ open class ProblemFromList(override val elem : Element) : AbstractProblem(), Has
 
 
 	override val tags : List<LuoGuTag> by lazy {
-		elemMain.children().last().getElementsByClass("am-badge").map { elem ->
-			if ("lg-tag" in elem.classNames()) {
-				LuoGuTag(elem.text(), elem.attr("data-tagid").toInt(), elem.luoguColor !!.toColor())
-			} else Problem.Difficulty(elem)
-		}
+		elemMain.children().last().run(::parseTags)
 	}
 }

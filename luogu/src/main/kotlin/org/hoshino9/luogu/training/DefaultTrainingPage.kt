@@ -22,7 +22,7 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 
 		mainBody.splitWith {
 			it.hasAttr(attr)
-		}.mapNotNull { it ->
+		}.mapNotNull {
 			val elem = Element("Internal")
 			it.forEach { node ->
 				if (node is TextNode && node.isBlank) return@forEach        //会有空node, 需要排除, 不仅没有用还会引发异常

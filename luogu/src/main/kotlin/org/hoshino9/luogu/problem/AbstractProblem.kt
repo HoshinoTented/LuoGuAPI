@@ -3,8 +3,9 @@
 package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.page.AbstractLuoGuPage
 
-abstract class AbstractProblem : Problem {
+abstract class AbstractProblem : AbstractLuoGuPage(), Problem {
 	/**
 	 * 题目的地址
 	 */

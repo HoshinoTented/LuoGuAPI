@@ -5,6 +5,7 @@ import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.discuss.DiscussListPage
 import org.hoshino9.luogu.problem.ProblemContent
+import org.hoshino9.luogu.problem.ProblemFromId
 import org.hoshino9.luogu.results.SignedInStatus
 import org.hoshino9.luogu.user.HasBadgeUser
 import org.junit.Before
@@ -144,6 +145,9 @@ ${it.source}
 	fun problemListTest() {
 		luogu.problemList().forEach {
 			println("${it.name}(${it.id}) ${it.tags} (${it.passPercent.first} / ${it.passPercent.second})")
+			ProblemFromId(it.id, luogu.client).let { p ->
+				println("${p.name}(${p.id}) ${p.tags}(${p.difficulty}) (${p.passPercent.first} / ${p.passPercent.second})")
+			}
 		}
 	}
 

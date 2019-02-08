@@ -52,7 +52,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 */
 	val signInStatus : SignedInStatus
 		get() {
-			val doc = luogu.homePage.run(Jsoup::parse)
+			val doc = luogu.page
 			val node = doc.getElementsByClass("am-u-md-4 lg-punch am-text-center")?.first() ?: throw NoSuchElementException()
 			return SignedInStatus(node.children())
 		}
