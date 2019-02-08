@@ -4,6 +4,7 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.discuss.DiscussListPage
+import org.hoshino9.luogu.problem.ProblemContent
 import org.hoshino9.luogu.results.SignedInStatus
 import org.hoshino9.luogu.user.HasBadgeUser
 import org.junit.Before
@@ -201,5 +202,10 @@ Content: $content
 				}
 			}
 		}
+	}
+
+	@Test
+	fun problemContent() {
+		ProblemContent.parse("P1001").run(::println)
 	}
 }

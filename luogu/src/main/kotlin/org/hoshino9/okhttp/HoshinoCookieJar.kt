@@ -8,11 +8,6 @@ import okhttp3.HttpUrl
 import java.net.CookieManager
 import java.net.HttpCookie
 
-/**
- * 只有 www.luogu.org 才能用的 CookieJar
- * 锁定 domain 为 www.luogu.org
- * 如果用在别的网站会爆炸
- */
 open class HoshinoCookieJar : CookieJar {
 	val cookieManager = CookieManager()
 

@@ -30,3 +30,12 @@ inline fun <T> Iterable<T>.splitWith(block : (T) -> Boolean) : List<List<T>> {
 
 	return result
 }
+
+inline fun <T> Iterator<T>.takeWhile(block : (T) -> Boolean) : List<T> {
+	return ArrayList<T>().also { result ->
+		while (hasNext()) {
+			val next = next()
+			if (block(next)) result.add(next) else break
+		}
+	}
+}
