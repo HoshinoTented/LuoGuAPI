@@ -1,5 +1,6 @@
 package org.hoshino9.luogu.color
 
+import org.jsoup.nodes.Element
 import java.awt.Color
 
 enum class LuoGuColor(val color : String) {
@@ -25,3 +26,8 @@ fun colorFromClass(className : String) : LuoGuColor {
 	return LuoGuColor.values().firstOrNull { it.name.equals(className.substring(6), true) }
 			?: throw NoSuchElementException(className)
 }
+
+val Element.luoguColor : LuoGuColor?
+	get() {
+		return classNames().firstOrNull { it.startsWith("lg-bg-") }?.run(::colorFromClass)
+	}

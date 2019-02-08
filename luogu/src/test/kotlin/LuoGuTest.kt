@@ -15,16 +15,6 @@ import java.nio.file.Paths
 import java.util.Properties
 import java.util.Scanner
 
-fun main() {
-	LuoGuTest().run {
-		login()
-		println("logged in: $user")
-
-		saveCookie()
-		println("save cookie")
-	}
-}
-
 class LuoGuTest {
 	companion object {
 		private val testRoot = Paths.get("src", "test", "resources")
@@ -153,7 +143,7 @@ ${it.source}
 	@Test
 	fun problemListTest() {
 		luogu.problemList().forEach {
-			println("${it.id} (${it.passPercent.first} / ${it.passPercent.second})")
+			println("${it.id} ${it.tags} (${it.passPercent.first} / ${it.passPercent.second})")
 		}
 	}
 

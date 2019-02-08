@@ -1,10 +1,23 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.color.*
 import org.hoshino9.luogu.tag.LuoGuTag
+import org.jsoup.nodes.Element
 
 interface Problem {
 	sealed class Difficulty(text : String, color : LuoGuColor) : LuoGuTag(text, - 1, color.toColor()) {
+		companion object {
+			val difficulties = arrayOf(Red, Orange, Yellow, Green, Blue, Purple, Black, Unknown)
+
+			operator fun invoke(elem : Element) : Difficulty {
+				(elem.luoguColor ?: throw IllegalArgumentException("Color not found ${elem.classNames()}")).let { color ->
+					return difficulties.first { it.color == color.toColor() }
+				}
+			}
+		}
+
 		object Red : Difficulty("入门难度", LuoGuColor.Red)
 		object Orange : Difficulty("普及-", LuoGuColor.Orange)
 		object Yellow : Difficulty("普及/提高-", LuoGuColor.Yellow)

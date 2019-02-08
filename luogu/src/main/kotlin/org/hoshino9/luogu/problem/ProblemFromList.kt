@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu.problem
 
+import org.hoshino9.luogu.color.luoguColor
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.utils.HasElement
 import org.jsoup.nodes.Element
@@ -30,7 +31,7 @@ open class ProblemFromList(override val elem : Element) : AbstractProblem(), Has
 	}
 
 	// 获取最后一个 tag
-	override val difficulty : Problem.Difficulty by lazy { TODO() }
+	override val difficulty : Problem.Difficulty by lazy { tags.first { it is Problem.Difficulty } as Problem.Difficulty }
 	override val name : String by lazy { TODO() }
 	override val passPercent : Pair<String, String> by lazy {
 		passBlock.child(0).child(0).text().run(passPercentRegex::matchEntire)?.let {
@@ -39,5 +40,11 @@ open class ProblemFromList(override val elem : Element) : AbstractProblem(), Has
 	}
 
 
-	override val tags : List<LuoGuTag> by lazy { TODO() }
+	override val tags : List<LuoGuTag> by lazy {
+		elemMain.children().last().getElementsByClass("am-badge").map { elem ->
+			if ("lg-tag" in elem.classNames()) {
+				LuoGuTag(elem.text(), elem.attr("data-tagid").toInt(), elem.luoguColor !!.toColor())
+			} else Problem.Difficulty(elem)
+		}
+	}
 }
