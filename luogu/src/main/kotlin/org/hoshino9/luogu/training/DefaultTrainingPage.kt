@@ -15,6 +15,10 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 		}
 	}
 
+	private val right : Element by lazy {
+		elem.getElementsByClass("am-list am-list-static lg-summary-list").first()
+	}
+
 	override val trainingBlocks : List<TrainingBlock> by lazy {
 		val className = "lg-article"
 		val attr = "traininglv"
@@ -33,10 +37,18 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 			if (elem.children().isEmpty()) null else TrainingBlock(elem, luogu)
 		}
 	}
-	override val passedCount : String
-		get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-	override val lastPassedTime : String
-		get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-	override val skipPercent : Pair<String, String>
-		get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+	private val passedAndLast : Pair<String, String> by lazy {
+		right.child(0).child(1).text().run(percentRegex::matchEntire) !!.groupValues.let { (_, a, b) ->
+			a to b
+		}
+	}
+
+	override val passedCount : String get() = passedAndLast.first
+	override val lastPassedBlock : String get() = passedAndLast.second
+	override val skipPercent : Pair<String, String> by lazy {
+		right.child(1).child(1).text().run(percentRegex::matchEntire) !!.groupValues.let { (_, a, b) ->
+			a to b
+		}
+	}
 }

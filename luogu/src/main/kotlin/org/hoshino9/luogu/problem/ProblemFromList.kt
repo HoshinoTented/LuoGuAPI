@@ -9,6 +9,7 @@ import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.emptyClient
+import org.hoshino9.luogu.utils.percentRegex
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -18,10 +19,6 @@ import org.jsoup.nodes.Element
  * @param elem 题目的 html 元素(题目列表)
  */
 open class ProblemFromList(override val elem : Element, val client : HttpClient) : AbstractProblem(), HasElement {
-	companion object {
-		private val passPercentRegex = Regex("""(\d+) /(\d+)""")
-	}
-
 	private val elemMain : Element by lazy { elem.child(0) }
 	private val passBlock : Element by lazy { elem.child(1) }
 
@@ -43,7 +40,7 @@ open class ProblemFromList(override val elem : Element, val client : HttpClient)
 	override val difficulty : Problem.Difficulty by lazy { tags.first { it is Problem.Difficulty } as Problem.Difficulty }
 	override val name : String by lazy { elemMain.children().let { it[it.size - 2] }.text() }
 	override val passPercent : Pair<String, String> by lazy {
-		passBlock.child(0).child(0).text().run(passPercentRegex::matchEntire)?.let {
+		passBlock.child(0).child(0).text().run(percentRegex::matchEntire)?.let {
 			it.groupValues[1] to it.groupValues[2]
 		} ?: "" to ""
 	}

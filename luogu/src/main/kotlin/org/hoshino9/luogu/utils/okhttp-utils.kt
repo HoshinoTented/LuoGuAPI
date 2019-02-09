@@ -58,7 +58,7 @@ inline fun <T> HttpClient.executeGet(url : String = "", action : (Response) -> T
 }
 
 // Client
-val emptyClient : HttpClient get() = OkHttpClient()
+val emptyClient : HttpClient /*get() */ = OkHttpClient()
 val defaultClient : HttpClient
 	get() = OkHttpClient.Builder()
 			.cookieJar(HoshinoCookieJar())

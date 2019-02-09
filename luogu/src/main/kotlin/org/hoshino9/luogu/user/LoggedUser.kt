@@ -57,7 +57,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 			return SignedInStatus(node.children())
 		}
 
-	override val spacePage : UserSpacePage by lazy { UserSpacePage(this, luogu.client) }
+	override val spacePage : LoggedUserSpacePage by lazy { LoggedUserSpacePage(this) }
 
 	/**
 	 * **你谷**签到

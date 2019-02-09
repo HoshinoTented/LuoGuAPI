@@ -153,7 +153,11 @@ ${it.source}
 
 	@Test
 	fun training() {
-		luogu.trainingPage.trainingBlocks.forEach {
+		luogu.trainingPage.also {
+			println("passed: ${it.passedCount}")
+			println("newest passed: ${it.lastPassedBlock}")
+			println("skip: ${it.skipPercent}")
+		}.trainingBlocks.forEach {
 			println(it.name)
 			it.trainings.forEach { training ->
 				print("[${training.status.content}]")
@@ -172,6 +176,7 @@ ${it.source}
 		println("$user: ${user.spacePage.username}")
 		user.spacePage.passedProblems.run(::println)
 		user.spacePage.triedProblems.run(::println)
+		user.spacePage.gugugu.run(::println)
 	}
 
 //	@Test

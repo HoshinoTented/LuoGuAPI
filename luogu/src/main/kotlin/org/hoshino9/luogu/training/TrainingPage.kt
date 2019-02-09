@@ -12,6 +12,6 @@ interface TrainingPage {
 
 	val trainingBlocks : List<TrainingBlock>
 	val passedCount : String
-	val lastPassedTime : String
+	val lastPassedBlock : String
 	val skipPercent : Pair<String, String>
 }
