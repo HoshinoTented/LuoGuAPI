@@ -96,6 +96,11 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			return DefaultTrainingPage(this)
 		}
 
+	val isLogged : Boolean
+		get() {
+			return feInjection.getJSONObject("currentUser") != null
+		}
+
 	/**
 	 * 获得当前客户端登录的用户
 	 */

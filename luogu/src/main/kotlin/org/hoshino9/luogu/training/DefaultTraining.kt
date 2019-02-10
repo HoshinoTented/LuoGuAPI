@@ -14,7 +14,7 @@ open class DefaultTraining(override val mid : String, val luogu : LuoGu) : Abstr
 			resp.assert()
 			val content = resp.strData
 
-			if (content.isNullOrEmpty()) throw HTMLParseException(null, "no data")
+			if (content.isEmpty()) throw HTMLParseException(null, "no data")
 
 			json(content) {
 				val code = getInt("code")

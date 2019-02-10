@@ -96,13 +96,14 @@ ${it.user}
 		}.run(::println)
 	}
 
-	@Test
+	//	@Test
+	@Suppress("DEPRECATION")
 	fun benbenTest() {
 		val toString : (Comment) -> String = {
 			val user = it.user
 
 			//language=TEXT
-			"""user: ${if (user is HasBadgeUser) "${user.uid}[${user.badge.text}]"  else user.uid}
+			"""user: ${if (user is HasBadgeUser) "${user.uid}[${user.badge.text}]" else user.uid}
 date: ${it.date}
 content:
 ${it.content}
@@ -179,7 +180,7 @@ ${it.source}
 		user.spacePage.gugugu.run(::println)
 	}
 
-//	@Test
+	//	@Test
 	fun paste() {
 		"LuoGu API Test".let { content ->
 			user.postPaste(content).let { paste ->

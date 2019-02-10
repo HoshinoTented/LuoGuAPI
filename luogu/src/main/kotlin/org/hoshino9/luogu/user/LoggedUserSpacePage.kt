@@ -2,12 +2,10 @@
 
 package org.hoshino9.luogu.user
 
-import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.utils.page
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 
 class LoggedUserSpacePage(val loggedUser : LoggedUser) : UserSpacePage(loggedUser) {
 	override val page : Document by lazy {
