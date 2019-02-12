@@ -8,6 +8,7 @@ import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.data.SliderPhoto
+import org.hoshino9.luogu.discuss.DiscussInfoPage
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.training.DefaultTrainingPage
 import org.hoshino9.luogu.training.TrainingPage
@@ -99,6 +100,16 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 	val isLogged : Boolean
 		get() {
 			return feInjection.getJSONObject("currentUser") != null
+		}
+
+	val posts : List<DiscussInfoPage>
+		get() {
+			return page.getElementsByClass("am-u-lg-3 am-u-md-4 lg-right").first().getElementsByTag("a").map {
+				@Suppress("ReplaceSingleLineLet")
+				it.attr("href").run(LuoGuUtils::lastValueFromUrl).let { id ->
+					DiscussInfoPage(id, client = client)
+				}
+			}
 		}
 
 	/**

@@ -208,4 +208,9 @@ Content: $content
 	fun problemContent() {
 		ProblemContent.parse("P1001").run(::println)
 	}
+
+	@Test
+	fun posts() {
+		luogu.posts.run(::println)
+	}
 }
