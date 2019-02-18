@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.record
 
-import com.google.gson.*
-import org.hoshino9.luogu.utils.globalGson
+import org.hoshino9.luogu.utils.delegate
+import org.json.JSONObject
 
 interface TestCase {
 	enum class Status(val value : Int) {
@@ -26,22 +26,28 @@ interface TestCase {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(name : String, json : String) : TestCase {
-			return globalGson.fromJson<TestCaseBean>(json, TestCaseBean::class.java).apply {
-				this.name = name
-			}
+			return invoke(name, JSONObject(json))
 		}
 
 		@JvmName("newInstance")
-		operator fun invoke(name : String, elem : JsonElement) : TestCase {
-			return globalGson.fromJson<TestCaseBean>(elem, TestCaseBean::class.java).apply {
-				this.name = name
-			}
-		}
+		operator fun invoke(name : String, elem : JSONObject) : TestCase {
+			return elem.delegate.let {
+				val desc : String by it
+				val exit_code : Int by it
+				val flag : Int by it
+				val subtask : Int by it
+				val memory : Int by it
+				val score : Int by it
+				val signal : Int by it
+				val time : Int by it
 
-		@JvmName("newInstance")
-		operator fun invoke(context : JsonDeserializationContext, name : String, elem : JsonElement) : TestCase {
-			return context.deserialize<TestCaseBean>(elem, TestCaseBean::class.java).apply {
-				this.name = name
+				TestCaseBean(
+						desc, exit_code,
+						Status.values().first { it.value == flag },
+						subtask, memory, score, signal, time
+				).apply {
+					this.name = name
+				}
 			}
 		}
 	}

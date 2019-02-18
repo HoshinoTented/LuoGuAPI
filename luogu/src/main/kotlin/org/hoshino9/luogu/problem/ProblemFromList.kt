@@ -2,13 +2,10 @@
 
 package org.hoshino9.luogu.problem
 
-import okhttp3.OkHttpClient
-import org.hoshino9.luogu.color.luoguColor
 import org.hoshino9.luogu.problem.tags.parseTags
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.utils.HttpClient
-import org.hoshino9.luogu.utils.emptyClient
 import org.hoshino9.luogu.utils.percentRegex
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element

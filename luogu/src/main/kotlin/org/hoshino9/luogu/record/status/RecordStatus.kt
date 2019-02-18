@@ -1,10 +1,9 @@
 package org.hoshino9.luogu.record.status
 
-import com.google.gson.*
-import com.google.gson.reflect.TypeToken
-import org.hoshino9.luogu.utils.globalGson
 import org.hoshino9.luogu.record.TestCase
-import java.lang.reflect.Type
+import org.hoshino9.luogu.utils.delegate
+import org.json.JSONArray
+import org.json.JSONObject
 
 interface RecordStatus {
 	enum class Status(val value : Int) {
@@ -19,36 +18,53 @@ interface RecordStatus {
 	}
 
 	data class CompileMessage(val content : String, val flag : Int) {
+		companion object {
+			operator fun invoke(obj : JSONObject) : CompileMessage {
+				return obj.delegate.let {
+					val content : String by it
+					val flag : Int by it
+
+					CompileMessage(content, flag)
+				}
+			}
+		}
+
 		val successful : Boolean get() = flag == 12
 	}
 
-	data class SubTask(val judger : Int, val memory : Int, val score : Int, val status : Status, val time : Int)
+	data class SubTask(val judger : Int, val memory : Int, val score : Int, val status : Status, val time : Int) {
+		companion object {
+			operator fun invoke(obj : JSONObject) : SubTask {
+				return obj.delegate.let {
+					val judger : Int by it
+					val memory : Int by it
+					val score : Int by it
+					val status : Int by it
+					val time : Int by it
 
-	data class Detail(val testCases : List<TestCase>, val compileMessage : CompileMessage, val subTasks : List<SubTask>) {
-		companion object Adapter : JsonDeserializer<Detail>, JsonSerializer<Detail> {
-			override fun deserialize(json : JsonElement, typeOfT : Type?, context : JsonDeserializationContext) : Detail {
-				return json.asJsonObject.run {
-					val compileMessage = context.deserialize<CompileMessage>(this["compile"], CompileMessage::class.java)
-					val subTasks = context.deserialize<List<SubTask>>(this["subtasks"], (object : TypeToken<List<SubTask>>() {}).type) ?: emptyList()
-					val testCases = keySet().mapNotNull {
-						if (it.startsWith("case")) {
-							TestCase(context, it, this[it])
-						} else null
-					}
-
-					Detail(testCases, compileMessage, subTasks)
+					SubTask(judger, memory, score, Status.values().first { it.value == status }, time)
 				}
 			}
+		}
+	}
 
-			override fun serialize(src : Detail?, typeOfSrc : Type?, context : JsonSerializationContext) : JsonElement {
-				src ?: return JsonNull.INSTANCE
-				return JsonObject().apply {
-					src.testCases.forEach {
-						this.add(it.name, context.serialize(it))
+	data class Detail(val testCases : List<TestCase>, val compileMessage : CompileMessage, val subTasks : List<SubTask>) {
+		companion object {
+			operator fun invoke(obj : JSONObject) : Detail {
+				return obj.delegate.let {
+					val compile : JSONObject by it
+					val testCases = it.obj.keySet().mapNotNull { name ->
+						name.takeIf { it.startsWith("case") }?.run {
+							TestCase(name, it.obj.getJSONObject(name))
+						}
 					}
 
-					this.add("compile", context.serialize(src.compileMessage))
-					this.add("subtasks", context.serialize(src.subTasks))
+					val subtasks : JSONArray? by it
+
+					Detail(testCases, compile.run(CompileMessage.Companion::invoke),
+							subtasks?.map {
+								SubTask(it as JSONObject)
+							} ?: emptyList())
 				}
 			}
 		}
@@ -57,12 +73,22 @@ interface RecordStatus {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(json : String) : RecordStatus {
-			return globalGson.fromJson(json, RecordStatusBean::class.java)
+			return invoke(JSONObject(json))
 		}
 
 		@JvmName("newInstance")
-		operator fun invoke(elem : JsonElement) : RecordStatus {
-			return globalGson.fromJson(elem, RecordStatusBean::class.java)
+		operator fun invoke(elem : JSONObject) : RecordStatus {
+			return elem.delegate.let {
+				val status : Int by it
+				val memory : String by it
+				val score : String by it
+				val time : String by it
+				val detail : JSONObject by it
+
+				RecordStatusBean(
+						Status.values().first { it.value == status },
+						memory, score, time, Detail(detail))
+			}
 		}
 	}
 

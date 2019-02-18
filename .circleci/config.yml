@@ -24,7 +24,9 @@ jobs:
     steps:
     - checkout
 
-    - run: ./gradlew assemble --info --warning-mode=all
+    - run:
+        name: Assemble
+        command: ./gradlew assemble --info --warning-mode=all
 
     - store_artifacts:
         path: 'luogu/build/libs'

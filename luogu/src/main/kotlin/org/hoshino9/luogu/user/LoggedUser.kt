@@ -4,7 +4,6 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.data.StatusObject
 import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.benben.BenbenUtils
@@ -104,10 +103,13 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 			resp.assert()
 
 			val content = resp.strData
-			val data = globalGson.fromJson(content, StatusObject::class.java)
+			json(content).delegate.let {
+				val status : Int by it
+				val data : String? by it
 
-			if (data.status != 200) throw IllegalAPIStatusCodeException(data.status, data.data ?: "")
-			DefaultPaste(data.data !!, luogu.client)
+				if (status != 200) throw IllegalAPIStatusCodeException(status, data ?: "")
+				DefaultPaste(data !!, luogu.client)
+			}
 		}
 	}
 

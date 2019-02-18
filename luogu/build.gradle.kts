@@ -16,7 +16,7 @@ dependencies {
 	compile(kotlin("stdlib", "1.3.10"))
 	compile("com.squareup.okhttp3", "okhttp", "3.11.0")
 	compile("org.json", "json", "20180813")
-	compile("com.google.code.gson", "gson", "2.8.5")
+//	compile("com.google.code.gson", "gson", "2.8.5")
 	compile("org.jsoup", "jsoup", "1.11.3")
 	compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0")
 	testCompile(kotlin("test-junit", "1.3.10"))
@@ -35,6 +35,8 @@ val dependenciesJar = task<Jar>("dependenciesJar") {
 	from(configurations.getByName("compile").map { if (it.isDirectory) it else zipTree(it) })
 	classifier = "dependencies"
 }
+
+extra
 
 artifacts {
 	operator fun String.invoke(obj : Any) = add(this, obj)

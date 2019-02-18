@@ -27,7 +27,9 @@ fun colorFromClass(className : String) : LuoGuColor {
 			?: throw NoSuchElementException(className)
 }
 
-val Element.luoguColor : LuoGuColor?
-	get() {
-		return classNames().firstOrNull { it.startsWith("lg-bg-") }?.run(::colorFromClass)
-	}
+private fun Element.luoguColor(prefix : String) : LuoGuColor? {
+	return classNames().firstOrNull { it.startsWith(prefix) }?.run(::colorFromClass)
+}
+
+val Element.luoguFrontColor : LuoGuColor? get() = luoguColor("lg-fg-")
+val Element.luoguBadgeColor : LuoGuColor? get() = luoguColor("lg-bg-")

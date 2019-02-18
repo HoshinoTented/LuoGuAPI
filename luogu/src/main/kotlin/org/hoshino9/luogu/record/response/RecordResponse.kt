@@ -1,7 +1,9 @@
 package org.hoshino9.luogu.record.response
 
-import org.hoshino9.luogu.utils.globalGson
 import org.hoshino9.luogu.record.status.RecordStatus
+import org.hoshino9.luogu.utils.delegate
+import org.hoshino9.luogu.utils.json
+import org.json.JSONObject
 
 interface RecordResponse {
 	val rid : String
@@ -12,8 +14,18 @@ interface RecordResponse {
 
 	companion object {
 		@JvmName("newInstance")
-		operator fun invoke(json : String) : RecordResponse {
-			return globalGson.fromJson(json, RecordResponseBean::class.java)
+		operator fun invoke(src : String) : RecordResponse {
+			return json(src) {
+				val property = delegate
+				val _channel_param : String by property
+				val type : String by property
+				val result : String by property
+				val welcome_message : JSONObject by property
+				val client_number : Int by property
+
+
+				RecordResponseBean(_channel_param, type, result, welcome_message.run(RecordStatus.Companion::invoke), client_number)
+			}
 		}
 	}
 }

@@ -3,8 +3,6 @@
 package org.hoshino9.luogu
 
 import okhttp3.Response
-import org.hoshino9.luogu.data.CodeObject
-import org.hoshino9.luogu.data.StatusObject
 import org.jsoup.nodes.Node
 
 open class IllegalStatusCodeException(val code : Any?, msg : Any? = null) : IllegalStateException("$code: $msg")
@@ -13,5 +11,3 @@ open class MatchException(val regex : Regex, val seq : CharSequence) : Exception
 open class HTMLParseException(val node : Node?, val msg : String = "") : Exception(msg)
 
 fun IllegalStatusCodeException(resp : Response) : IllegalStatusCodeException = IllegalStatusCodeException(resp.code().toString())
-fun IllegalAPIStatusCodeException(obj : CodeObject) = IllegalAPIStatusCodeException(obj.code.toString())
-fun IllegalAPIStatusCodeException(obj : StatusObject) = IllegalAPIStatusCodeException(obj.status.toString())

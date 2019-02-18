@@ -12,7 +12,7 @@ interface Problem {
 			val difficulties = arrayOf(Red, Orange, Yellow, Green, Blue, Purple, Black, Unknown)
 
 			operator fun invoke(elem : Element) : Difficulty {
-				(elem.luoguColor ?: throw IllegalArgumentException("Color not found ${elem.classNames()}")).let { color ->
+				(elem.luoguBadgeColor ?: throw IllegalArgumentException("Color not found ${elem.classNames()}")).let { color ->
 					return difficulties.first { it.color == color.toColor() }
 				}
 			}

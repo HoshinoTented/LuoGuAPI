@@ -4,7 +4,6 @@ package org.hoshino9.luogu
 
 import okhttp3.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.data.CodeObject
 import org.hoshino9.luogu.benben.BenBenType
 import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.data.SliderPhoto
@@ -169,10 +168,14 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 					resp.assert()
 					val content = resp.strData
 
-					val data = globalGson.fromJson(content, CodeObject::class.java)
+					json(content).delegate.let {
+						val code : Int by it
+						val message : String by it
 
-					if (data.code != 200) throw IllegalAPIStatusCodeException(data.code, data.message)
-					refresh()
+						if (code != 200) throw IllegalAPIStatusCodeException(code, message)
+
+						refresh()
+					}
 				}
 	}
 
