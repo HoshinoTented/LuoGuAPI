@@ -15,9 +15,7 @@ AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/l66p8yqgxg
 ~~没人用要跨什么平台QAQ~~
 
 # How to use (Real)
-您需要准备以下工具: 
-* [JDK](https://oracle.com)
-* [Gradle](https://gradle.org)
+您需要准备一个 [JDK](https://oracle.com) 并配置正确的 `JAVA_HOME`。
 
 在项目根目录下执行以下命令:
 ```bash
