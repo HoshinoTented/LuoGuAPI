@@ -4,6 +4,6 @@ import org.json.JSONObject
 import org.jsoup.nodes.Document
 
 interface LuoGuPage {
-	val feInjection : JSONObject
-	val page : Document
+	val url: String
+	val feInjection: JSONObject
 }

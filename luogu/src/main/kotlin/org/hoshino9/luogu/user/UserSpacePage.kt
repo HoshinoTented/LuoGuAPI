@@ -6,15 +6,13 @@ import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.ProblemFromId
-import org.hoshino9.luogu.utils.*
-import org.jsoup.nodes.Document
+import org.hoshino9.luogu.utils.HasElement
+import org.hoshino9.luogu.utils.emptyClient
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 open class UserSpacePage(val user : User) : AbstractLuoGuPage(), HasElement {
-	override val page : Document by lazy {
-		emptyClient.page("$baseUrl/space/show?uid=${user.uid}")
-	}
+	override val url: String = "$baseUrl/space/show?uid=${user.uid}"
 
 	override val elem : Element by lazy {
 		page.body()

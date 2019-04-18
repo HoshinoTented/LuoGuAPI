@@ -2,8 +2,9 @@ package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.utils.EQUAL
 import org.hoshino9.luogu.utils.SEPARATOR
-import org.hoshino9.luogu.tag.LuoGuTag
+import org.hoshino9.luogu.tag.ColoredLuoGuTag
 import org.hoshino9.luogu.problem.tags.ProblemStore
+import org.hoshino9.luogu.tag.LuoGuTag
 
 /**
  * **你谷** 题目列表搜索配置
@@ -13,7 +14,7 @@ import org.hoshino9.luogu.problem.tags.ProblemStore
  * @param searchContent 是否搜索题目内容(与 `keyword` 搭配)
  * @param type 题库
  *
- * @see LuoGuTag
+ * @see ColoredLuoGuTag
  * @see ProblemStore
  * @see SortMode
  */

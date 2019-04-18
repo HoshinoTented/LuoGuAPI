@@ -25,7 +25,7 @@ import java.io.OutputStream
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultClient) : AbstractLuoGuPage() {
+open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient) : AbstractLuoGuPage(client) {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(clientId : String, uid : String) : LuoGu = LuoGu().apply {
@@ -56,17 +56,7 @@ open class LuoGu @JvmOverloads constructor(val client : OkHttpClient = defaultCl
 			)
 		}
 
-	override val page : Document get() = Jsoup.parse(homePage)
-
-	/**
-	 * 返回 **你谷** 主页源代码
-	 */
-	val homePage : String
-		get() = executeGet { resp ->
-			if (resp.isSuccessful) {
-				resp.strData
-			} else throw IllegalStatusCodeException(resp.code())
-		}
+	override val url: String = LuoGuUtils.baseUrl
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个

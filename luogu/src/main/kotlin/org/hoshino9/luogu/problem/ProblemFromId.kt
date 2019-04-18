@@ -2,17 +2,14 @@ package org.hoshino9.luogu.problem
 
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils
-import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.page.LuoGuPage
 import org.hoshino9.luogu.problem.tags.parseTags
-import org.hoshino9.luogu.tag.LuoGuTag
+import org.hoshino9.luogu.tag.ColoredLuoGuTag
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-open class ProblemFromId(override val id : String, val client : OkHttpClient) : AbstractProblem(), HasElement, ProblemPage {
+open class ProblemFromId(override val id: String, client: OkHttpClient) : AbstractProblem(client), HasElement, ProblemPage {
 	companion object {
 		private val regex = Regex(""" \w+ (.+)""")
 	}
@@ -58,7 +55,7 @@ open class ProblemFromId(override val id : String, val client : OkHttpClient) : 
 		}
 	}
 
-	override val tags : List<LuoGuTag> by lazy {
+	override val tags: List<ColoredLuoGuTag> by lazy {
 		ls.child(3).run(::parseTags)
 	}
 }

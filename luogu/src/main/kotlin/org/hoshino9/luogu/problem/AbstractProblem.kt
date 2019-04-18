@@ -4,13 +4,13 @@ package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.utils.HttpClient
 
-abstract class AbstractProblem : AbstractLuoGuPage(), Problem {
+abstract class AbstractProblem(client: HttpClient) : AbstractLuoGuPage(client), Problem {
 	/**
 	 * 题目的地址
 	 */
-	@Suppress("SpellCheckingInspection")
-	open val url : String get() = "$baseUrl/problemnew/show/$id"
+	override val url: String get() = "$baseUrl/problemnew/show/$id"
 
 	override val content : ProblemContent by lazy {
 		ProblemContent.parse(id)

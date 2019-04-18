@@ -25,6 +25,11 @@ fun <K : Any, V : Any> Iterable<Pair<K, V>>.params() : RequestBody {
 // Headers
 fun referer(url : String = "") : Headers = Headers.Builder().add("referer", "${LuoGuUtils.baseUrl}/$url").build()
 
+val emptyHeaders: Headers
+	get() {
+		return Headers.Builder().build()
+	}
+
 // Request
 fun LuoGu.postRequest(url : String, body : RequestBody, headers : Headers) : Request = Request.Builder()
 		.url("${LuoGuUtils.baseUrl}/$url")
@@ -34,8 +39,9 @@ fun LuoGu.postRequest(url : String, body : RequestBody, headers : Headers) : Req
 		.build()
 
 @JvmOverloads
-fun getRequest(url : String = "") : Request = Request.Builder()
+fun getRequest(url: String = "", headers: Headers): Request = Request.Builder()
 		.url(url)
+		.headers(headers)
 		.addHeader("User-Agent", USER_AGENT)
 		.build()
 
@@ -50,9 +56,9 @@ inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyPa
 	}
 }
 
-inline fun <T> LuoGu.executeGet(url : String = "", action : (Response) -> T) : T = client.executeGet("${LuoGuUtils.baseUrl}/$url", action)
-inline fun <T> HttpClient.executeGet(url : String = "", action : (Response) -> T) : T {
-	return newCall(getRequest(url)).execute().use { resp ->
+inline fun <T> LuoGu.executeGet(url: String = "", headers: Headers = emptyHeaders, action: (Response) -> T): T = client.executeGet("${LuoGuUtils.baseUrl}/$url", headers, action)
+inline fun <T> HttpClient.executeGet(url: String = "", headers: Headers = emptyHeaders, action: (Response) -> T): T {
+	return newCall(getRequest(url, headers)).execute().use { resp ->
 		resp.run(action)
 	}
 }

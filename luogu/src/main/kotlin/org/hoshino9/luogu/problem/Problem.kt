@@ -3,11 +3,11 @@
 package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.color.*
-import org.hoshino9.luogu.tag.LuoGuTag
+import org.hoshino9.luogu.tag.ColoredLuoGuTag
 import org.jsoup.nodes.Element
 
 interface Problem {
-	sealed class Difficulty(text : String, color : LuoGuColor) : LuoGuTag(text, - 1, color.toColor()) {
+	sealed class Difficulty(text: String, color: LuoGuColor) : ColoredLuoGuTag(text, - 1, color.toColor()) {
 		companion object {
 			val difficulties = arrayOf(Red, Orange, Yellow, Green, Blue, Purple, Black, Unknown)
 
@@ -48,7 +48,7 @@ interface Problem {
 	/**
 	 * 题目的标签
 	 */
-	val tags : List<LuoGuTag>
+	val tags: List<ColoredLuoGuTag>
 
 	/**
 	 * 题目内容

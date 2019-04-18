@@ -3,9 +3,9 @@
 package org.hoshino9.luogu.problem.tags
 
 import org.hoshino9.luogu.color.LuoGuColor
-import org.hoshino9.luogu.tag.LuoGuTag
+import org.hoshino9.luogu.tag.ColoredLuoGuTag
 
-sealed class ProblemStore(text : String, data : Int) : LuoGuTag(text, data, LuoGuColor.Purple.toColor())
+sealed class ProblemStore(text: String, data: Int) : ColoredLuoGuTag(text, data, LuoGuColor.Purple.toColor())
 
 object LuoGu : ProblemStore("洛谷题库", 1)
 object CodeForces : ProblemStore("CodeForces", 13)
