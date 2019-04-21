@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "CanBeParameter", "unused")
 
-package org.hoshino9.luogu.extensions.paintboard
+package org.hoshino9.luogu.paintboard
 
 import org.json.JSONArray
 import java.awt.image.BufferedImage

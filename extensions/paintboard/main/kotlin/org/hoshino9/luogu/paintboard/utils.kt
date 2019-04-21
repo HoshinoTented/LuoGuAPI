@@ -1,4 +1,4 @@
-package org.hoshino9.luogu.extensions.paintboard
+package org.hoshino9.luogu.paintboard
 
 import org.hoshino9.luogu.LuoGu
 import java.awt.image.BufferedImage

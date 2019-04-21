@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package org.hoshino9.luogu.extensions.paintboard
+package org.hoshino9.luogu.paintboard
 
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.*

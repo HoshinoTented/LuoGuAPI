@@ -1,7 +1,7 @@
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.extensions.paintboard.ImageDrawScheme
-import org.hoshino9.luogu.extensions.paintboard.PaintUser
-import org.hoshino9.luogu.extensions.paintboard.drawByScheme
+import org.hoshino9.luogu.paintboard.ImageDrawScheme
+import org.hoshino9.luogu.paintboard.PaintUser
+import org.hoshino9.luogu.paintboard.drawByScheme
 import java.nio.file.Paths
 import java.util.Properties
 import javax.imageio.ImageIO

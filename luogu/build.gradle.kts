@@ -3,17 +3,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm")
 	maven
 }
-
-group = "org.hoshino9"
-version = "0.0.1"
 
 val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(KotlinSourceSet::class).kotlin
 
 dependencies {
-	compile(kotlin("stdlib", "1.3.10"))
+	compile(kotlin("stdlib"))
 	compile("com.squareup.okhttp3", "okhttp", "3.11.0")
 	compile("org.json", "json", "20180813")
 	compile("org.jsoup", "jsoup", "1.11.3")
@@ -26,12 +22,12 @@ tasks.withType<KotlinCompile> {
 
 val sourcesJar = task<Jar>("sourcesJar") {
 	from(sourceSets.getByName("main").kotlin)
-	classifier = "sources"
+	archiveClassifier.set("sources")
 }
 
 val dependenciesJar = task<Jar>("dependenciesJar") {
 	from(configurations.getByName("compile").map { if (it.isDirectory) it else zipTree(it) })
-	classifier = "dependencies"
+	archiveClassifier.set("dependencies")
 }
 
 artifacts {
