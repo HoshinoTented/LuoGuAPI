@@ -4,9 +4,6 @@ plugins {
 	kotlin("jvm") version "1.3.30"
 }
 
-group = "org.hoshino9"
-version = "0.0.1"
-
 repositories {
 	jcenter()
 }
@@ -15,6 +12,9 @@ allprojects {
 	apply {
 		plugin("kotlin")
 	}
+
+	group = parent?.group?.let { prefix -> "$prefix.$name" } ?: "org.hoshino9"
+	version = parent?.version ?: "0.0.1"
 
 	repositories {
 		jcenter()
