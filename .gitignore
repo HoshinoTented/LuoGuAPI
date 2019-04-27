@@ -8,11 +8,8 @@
 build/
 out/
 
-# test
-*/src/test/resources/
+# test resources
+/testResources/
 
 # wiki
 wiki
-
-# internal test
-internal-*
