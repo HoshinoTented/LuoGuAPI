@@ -26,7 +26,7 @@ jobs:
 
     - run:
         name: Assemble
-        command: ./gradlew assemble --info --warning-mode=all
+        command: ./gradlew assemble --info --stacktrace --warning-mode=all --no-daemon
 
     - store_artifacts:
         path: 'luogu/build/libs'
