@@ -19,14 +19,14 @@ open class User(val uid : String, val client : HttpClient = defaultClient) {
 		}
 	}
 
-	private val page : Document by lazy {
+	private val page : Document = run {
 		client.executeGet("$baseUrl/space/show?uid=$uid") { resp ->
 			resp.assert()
 			Jsoup.parse(resp.strData)
 		}
 	}
 
-	open val spacePage : UserSpacePage by lazy { UserSpacePage(this) }
+	open val spacePage : UserSpacePage = run { UserSpacePage(this) }
 
 	override fun equals(other : Any?) : Boolean {
 		if (this === other) return true

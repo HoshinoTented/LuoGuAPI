@@ -12,7 +12,7 @@ abstract class AbstractProblem(client: HttpClient) : AbstractLuoGuPage(client), 
 	 */
 	override val url: String get() = "$baseUrl/problemnew/show/$id"
 
-	override val content : ProblemContent by lazy {
+	override val content : ProblemContent = run {
 		ProblemContent.parse(id)
 	}
 

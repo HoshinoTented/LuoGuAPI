@@ -11,20 +11,20 @@ open class DefaultTrainingBlock(override val elem : Element, val luogu : LuoGu)
 		private val passedPercentRegex = Regex("""(\d+) / (\d+) 达成""")
 	}
 
-	override val trainingLv : String by lazy {
+	override val trainingLv : String = run {
 		val attr = "traininglv"
 		elem.child(0).attr(attr)
 	}
 
-	override val name : String by lazy {
+	override val name : String = run {
 		elem.child(0).text()
 	}
 
-	override val description : String by lazy {
+	override val description : String = run {
 		elem.childNode(1).toString().trim()
 	}
 
-	override val passPercent : Pair<String, String> by lazy {
+	override val passPercent : Pair<String, String> = run {
 		val tagName = "strong"
 		val text = elem.getElementsByTag(tagName).first().text()
 
@@ -36,7 +36,7 @@ open class DefaultTrainingBlock(override val elem : Element, val luogu : LuoGu)
 		} ?: throw MatchException(passedPercentRegex, text)
 	}
 
-	override val trainings : List<Training> by lazy {
+	override val trainings : List<Training> = run {
 		val tagName = "section"
 
 		elem.getElementsByTag(tagName).map {

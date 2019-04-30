@@ -7,20 +7,20 @@ import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Element
 
 open class DefaultPhoto(override val elem : Element) : AbstractPhoto(), HasElement {
-	private val leftElem : Element by lazy { elem.child(0) }
-	private val rightElem : Element by lazy { elem.child(1) }
+	private val leftElem : Element = run { elem.child(0) }
+	private val rightElem : Element = run { elem.child(1) }
 
-	override val date : String by lazy {
+	override val date : String = run {
 		leftElem.child(2).run {
 			textNodes().lastOrNull { it.text().isNotBlank() }?.text()?.trim() ?: throw HTMLParseException(this)
 		}
 	}
 
-	override val user : User by lazy {
+	override val user : User = run {
 		leftElem.child(2).child(0).attr("href").run(LuoGuUtils::userFromUrl)
 	}
 
-	override val url : String by lazy {
+	override val url : String = run {
 		rightElem.child(0).child(0).text()
 	}
 }

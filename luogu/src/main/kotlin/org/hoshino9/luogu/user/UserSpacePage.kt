@@ -14,18 +14,18 @@ import org.jsoup.select.Elements
 open class UserSpacePage(val user : User) : AbstractLuoGuPage(), HasElement {
 	override val url: String = "$baseUrl/space/show?uid=${user.uid}"
 
-	override val elem : Element by lazy {
+	override val elem : Element = run {
 		page.body()
 	}
 
-	protected val rights : Elements by lazy {
+	protected val rights : Elements = run {
 		elem.getElementsByClass("lg-article am-hide-sm")
 	}
 
 	/**
 	 * 用户名
 	 */
-	open val username : String by lazy {
+	open val username : String = run {
 		feInjection.getJSONObject("currentMeta").getString("title").dropLast(4)
 	}
 
@@ -33,7 +33,7 @@ open class UserSpacePage(val user : User) : AbstractLuoGuPage(), HasElement {
 	 * 用户的签名
 	 * **Nullable**
 	 */
-	open val introduction : Element by lazy {
+	open val introduction : Element = run {
 		TODO()
 	}
 
@@ -42,7 +42,7 @@ open class UserSpacePage(val user : User) : AbstractLuoGuPage(), HasElement {
 	 * 返回一个 List
 	 * 题目的pid
 	 */
-	open val passedProblems : List<Problem> by lazy {
+	open val passedProblems : List<Problem> = run {
 		parseProblems(rights[0].children())
 	}
 

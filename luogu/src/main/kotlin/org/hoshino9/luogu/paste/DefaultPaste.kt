@@ -7,9 +7,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 open class DefaultPaste(override val id : String, val client : HttpClient = defaultClient) : AbstractPaste(), HasElement {
-	private val body : Element by lazy { elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem) }
+	private val body : Element = run { elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem) }
 
-	override val elem : Element by lazy {
+	override val elem : Element = run {
 		client.executeGet(url) { resp ->
 			resp.assert()
 			val content = resp.strData
@@ -18,19 +18,19 @@ open class DefaultPaste(override val id : String, val client : HttpClient = defa
 		}
 	}
 
-	override val user : User by lazy {
+	override val user : User = run {
 		body.child(0).child(0).attr("href").run(LuoGuUtils::userFromUrl)
 	}
 
-	override val date : String by lazy {
+	override val date : String = run {
 		body.child(0).textNodes()[1].text().trim().substring(6)
 	}
 
-	override val isPublic : Boolean by lazy {
+	override val isPublic : Boolean = run {
 		body.child(1).text() == "公开"
 	}
 
-	override val source : String by lazy {
+	override val source : String = run {
 		body.children().last().text()
 	}
 

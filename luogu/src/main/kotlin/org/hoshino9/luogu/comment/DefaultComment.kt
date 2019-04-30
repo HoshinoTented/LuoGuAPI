@@ -14,21 +14,21 @@ import org.jsoup.nodes.Node
  * @param elem 评论的HTML代码
  */
 open class DefaultComment(override val elem : Element) : AbstractComment(), HasElement {
-	protected val mainBlock : Element by lazy { elem.child(1) }
-	protected val header : Element by lazy { mainBlock.child(0).child(0) }
-	protected val commentMain : Element by lazy { mainBlock.child(1) }
+	protected val mainBlock : Element = run { elem.child(1) }
+	protected val header : Element = run { mainBlock.child(0).child(0) }
+	protected val commentMain : Element = run { mainBlock.child(1) }
 
-	override val user : User by lazy {
+	override val user : User = run {
 		User(header.child(0))
 	}
 
-	override val date : String by lazy {
+	override val date : String = run {
 		header.textNodes().run {
 			get(lastIndex - 1).toString().trim()
 		}
 	}
 
-	override val content : List<Node> by lazy {
+	override val content : List<Node> = run {
 		commentMain
 				.child(0)
 				.childNodes()

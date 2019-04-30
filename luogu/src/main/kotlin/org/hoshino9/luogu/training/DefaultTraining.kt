@@ -9,7 +9,7 @@ import org.jsoup.nodes.Element
 import java.lang.IllegalArgumentException
 
 open class DefaultTraining(override val mid : String, val luogu : LuoGu) : AbstractTraining(), HasElement {
-	override val elem : Element by lazy {
+	override val elem : Element = run {
 		luogu.executeGet("training/ajax_get_detail?missionid=$mid") { resp ->
 			resp.assert()
 			val content = resp.strData

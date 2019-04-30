@@ -8,15 +8,15 @@ import org.hoshino9.luogu.utils.page
 import org.jsoup.nodes.Document
 
 class LoggedUserSpacePage(val loggedUser : LoggedUser) : UserSpacePage(loggedUser) {
-	override val page : Document by lazy {
+	override val page : Document = run {
 		loggedUser.luogu.client.page("${LuoGuUtils.baseUrl}/space/show?uid=${user.uid}")
 	}
 
-	override val username : String by lazy {
+	override val username : String = run {
 		feInjection.getJSONObject("currentUser").getString("name")
 	}
 
-	val introductionSrc : String by lazy {
+	val introductionSrc : String = run {
 		feInjection.getJSONObject("currentUser").getString("introduce")
 	}
 
@@ -25,14 +25,14 @@ class LoggedUserSpacePage(val loggedUser : LoggedUser) : UserSpacePage(loggedUse
 	 * 返回一个 List
 	 * 题目的pid
 	 */
-	val triedProblems : List<Problem> by lazy {
+	val triedProblems : List<Problem> = run {
 		parseProblems(rights[2].children())
 	}
 
 	/**
 	 * 咕值
 	 */
-	val gugugu : Int by lazy {
+	val gugugu : Int = run {
 		elem.getElementById("highchart-guzhi").parent().children().last().child(0).text().toInt()
 	}
 }

@@ -7,7 +7,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 
 open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasElement {
-	override val elem : Element by lazy {
+	override val elem : Element = run {
 		luogu.executeGet("training/mainpage") { resp ->
 			resp.assert()
 
@@ -15,11 +15,11 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 		}
 	}
 
-	private val right : Element by lazy {
+	private val right : Element = run {
 		elem.getElementsByClass("am-list am-list-static lg-summary-list").first()
 	}
 
-	override val trainingBlocks : List<TrainingBlock> by lazy {
+	override val trainingBlocks : List<TrainingBlock> = run {
 		val className = "lg-article"
 		val attr = "traininglv"
 		val mainBody = elem.getElementsByClass(className).last().childNodes()
@@ -38,7 +38,7 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 		}
 	}
 
-	private val passedAndLast : Pair<String, String> by lazy {
+	private val passedAndLast : Pair<String, String> = run {
 		right.child(0).child(1).text().run(percentRegex::matchEntire) !!.groupValues.let { (_, a, b) ->
 			a to b
 		}
@@ -46,7 +46,7 @@ open class DefaultTrainingPage(val luogu : LuoGu) : AbstractTrainingPage(), HasE
 
 	override val passedCount : String get() = passedAndLast.first
 	override val lastPassedBlock : String get() = passedAndLast.second
-	override val skipPercent : Pair<String, String> by lazy {
+	override val skipPercent : Pair<String, String> = run {
 		right.child(1).child(1).text().run(percentRegex::matchEntire) !!.groupValues.let { (_, a, b) ->
 			a to b
 		}

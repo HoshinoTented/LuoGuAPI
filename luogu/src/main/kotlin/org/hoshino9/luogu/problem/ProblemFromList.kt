@@ -16,14 +16,14 @@ import org.jsoup.nodes.Element
  * @param elem 题目的 html 元素(题目列表)
  */
 open class ProblemFromList(override val elem: Element, client: HttpClient) : AbstractProblem(client), HasElement {
-	private val elemMain : Element by lazy { elem.child(0) }
-	private val passBlock : Element by lazy { elem.child(1) }
+	private val elemMain : Element = run { elem.child(0) }
+	private val passBlock : Element = run { elem.child(1) }
 
-	override val page : Document by lazy {
+	override val page : Document = run {
 		ProblemFromId(id, client).page
 	}
 
-	override val id : String by lazy {
+	override val id : String = run {
 		elem
 				.children()
 				.first()
@@ -34,16 +34,16 @@ open class ProblemFromList(override val elem: Element, client: HttpClient) : Abs
 	}
 
 	// 获取最后一个 tag
-	override val difficulty : Problem.Difficulty by lazy { tags.first { it is Problem.Difficulty } as Problem.Difficulty }
-	override val name : String by lazy { elemMain.children().let { it[it.size - 2] }.text() }
-	override val passPercent : Pair<String, String> by lazy {
+	override val difficulty : Problem.Difficulty = run { tags.first { it is Problem.Difficulty } as Problem.Difficulty }
+	override val name : String = run { elemMain.children().let { it[it.size - 2] }.text() }
+	override val passPercent : Pair<String, String> = run {
 		passBlock.child(0).child(0).text().run(percentRegex::matchEntire)?.let {
 			it.groupValues[1] to it.groupValues[2]
 		} ?: "" to ""
 	}
 
 
-	override val tags: List<ColoredLuoGuTag> by lazy {
+	override val tags: List<ColoredLuoGuTag> = run {
 		elemMain.children().last().run(::parseTags)
 	}
 }

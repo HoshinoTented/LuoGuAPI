@@ -6,11 +6,11 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 
 open class DiscussComment(elem : Element) : DefaultComment(elem) {
-	override val user : User by lazy {
+	override val user : User = run {
 		getUserFromDiscussHeader(header)
 	}
 
-	override val content : List<Node> by lazy {
+	override val content : List<Node> = run {
 		commentMain.children()
 	}
 }

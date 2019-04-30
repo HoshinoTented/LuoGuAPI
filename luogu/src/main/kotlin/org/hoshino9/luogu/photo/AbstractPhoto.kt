@@ -5,7 +5,7 @@ import org.hoshino9.luogu.*
 abstract class AbstractPhoto : Photo {
 	private val urlRegex = Regex("""https://cdn.luogu.org/upload/pic/(\d+)\.(jpg|png|gif)""")
 
-	override val id : String by lazy {
+	override val id : String = run {
 		urlRegex.matchEntire(url)?.run {
 			groupValues[1]
 		} ?: throw MatchException(urlRegex, url)
