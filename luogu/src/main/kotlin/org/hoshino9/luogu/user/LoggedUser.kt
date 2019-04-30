@@ -34,7 +34,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 		 * @param luogu 已经登陆过的洛谷客户端
 		 * @return 返回一个 LoggedUser 对象
 		 *
-		 * @see LuoGuUtils.getUserIdFromPage
+		 * @see LuoGuUtils.userIdFromPage
 		 */
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LoggedUser {

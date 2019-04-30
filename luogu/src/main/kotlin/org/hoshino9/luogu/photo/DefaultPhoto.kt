@@ -17,7 +17,7 @@ open class DefaultPhoto(override val elem : Element) : AbstractPhoto(), HasEleme
 	}
 
 	override val user : User by lazy {
-		leftElem.child(2).child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
+		leftElem.child(2).child(0).attr("href").run(LuoGuUtils::userFromUrl)
 	}
 
 	override val url : String by lazy {

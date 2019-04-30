@@ -15,7 +15,7 @@ open class HasBadgeUser(uid: String, val badge: ColoredLuoGuTag) : User(uid) {
 			val name = element.child(0)
 			val badge = element.child(1)
 
-			return HasBadgeUser(LuoGuUtils.getUserFromUrl(name.attr("href")).uid, UserBadge(badge.text(), name.luoguFrontColor !!.toColor()))
+			return HasBadgeUser(LuoGuUtils.userFromUrl(name.attr("href")).uid, UserBadge(badge.text(), name.luoguFrontColor !!.toColor()))
 		}
 	}
 }

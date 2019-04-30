@@ -35,7 +35,7 @@ open class ProblemFromId(override val id: String, client: OkHttpClient) : Abstra
 	}
 
 	override val author : User by lazy {
-		ls.child(1).children().last().child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
+		ls.child(1).children().last().child(0).attr("href").run(LuoGuUtils::userFromUrl)
 	}
 
 	override val difficulty : Problem.Difficulty by lazy {

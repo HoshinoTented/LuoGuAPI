@@ -17,7 +17,6 @@ import org.hoshino9.luogu.problem.ProblemSearchConfig
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import java.io.OutputStream
 
 /**
@@ -65,7 +64,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		get() {
 			return executeGet { resp ->
 				resp.assert()
-				LuoGuUtils.getCsrfTokenFromPage(Jsoup.parse(resp.strData))
+				LuoGuUtils.csrfTokenFromPage(Jsoup.parse(resp.strData))
 			}
 		}
 
@@ -77,7 +76,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			return executeGet { resp ->
 				resp.assert()
 
-				resp.strData.run(Jsoup::parse).run(LuoGuUtils::getSliderPhotosFromPage)
+				resp.strData.run(Jsoup::parse).run(LuoGuUtils::sliderPhotosFromPage)
 			}
 		}
 

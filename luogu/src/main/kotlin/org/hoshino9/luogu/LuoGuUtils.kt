@@ -4,24 +4,23 @@ package org.hoshino9.luogu
 
 import okhttp3.HttpUrl
 import org.hoshino9.luogu.data.SliderPhoto
-import org.hoshino9.luogu.record.status.RecordStatus
 import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
 	const val domain = "www.luogu.org"
 	const val baseUrl = "https://$domain"
-	val httpUrl : HttpUrl get() = HttpUrl.get(baseUrl)
+	val httpUrl: HttpUrl get() = HttpUrl.get(baseUrl)
 
-	fun lastValueFromUrl(url : String) : String {
+	fun lastValueFromUrl(url: String): String {
 		return url.substringAfterLast('=')
 	}
 
-	fun nameFromUrl(url : String) : String {
+	fun nameFromUrl(url: String): String {
 		return url.substringAfterLast('/')
 	}
 
-	fun getUserFromUrl(url : String) : User {
+	fun userFromUrl(url: String): User {
 		return User(lastValueFromUrl(url))
 	}
 
@@ -32,23 +31,21 @@ object LuoGuUtils {
 	 *
 	 * @see Document
 	 */
-	fun getSliderPhotosFromPage(page : Document) : List<SliderPhoto> {
+	fun sliderPhotosFromPage(page: Document): List<SliderPhoto> {
 		val name = "lg-slider"
-		return page.getElementById(name)?.run {
-			children().firstOrNull()?.run {
-				children().filter {
-					it.className() != "clone"
-				}.mapNotNull {
-					val linkElement = it.children().firstOrNull() ?: return@mapNotNull null
-					val imgElement = linkElement.children().firstOrNull()
-					if (imgElement == null) {
-						SliderPhoto(null, linkElement.attr("src"))
-					} else {
-						SliderPhoto(linkElement.attr("href"), imgElement.attr("src"))
-					}
-				}
-			} ?: throw NoSuchElementException("first child of $name")
-		} ?: throw NoSuchElementException(name)
+		val outerElement = page.getElementById(name) ?: throw NoSuchElementException(name)
+		val element = outerElement.children().firstOrNull() ?: throw NoSuchElementException("first child of $name")
+		return element.children().filter {
+			it.className() != "clone"
+		}.mapNotNull {
+			val linkElement = it.children().firstOrNull() ?: return@mapNotNull null
+			val imgElement = linkElement.children().firstOrNull()
+			if (imgElement == null) {
+				SliderPhoto(null, linkElement.attr("src"))
+			} else {
+				SliderPhoto(linkElement.attr("href"), imgElement.attr("src"))
+			}
+		}
 	}
 
 	/**
@@ -58,7 +55,7 @@ object LuoGuUtils {
 	 *
 	 * @see Document
 	 */
-	fun getUserIdFromPage(document : Document) : String? {
+	fun userIdFromPage(document: Document): String? {
 		return (document.body()
 				.getElementsByAttribute("myuid")
 				.firstOrNull()
@@ -71,7 +68,8 @@ object LuoGuUtils {
 	 * @param page 任意一个**你谷**页面
 	 * @return 返回 `csrf-token`, 若找不到则返回 **null**
 	 */
-	fun getCsrfTokenFromPage(page : Document) : String {
-		return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content") ?: throw HTMLParseException(page)
+	fun csrfTokenFromPage(page: Document): String {
+		return page.head().getElementsByTag("meta").firstOrNull { it?.attr("name") == "csrf-token" }?.attr("content")
+				?: throw HTMLParseException(page)
 	}
 }

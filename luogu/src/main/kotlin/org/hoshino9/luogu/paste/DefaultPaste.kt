@@ -19,7 +19,7 @@ open class DefaultPaste(override val id : String, val client : HttpClient = defa
 	}
 
 	override val user : User by lazy {
-		body.child(0).child(0).attr("href").run(LuoGuUtils::getUserFromUrl)
+		body.child(0).child(0).attr("href").run(LuoGuUtils::userFromUrl)
 	}
 
 	override val date : String by lazy {
