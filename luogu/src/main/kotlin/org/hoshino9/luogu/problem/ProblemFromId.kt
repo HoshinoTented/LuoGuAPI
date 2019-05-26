@@ -9,12 +9,12 @@ import org.hoshino9.luogu.utils.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
-open class ProblemFromId(override val id: String, client: OkHttpClient) : AbstractProblem(client), HasElement, ProblemPage {
+open class ProblemFromId(override val id: String, client: OkHttpClient) : AbstractProblem(client), ProblemPage {
 	companion object {
 		private val regex = Regex(""" \w+ (.+)""")
 	}
 
-	override val elem : Element by lazy {
+	val elem: Element by lazy {
 		page.body()
 	}
 

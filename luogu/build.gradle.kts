@@ -13,6 +13,21 @@ dependencies {
 	compile("org.json", "json", "20180813")
 	compile("org.jsoup", "jsoup", "1.11.3")
 	testCompile(kotlin("test-junit", "1.3.10"))
+
+	val plugins = listOf(
+			"comment",
+			"discuss",
+			"training",
+			"paintboard",
+			"photo",
+			"paste",
+			"problem").map {
+		":extensions:$it"
+	}.toTypedArray()
+
+	plugins.forEach {
+		testCompile(project(it))
+	}
 }
 
 val sourcesJar = task<Jar>("sourcesJar") {

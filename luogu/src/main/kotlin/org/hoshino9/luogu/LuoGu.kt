@@ -2,15 +2,12 @@
 
 package org.hoshino9.luogu
 
-import okhttp3.*
+import okhttp3.Cookie
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.benben.BenBenType
-import org.hoshino9.luogu.comment.Comment
 import org.hoshino9.luogu.data.SliderPhoto
-import org.hoshino9.luogu.discuss.DiscussInfoPage
 import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.training.DefaultTrainingPage
-import org.hoshino9.luogu.training.TrainingPage
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.ProblemListPage
 import org.hoshino9.luogu.problem.ProblemSearchConfig
@@ -80,24 +77,9 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			}
 		}
 
-	val trainingPage : TrainingPage
-		get() {
-			return DefaultTrainingPage(this)
-		}
-
 	val isLogged : Boolean
 		get() {
 			return feInjection.getJSONObject("currentUser") != null
-		}
-
-	val posts : List<DiscussInfoPage>
-		get() {
-			return page.getElementsByClass("am-u-lg-3 am-u-md-4 lg-right").first().getElementsByTag("a").map {
-				@Suppress("ReplaceSingleLineLet")
-				it.attr("href").run(LuoGuUtils::lastValueFromUrl).let { id ->
-					DiscussInfoPage(id, client = client)
-				}
-			}
 		}
 
 	/**
@@ -173,17 +155,6 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			resp.assert()
 		}
 	}
-
-	/**
-	 * 公开的犇犇列表
-	 * @param page 页面序号
-	 * @return 返回一个评论列表
-	 * @see Comment
-	 */
-	@JvmOverloads
-	@Suppress("DEPRECATION")
-	@Deprecated("Benben was closed", ReplaceWith(""))
-	fun publicBenben(page : Int = 1) : List<Comment> = LoggedUser(this, "Internal").getBenben(BenBenType.ALL, page)
 
 	/**
 	 * 题目列表

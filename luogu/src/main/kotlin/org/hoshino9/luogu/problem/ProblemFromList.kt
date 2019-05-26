@@ -4,7 +4,6 @@ package org.hoshino9.luogu.problem
 
 import org.hoshino9.luogu.problem.tags.parseTags
 import org.hoshino9.luogu.tag.ColoredLuoGuTag
-import org.hoshino9.luogu.utils.HasElement
 import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.percentRegex
 import org.jsoup.nodes.Document
@@ -15,7 +14,7 @@ import org.jsoup.nodes.Element
  *
  * @param elem 题目的 html 元素(题目列表)
  */
-open class ProblemFromList(override val elem: Element, client: HttpClient) : AbstractProblem(client), HasElement {
+open class ProblemFromList(val elem: Element, client: HttpClient) : AbstractProblem(client) {
 	private val elemMain : Element by lazy { elem.child(0) }
 	private val passBlock : Element by lazy { elem.child(1) }
 
