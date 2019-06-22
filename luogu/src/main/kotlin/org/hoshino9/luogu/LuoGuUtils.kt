@@ -3,7 +3,6 @@
 package org.hoshino9.luogu
 
 import okhttp3.HttpUrl
-import org.hoshino9.luogu.data.SliderPhoto
 import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 
@@ -31,7 +30,7 @@ object LuoGuUtils {
 	 *
 	 * @see Document
 	 */
-	fun sliderPhotosFromPage(page: Document): List<SliderPhoto> {
+	fun sliderPhotosFromPage(page: Document): List<LuoGu.SliderPhoto> {
 		val name = "lg-slider"
 		val outerElement = page.getElementById(name) ?: throw NoSuchElementException(name)
 		val element = outerElement.children().firstOrNull() ?: throw NoSuchElementException("first child of $name")
@@ -41,9 +40,9 @@ object LuoGuUtils {
 			val linkElement = it.children().firstOrNull() ?: return@mapNotNull null
 			val imgElement = linkElement.children().firstOrNull()
 			if (imgElement == null) {
-				SliderPhoto(null, linkElement.attr("src"))
+				LuoGu.SliderPhoto(null, linkElement.attr("src"))
 			} else {
-				SliderPhoto(linkElement.attr("href"), imgElement.attr("src"))
+				LuoGu.SliderPhoto(linkElement.attr("href"), imgElement.attr("src"))
 			}
 		}
 	}
