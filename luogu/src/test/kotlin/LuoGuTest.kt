@@ -9,8 +9,8 @@ import org.hoshino9.luogu.paste.postPaste
 import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.problem.ProblemContent
 import org.hoshino9.luogu.problem.ProblemFromId
-import org.hoshino9.luogu.results.SignedInStatus
 import org.hoshino9.luogu.training.trainingPage
+import org.hoshino9.luogu.user.LoggedUser
 import org.junit.Before
 import org.junit.Test
 import java.nio.file.Files
@@ -70,7 +70,7 @@ open class LuoGuTest {
 
 	@Test
 	fun signInTest() {
-		val toString : (SignedInStatus.Thing) -> String = {
+		val toString: (LoggedUser.SignedInStatus.Thing) -> String = {
 			"${it.name}: ${it.description}"
 		}
 

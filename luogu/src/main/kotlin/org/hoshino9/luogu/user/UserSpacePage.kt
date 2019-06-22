@@ -10,6 +10,8 @@ import org.hoshino9.luogu.utils.emptyClient
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
+// FIXME: UserSpacePage 合并到 User 里
+
 open class UserSpacePage(val user: User) : AbstractLuoGuPage() {
 	override val url: String = "$baseUrl/space/show?uid=${user.uid}"
 

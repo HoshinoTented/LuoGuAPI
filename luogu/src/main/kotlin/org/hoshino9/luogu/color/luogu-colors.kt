@@ -3,6 +3,8 @@ package org.hoshino9.luogu.color
 import org.jsoup.nodes.Element
 import java.awt.Color
 
+// FIXME: 这个等着删吧
+
 enum class LuoGuColor(val color : String) {
 	Pink("F495A0"),
 	Red("E74C3C"),

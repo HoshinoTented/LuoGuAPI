@@ -6,7 +6,6 @@ import okhttp3.Cookie
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.data.SliderPhoto
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.ProblemListPage
@@ -22,6 +21,8 @@ import java.io.OutputStream
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient) : AbstractLuoGuPage(client) {
+	data class SliderPhoto(val url: String?, val img: String)
+
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(clientId : String, uid : String) : LuoGu = LuoGu().apply {
