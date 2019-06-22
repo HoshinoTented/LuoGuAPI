@@ -7,7 +7,8 @@ val plugins = listOf(
 		"paintboard",
 		"photo",
 		"paste",
-		"problem").map {
+		"problem",
+		"record").map {
 	":extensions:$it"
 }.toTypedArray()
 

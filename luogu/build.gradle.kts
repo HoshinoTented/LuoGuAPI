@@ -21,7 +21,8 @@ dependencies {
 			"paintboard",
 			"photo",
 			"paste",
-			"problem").map {
+			"problem",
+			"record").map {
 		":extensions:$it"
 	}.toTypedArray()
 

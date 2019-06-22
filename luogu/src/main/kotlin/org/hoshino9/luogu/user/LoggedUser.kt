@@ -5,7 +5,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.hoshino9.luogu.*
 import org.hoshino9.luogu.problem.Solution
-import org.hoshino9.luogu.record.Record
 import org.hoshino9.luogu.results.SignedInStatus
 import org.hoshino9.luogu.utils.*
 import org.json.JSONObject
@@ -57,39 +56,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	fun signIn() {
 		return luogu.executeGet("index/ajax_punch") { resp ->
 			resp.assert()
-		}
-	}
-
-	/**
-	 * 提交题解
-	 * @param solution 题解对象
-	 * @return 返回 Record 对象
-	 *
-	 * @see Solution
-	 * @see Record
-	 */
-	@JvmOverloads
-	fun postSolution(solution : Solution, verifyCode : String = "") : Record {
-		return luogu.executePost("api/problem/submit/${solution.pid}",
-				listOf(
-						"code" to solution.code,
-						"lang" to solution.language.value.toString(),
-						"enableO2" to if (solution.enableO2) "1" else "0",
-						"verify" to verifyCode
-				).params(), referer("problemnew/show/${solution.pid}")
-		) { resp ->
-			resp.assert()
-			val content = resp.strData
-
-			json(content) {
-				val status = this["status"] //optInt("status")
-				val data = this["data"]
-
-				if (status == 200) {
-					data as JSONObject
-					Record(data.get("rid").toString())
-				} else throw IllegalAPIStatusCodeException(status, data)
-			}
 		}
 	}
 

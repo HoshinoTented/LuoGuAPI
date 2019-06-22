@@ -4,7 +4,6 @@ package org.hoshino9.luogu
 
 import okhttp3.HttpUrl
 import org.hoshino9.luogu.data.SliderPhoto
-import org.hoshino9.luogu.record.status.RecordStatus
 import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 

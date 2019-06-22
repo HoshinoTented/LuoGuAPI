@@ -1,4 +1,5 @@
 import org.hoshino9.luogu.problem.Solution
+import org.hoshino9.luogu.record.postSolution
 
 fun main(args : Array<String>) {
 	LuoGuTest().apply {
