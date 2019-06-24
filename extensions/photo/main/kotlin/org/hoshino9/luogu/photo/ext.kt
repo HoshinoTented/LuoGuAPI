@@ -43,6 +43,6 @@ fun LoggedUser.deletePhoto(photo: Photo) {
  */
 fun getPhotos(list: Element): List<Photo> {
 	return list.getElementsByClass("lg-table-row").map {
-		Photo(it)
+		Photo.Factory(it).newInstance()
 	}
 }
