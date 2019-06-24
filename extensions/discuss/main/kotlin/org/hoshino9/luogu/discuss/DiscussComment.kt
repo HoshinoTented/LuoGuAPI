@@ -5,8 +5,7 @@ import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 
-class DiscussComment
-private constructor() {
+interface DiscussComment {
 	open class Factory(elem: Element) : Comment.Factory(elem) {
 		override val user: User
 			get() {

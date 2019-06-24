@@ -7,15 +7,8 @@ import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
-data class Paste(
-		val id: String,
-		val user: User,
-		val url: String,
-		val date: String,
-		val source: String,
-		val isPublic: Boolean
-) {
-	open class Factory(open val id: String, val client: HttpClient = defaultClient) {
+interface Paste {
+	open class Factory(override val id: String, val client: HttpClient = defaultClient) : Paste {
 		protected val body: Element get() = elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem)
 
 		val elem: Element
@@ -28,23 +21,39 @@ data class Paste(
 				}
 			}
 
-		open val url: String get() = "${LuoGuUtils.baseUrl}/paste/$id"
+		override val url: String get() = "${LuoGuUtils.baseUrl}/paste/$id"
 
-		open val user: User
+		override val user: User
 			get() = body.child(0).child(0).attr("href").run(LuoGuUtils::userFromUrl)
 
-		open val date: String
+		override val date: String
 			get() = body.child(0).textNodes()[1].text().trim().substring(6)
 
-		open val isPublic: Boolean get() = body.child(1).text() == "公开"
+		override val isPublic: Boolean get() = body.child(1).text() == "公开"
 
-		open val source: String get() = body.children().last().text()
+		override val source: String get() = body.children().last().text()
 
 		fun newInstance(): Paste {
-			return Paste(id, user, url, date, source, isPublic)
+			return PasteData(id, user, url, date, source, isPublic)
 		}
 	}
 
+	val id: String
+	val user: User
+	val url: String
+	val date: String
+	val source: String
+	val isPublic: Boolean
+}
+
+data class PasteData(
+		override val id: String,
+		override val user: User,
+		override val url: String,
+		override val date: String,
+		override val source: String,
+		override val isPublic: Boolean
+) : Paste {
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is Paste) return false
