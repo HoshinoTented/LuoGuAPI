@@ -1,4 +1,4 @@
-package org.hoshino9.luogu.experimental.problem
+package org.hoshino9.luogu.problem.experimental
 
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.page.ExperimentalLuoGuPage

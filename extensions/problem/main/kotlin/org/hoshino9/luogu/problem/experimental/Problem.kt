@@ -1,6 +1,5 @@
-package org.hoshino9.luogu.experimental.problem
+package org.hoshino9.luogu.problem.experimental
 
-import org.hoshino9.luogu.tag.ColoredLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 
 /**
