@@ -1,11 +1,14 @@
 package org.hoshino9.luogu.record
 
 import okhttp3.Request
+import okhttp3.Response
 import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.USER_AGENT
 import org.hoshino9.luogu.record.listener.OnMessageType
 import org.hoshino9.luogu.record.listener.RecordListener
+import org.hoshino9.luogu.record.response.RecordResponse
 
 abstract class AbstractRecord : Record {
 	override fun listen(client : LuoGu, listener : OnMessageType) : WebSocket {
@@ -13,7 +16,7 @@ abstract class AbstractRecord : Record {
 				Request.Builder()
 						.url("wss://ws.luogu.org/ws")
 						.addHeader("User-Agent", USER_AGENT)
-						.addHeader("Cookie", "__client_id=${client.clientId}")
+						.addHeader("Cookie", "__client_id=${client.clientId}; _uid=${client.uid}")
 						.build(),
 				RecordListener.Builder().onOpen { socket, _ ->
 					socket.send(Record.message(rid))

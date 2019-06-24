@@ -56,9 +56,9 @@ object LuoGuUtils {
 	 */
 	fun userIdFromPage(document: Document): String? {
 		return (document.body()
-				.getElementsByAttribute("myuid")
+				.getElementsByAttribute("uid")
 				.firstOrNull()
-				?.attr("myuid")
+				?.attr("uid")
 				.orEmpty()).takeIf { it.isNotEmpty() }
 	}
 

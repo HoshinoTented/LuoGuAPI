@@ -84,7 +84,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 		@JvmName("newInstance")
 		operator fun invoke(luogu : LuoGu) : LoggedUser {
 			if (luogu.isLogged.not()) throw IllegalArgumentException("no logged in")
-			return LoggedUser(luogu, luogu.myuid)
+			return LoggedUser(luogu, luogu.uid)
 		}
 	}
 
@@ -159,7 +159,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	 */
 	fun doFollow(user : User, isFollow : Boolean = true) : Boolean {
 		return if (luogu.isLogged) {
-			luogu.executeGet("space/show?uid=${user.uid}&myuid=${this.uid}&follow=${if (isFollow) 1 else 0}") {
+			luogu.executeGet("space/show?uid=${user.uid}&uid=${this.uid}&follow=${if (isFollow) 1 else 0}") {
 				it.assert()
 
 				true

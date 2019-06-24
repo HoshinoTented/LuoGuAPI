@@ -80,8 +80,8 @@ interface RecordStatus {
 		operator fun invoke(elem : JSONObject) : RecordStatus {
 			return elem.delegate.let {
 				val status : Int by it
-				val memory : String by it
-				val score : String by it
+				val memory: String? by it
+				val score: String? by it
 				val time : String by it
 				val detail : JSONObject by it
 
@@ -93,8 +93,8 @@ interface RecordStatus {
 	}
 
 	val status : Status
-	val memory : String
-	val score : String
+	val memory: String?
+	val score: String?
 	val time : String
 	val detail : Detail
 }

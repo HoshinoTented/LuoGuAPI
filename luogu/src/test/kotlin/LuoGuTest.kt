@@ -64,7 +64,7 @@ open class LuoGuTest {
 
 	fun saveCookie() {
 		config.setProperty("__client_id", luogu.clientId)
-		config.setProperty("_uid", luogu.myuid)
+		config.setProperty("_uid", luogu.uid)
 		config.store(Files.newOutputStream(configPath), null)
 	}
 

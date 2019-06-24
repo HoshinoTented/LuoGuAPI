@@ -27,13 +27,13 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		@JvmName("newInstance")
 		operator fun invoke(clientId : String, uid : String) : LuoGu = LuoGu().apply {
 			this.clientId = clientId
-			this.myuid = uid
+			this.uid = uid
 
 			refresh()
 		}
 	}
 
-	var myuid : String
+	var uid: String
 		get() {
 			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" }?.value().orEmpty()
 		}
@@ -152,7 +152,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	}
 
 	fun logout() {
-		executeGet("login/logout?uid=$myuid") { resp ->
+		executeGet("login/logout?uid=$uid") { resp ->
 			resp.assert()
 		}
 	}

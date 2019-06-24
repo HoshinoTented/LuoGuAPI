@@ -10,6 +10,6 @@ open class DefaultRecordListener : RecordListener() {
 	}
 
 	override fun onMessage(webSocket : WebSocket, text : String) {
-		onMessageClosure(webSocket, RecordResponse(text))
+		onMessageClosure(webSocket, text)
 	}
 }
