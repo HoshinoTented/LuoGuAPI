@@ -201,7 +201,7 @@ ${it.source}
 
 	@Test
 	fun discuss() {
-		DiscussListPage("", client = luogu.client).let { list ->
+		DiscussListPage.Factory("", 1, luogu.client).newInstance().let { list ->
 			list.discusses.first().infoPage.let { info ->
 				info.mainComment.run {
 					"""User: $user
