@@ -47,7 +47,7 @@ open class UserSpacePage(val user: User) : AbstractLuoGuPage() {
 		parseProblems(rights[0].children())
 	}
 
-	val avatar : String get() = "https:://cdn.luogu.org/upload/usericon/${user.uid}.png"
+	val avatar: String get() = "https://cdn.luogu.org/upload/usericon/${user.uid}.png"
 
 	protected fun parseProblems(es : Elements) : List<Problem> {
 		return es.mapNotNull { elem ->
