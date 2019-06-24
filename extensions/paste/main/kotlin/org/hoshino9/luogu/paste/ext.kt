@@ -29,7 +29,7 @@ fun LoggedUser.postPaste(code: String, public: Boolean = true, verifyCode: Strin
 			val data: String? by it
 
 			if (status != 200) throw IllegalAPIStatusCodeException(status, data ?: "")
-			DefaultPaste(data !!, luogu.client)
+			Paste.Factory(data !!, luogu.client).newInstance()
 		}
 	}
 }
@@ -48,7 +48,7 @@ fun LoggedUser.pasteList(page: Int = 1): List<Paste> {
 		val content = resp.strData
 
 		return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
-			DefaultPaste(it.groupValues[1], luogu.client)
+			Paste.Factory(it.groupValues[1], luogu.client).newInstance()
 		}.toList()
 	}
 }

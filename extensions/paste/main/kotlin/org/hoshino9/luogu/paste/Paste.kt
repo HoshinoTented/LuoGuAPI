@@ -15,7 +15,7 @@ data class Paste(
 		val source: String,
 		val isPublic: Boolean
 ) {
-	open class DefaultPaste(open val id: String, val client: HttpClient = defaultClient) {
+	open class Factory(open val id: String, val client: HttpClient = defaultClient) {
 		protected val body: Element get() = elem.getElementsByClass("lg-article").first() ?: throw HTMLParseException(elem)
 
 		val elem: Element
