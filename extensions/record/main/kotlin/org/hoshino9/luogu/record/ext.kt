@@ -2,11 +2,11 @@
 
 package org.hoshino9.luogu.record
 
+import com.google.gson.JsonObject
 import org.hoshino9.luogu.IllegalAPIStatusCodeException
 import org.hoshino9.luogu.problem.Solution
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
-import org.json.JSONObject
 
 /**
  * 提交题解
@@ -30,11 +30,11 @@ fun LoggedUser.postSolution(solution: Solution, verifyCode: String = ""): Record
 		val content = resp.strData
 
 		json(content) {
-			val status = this["status"] //optInt("status")
+			val status = this["status"]?.asInt //optInt("status")
 			val data = this["data"]
 
 			if (status == 200) {
-				data as JSONObject
+				data as JsonObject
 				Record(data.get("rid").toString())
 			} else throw IllegalAPIStatusCodeException(status, data)
 		}

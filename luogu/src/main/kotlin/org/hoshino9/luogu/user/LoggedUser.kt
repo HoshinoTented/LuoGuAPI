@@ -130,7 +130,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 			resp.assert()
 			val content = resp.strData
 			json (content) {
-				if (this["code"] != 201) throw IllegalAPIStatusCodeException(this["code"])
+				if (this["code"]?.asInt != 201) throw IllegalAPIStatusCodeException(this["code"])
 			}
 		}
 	}
@@ -144,10 +144,10 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 			resp.assert()
 
 			json(resp.strData) {
-				getInt("code").let { code ->
-					if (code != 200) throw IllegalAPIStatusCodeException(code, getString("message"))
-					getJSONObject("more").let { more ->
-						more.getInt("messagenum") to more.getInt("noticenum")
+				get("code")?.asInt.let { code ->
+					if (code != 200) throw IllegalAPIStatusCodeException(code, get("message").asString)
+					get("more").asJsonObject.let { more ->
+						more.get("messagenum").asInt to more.get("noticenum").asInt
 					}
 				}
 			}

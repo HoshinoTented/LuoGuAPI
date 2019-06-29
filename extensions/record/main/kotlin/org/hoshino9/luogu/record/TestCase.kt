@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.record
 
+import com.google.gson.JsonObject
 import org.hoshino9.luogu.utils.delegate
-import org.json.JSONObject
 
 interface TestCase {
 	enum class Status(val value : Int) {
@@ -26,11 +26,11 @@ interface TestCase {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(name : String, json : String) : TestCase {
-			return invoke(name, JSONObject(json))
+			return invoke(name, org.hoshino9.luogu.utils.json(json))
 		}
 
 		@JvmName("newInstance")
-		operator fun invoke(name : String, elem : JSONObject) : TestCase {
+		operator fun invoke(name: String, elem: JsonObject): TestCase {
 			return elem.delegate.let {
 				val desc : String by it
 				val exit_code : Int by it

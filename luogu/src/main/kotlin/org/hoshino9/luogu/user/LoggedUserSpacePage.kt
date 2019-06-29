@@ -15,11 +15,11 @@ class LoggedUserSpacePage(val loggedUser : LoggedUser) : UserSpacePage(loggedUse
 	}
 
 	override val username : String by lazy {
-		feInjection.getJSONObject("currentUser").getString("name")
+		feInjection.get("currentUser").asJsonObject.get("name").asString
 	}
 
 	val introductionSrc : String by lazy {
-		feInjection.getJSONObject("currentUser").getString("introduce")
+		feInjection.get("currentUser").asJsonObject.get("introduce").asString
 	}
 
 	/**

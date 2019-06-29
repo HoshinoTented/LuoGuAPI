@@ -34,7 +34,7 @@ interface DiscussListPage {
 			get() {
 				return "am-g lg-table-bg0 lg-table-row".let { className ->
 					elem.getElementsByClass(className).map {
-						DiscussNode.Factory(it, client).newInstance()
+						DiscussNode.Factory(it, client)
 					}
 				}
 			}

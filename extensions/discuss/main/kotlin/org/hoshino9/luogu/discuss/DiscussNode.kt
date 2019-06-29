@@ -16,8 +16,8 @@ interface DiscussNode {
 
 		override val url: String get() = LuoGuUtils.baseUrl + midTop.attr("href")
 		override val id: String get() = LuoGuUtils.lastValueFromUrl(url)
-		override val forum: DiscussListPage get() = DiscussListPage.Factory(midBottom.child(0).attr("href").run(LuoGuUtils::lastValueFromUrl), 1, client).newInstance()
-		override val infoPage: DiscussInfoPage get() = DiscussInfoPage.Factory(id, 1, client).newInstance()
+		override val forum: DiscussListPage get() = DiscussListPage.Factory(midBottom.child(0).attr("href").run(LuoGuUtils::lastValueFromUrl), 1, client)
+		override val infoPage: DiscussInfoPage get() = DiscussInfoPage.Factory(id, 1, client)
 		override val postDate: String get() = midBottom.childNode(2).toString().substring(2)
 		override val replyCount: Int get() = left.children().last().text().substringBefore('个').toInt()
 		override val user: User get() = left.child(0).run(User.Companion::invoke)

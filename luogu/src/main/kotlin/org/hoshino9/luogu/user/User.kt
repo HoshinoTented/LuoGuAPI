@@ -13,7 +13,7 @@ open class User(val uid : String, val client : HttpClient = defaultClient) {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(elem : Element) : User {
-			if (elem.children().size != 1) return HasBadgeUser(elem)
+//			if (elem.children().size != 1) return HasBadgeUser(elem)
 
 			return elem.child(0).attr("href").run(LuoGuUtils::userFromUrl)
 		}

@@ -1,9 +1,8 @@
 package org.hoshino9.luogu.page
 
-import org.json.JSONObject
-import org.jsoup.nodes.Document
+import com.google.gson.JsonObject
 
 interface LuoGuPage {
 	val url: String
-	val feInjection: JSONObject
+	val feInjection: JsonObject
 }

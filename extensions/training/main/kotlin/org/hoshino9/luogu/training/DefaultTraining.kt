@@ -17,10 +17,10 @@ open class DefaultTraining(override val mid: String, val luogu: LuoGu) : Abstrac
 			if (content.isEmpty()) throw HTMLParseException(null, "no data")
 
 			json(content) {
-				val code = getInt("code")
+				val code: Int? by delegate
 
-				if (code != 200) throw IllegalStatusCodeException(code, getString("message"))
-				Jsoup.parse(getJSONObject("more").getString("html")).body()
+				if (code != 200) throw IllegalStatusCodeException(code, get("message").asString)
+				Jsoup.parse(getAsJsonObject("more").get("html").asString).body()
 			}
 		}
 	}

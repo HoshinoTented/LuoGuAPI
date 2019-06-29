@@ -43,7 +43,7 @@ open class ProblemFromId(override val id: String, client: OkHttpClient) : Abstra
 	}
 
 	override val name : String by lazy {
-		feInjection.getJSONObject("currentMeta").getString("title").run(regex::matchEntire) !!.groupValues[1]
+		feInjection.get("currentMeta").asJsonObject.get("title").asString.run(regex::matchEntire) !!.groupValues[1]
 	}
 
 	override val passPercent : Pair<String, String> by lazy {

@@ -9,10 +9,11 @@ val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(Kotlin
 
 dependencies {
 	compile(kotlin("stdlib"))
+	compile(kotlin("script-runtime"))
+	compile("com.google.code.gson", "gson", "2.8.5")
 	compile("com.squareup.okhttp3", "okhttp", "3.11.0")
-	compile("org.json", "json", "20180813")
 	compile("org.jsoup", "jsoup", "1.11.3")
-	testCompile(kotlin("test-junit", "1.3.10"))
+	testCompile(kotlin("test-junit"))
 
 	val plugins = listOf(
 			"comment",

@@ -1,8 +1,8 @@
 package org.hoshino9.luogu.page
 
+import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.utils.*
-import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URLDecoder
@@ -20,7 +20,7 @@ abstract class AbstractLuoGuPage(open val client: OkHttpClient = emptyClient) : 
 			}
 		}
 
-	override val feInjection : JSONObject by lazy {
+	override val feInjection: JsonObject by lazy {
 		json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
 	}
 }

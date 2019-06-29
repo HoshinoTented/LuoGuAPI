@@ -19,13 +19,13 @@ interface DiscussInfoPage {
 
 		override val mainComment: Comment by lazy {
 			val className = "am-comment am-comment-danger"
-			Comment.Factory(elem.getElementsByClass(className).first()).newInstance()
+			DiscussComment.Factory(elem.getElementsByClass(className).first())
 		}
 
 		override val comments: List<Comment> by lazy {
 			val className = "am-comment am-comment-primary"
 			elem.getElementsByClass(className).map {
-				DiscussComment.Factory(it).newInstance()
+				DiscussComment.Factory(it)
 			}
 		}
 

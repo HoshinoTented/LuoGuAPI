@@ -27,7 +27,7 @@ open class UserSpacePage(val user: User) : AbstractLuoGuPage() {
 	 * 用户名
 	 */
 	open val username : String by lazy {
-		feInjection.getJSONObject("currentMeta").getString("title").dropLast(4)
+		feInjection.get("currentMeta").asJsonObject.get("title").asString.dropLast(4)
 	}
 
 	/**

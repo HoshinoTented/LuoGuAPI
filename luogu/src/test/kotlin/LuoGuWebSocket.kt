@@ -26,7 +26,7 @@ fun LuoGu.listen(record: Record) {
 //				println("memory / time: $memory / $time")
 //				println("all test case:")
 //				detail.testCases.forEach {
-//					println("""${it.name}: $score""")
+//					println("""${it.title}: $score""")
 //				}
 //			}
 //		} else println("heart beat")

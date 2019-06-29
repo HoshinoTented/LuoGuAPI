@@ -80,7 +80,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 
 	val isLogged : Boolean
 		get() {
-			return feInjection.getJSONObject("currentUser") != null
+			return feInjection.get("currentUser") != null
 		}
 
 	/**

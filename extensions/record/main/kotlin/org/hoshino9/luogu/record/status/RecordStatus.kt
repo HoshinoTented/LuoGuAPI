@@ -1,9 +1,9 @@
 package org.hoshino9.luogu.record.status
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import org.hoshino9.luogu.record.TestCase
 import org.hoshino9.luogu.utils.delegate
-import org.json.JSONArray
-import org.json.JSONObject
 
 interface RecordStatus {
 	enum class Status(val value : Int) {
@@ -19,7 +19,7 @@ interface RecordStatus {
 
 	data class CompileMessage(val content : String, val flag : Int) {
 		companion object {
-			operator fun invoke(obj : JSONObject) : CompileMessage {
+			operator fun invoke(obj: JsonObject): CompileMessage {
 				return obj.delegate.let {
 					val content : String by it
 					val flag : Int by it
@@ -34,7 +34,7 @@ interface RecordStatus {
 
 	data class SubTask(val judger : Int, val memory : Int, val score : Int, val status : Status, val time : Int) {
 		companion object {
-			operator fun invoke(obj : JSONObject) : SubTask {
+			operator fun invoke(obj: JsonObject): SubTask {
 				return obj.delegate.let {
 					val judger : Int by it
 					val memory : Int by it
@@ -50,20 +50,20 @@ interface RecordStatus {
 
 	data class Detail(val testCases : List<TestCase>, val compileMessage : CompileMessage, val subTasks : List<SubTask>) {
 		companion object {
-			operator fun invoke(obj : JSONObject) : Detail {
+			operator fun invoke(obj: JsonObject): Detail {
 				return obj.delegate.let {
-					val compile : JSONObject by it
-					val testCases = it.obj.keySet().mapNotNull { name ->
+					val compile: JsonObject by it
+					val testCases = it.original.keySet().mapNotNull { name ->
 						name.takeIf { it.startsWith("case") }?.run {
-							TestCase(name, it.obj.getJSONObject(name))
+							TestCase(name, it.original.getAsJsonObject(name))
 						}
 					}
 
-					val subtasks : JSONArray? by it
+					val subtasks: JsonArray? by it
 
 					Detail(testCases, compile.run(CompileMessage.Companion::invoke),
 							subtasks?.map {
-								SubTask(it as JSONObject)
+								SubTask(it as JsonObject)
 							} ?: emptyList())
 				}
 			}
@@ -73,17 +73,17 @@ interface RecordStatus {
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(json : String) : RecordStatus {
-			return invoke(JSONObject(json))
+			return invoke(org.hoshino9.luogu.utils.json(json))
 		}
 
 		@JvmName("newInstance")
-		operator fun invoke(elem : JSONObject) : RecordStatus {
+		operator fun invoke(elem: JsonObject): RecordStatus {
 			return elem.delegate.let {
 				val status : Int by it
 				val memory: String? by it
 				val score: String? by it
 				val time : String by it
-				val detail : JSONObject by it
+				val detail: JsonObject by it
 
 				RecordStatusBean(
 						Status.values().first { it.value == status },

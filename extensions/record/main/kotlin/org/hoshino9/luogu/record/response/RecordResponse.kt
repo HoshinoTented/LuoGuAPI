@@ -1,9 +1,9 @@
 package org.hoshino9.luogu.record.response
 
+import com.google.gson.JsonObject
 import org.hoshino9.luogu.record.status.RecordStatus
 import org.hoshino9.luogu.utils.delegate
 import org.hoshino9.luogu.utils.json
-import org.json.JSONObject
 
 interface RecordResponse {
 	val rid : String
@@ -20,7 +20,7 @@ interface RecordResponse {
 				val _channel_param : String by property
 				val type : String by property
 				val result : String by property
-				val welcome_message : JSONObject by property
+				val welcome_message: JsonObject by property
 				val client_number : Int by property
 
 

@@ -2,7 +2,7 @@
 
 package org.hoshino9.luogu.paintboard
 
-import org.json.JSONArray
+import com.google.gson.JsonArray
 import java.awt.image.BufferedImage
 
 data class ColorPos(val x : Int, val y : Int, val color : Int)
@@ -36,15 +36,15 @@ class ImageDrawScheme(val img : BufferedImage) : DrawScheme {
 	}
 }
 
-class PositionListDrawScheme(val posList : JSONArray) : DrawScheme {
+class PositionListDrawScheme(val posList: JsonArray) : DrawScheme {
 	class ColorPosIterator(val it : Iterator<Any>) : Iterator<ColorPos> {
 		override fun hasNext() : Boolean {
 			return it.hasNext()
 		}
 
 		override fun next() : ColorPos {
-			return (it.next() as JSONArray).let { pos ->
-				ColorPos(pos[0] as Int, pos[1] as Int, pos[2] as Int)
+			return (it.next() as JsonArray).let { pos ->
+				ColorPos(pos[0].asInt, pos[1].asInt, pos[2].asInt)
 			}
 		}
 	}
