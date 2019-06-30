@@ -1,10 +1,6 @@
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
-plugins {
-	maven
-}
-
 val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(KotlinSourceSet::class).kotlin
 
 dependencies {
