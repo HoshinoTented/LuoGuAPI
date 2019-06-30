@@ -1,6 +1,7 @@
 package org.hoshino9.luogu.problem.experimental
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import okhttp3.Headers
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
@@ -27,55 +28,63 @@ interface Problem {
 			}
 		}
 
-		val data get() = source["currentData"].asJsonObject["problem"].asJsonObject
+		val data: JsonObject? get() = source["currentData"]?.asJsonObject?.get("problem")?.asJsonObject
+
+		/**
+		 * 是否存在
+		 * FIXME
+		 * 但这种判断是不合理的
+		 * 真实情况是 是否能访问到该题目
+		 */
+		val exists: Boolean = data != null
 
 		override val difficulty: Difficulty
-			get() = data["difficulty"].asInt.let {
+			get() = data !!["difficulty"].asInt.let {
 				Difficulty.values()[it]
 			}
 
-		override val title: String get() = data["title"].asString
+		override val title: String get() = data !!["title"].asString
 
 		override val tags: List<LuoGuTag>
 			get() {
-				return data["tags"].asJsonArray.map {
+				return data !!["tags"].asJsonArray.map {
 					IdLuoGuTag(it.asInt)
 				}
 			}
 
 		override val type: Int
-			get() = data["type"].asInt
+			get() = data !!["type"].asInt
 
 		override val totalAccepted: Long
-			get() = data["totalAccepted"].asLong
+			get() = data !!["totalAccepted"].asLong
 
 		override val totalSubmit: Long
-			get() = data["totalSubmit"].asLong
+			get() = data !!["totalSubmit"].asLong
 
 		override val wantsTranslation: Boolean
-			get() = data["wantsTranslation"].asBoolean
+			get() = data !!["wantsTranslation"].asBoolean
 
 		override val background: String
-			get() = data["background"].asString
+			get() = data !!["background"].asString
 
 		override val canEdit: Boolean
-			get() = data["canEdit"].asBoolean
+			get() = data !!["canEdit"].asBoolean
 
 		override val description: String
-			get() = data["description"].asString
+			get() = data !!["description"].asString
 
 		override val hint: String
-			get() = data["hint"].asString
+			get() = data !!["hint"].asString
 
 		override val inputFormat: String
-			get() = data["inputFormat"].asString
+			get() = data !!["inputFormat"].asString
 
 		override val outputFormat: String
-			get() = data["outputFormat"].asString
+			get() = data !!["outputFormat"].asString
 
 		override val limits: List<Limit>
 			get() {
-				val json = data["limits"].asJsonObject
+				val json = data !!["limits"].asJsonObject
 				val memory = json["memory"].asJsonArray
 				val time = json["time"].asJsonArray
 
@@ -86,12 +95,12 @@ interface Problem {
 
 		override val provider: User
 			get() {
-				return User(data["provider"].asJsonObject["uid"].asInt.toString())
+				return User(data !!["provider"].asJsonObject["uid"].asInt.toString())
 			}
 
 		override val samples: List<Sample>
 			get() {
-				return data["samples"].asJsonArray.map {
+				return data !!["samples"].asJsonArray.map {
 					it as JsonArray
 
 					val `in` = it[0].asString
