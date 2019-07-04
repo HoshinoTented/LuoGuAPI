@@ -1,5 +1,6 @@
 package org.hoshino9.luogu.problem.experimental
 
+import arrow.core.Either
 import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.page.ExperimentalLuoGuPage
@@ -14,11 +15,11 @@ open class ProblemListPage(val page: Int, val filter: ProblemSearchConfig, overr
 				.asJsonObject["problems"]
 				.asJsonObject
 
-	val result: List<Problem>
+	val result: List<String>
 		get() {
 			return data["result"]
 					.asJsonArray.map {
-				Problem.Factory(it.asJsonObject["pid"].asString, client)
+				it.asJsonObject["pid"].asString
 			}
 		}
 

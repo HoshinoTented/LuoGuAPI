@@ -1,47 +1,39 @@
 package org.hoshino9.luogu.problem.experimental
 
+import arrow.core.Either
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import okhttp3.Headers
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
+import org.hoshino9.luogu.page.ExperimentalLuoGuPage.Companion.contentOnlyGet
 
-/**
- * 0:
-difficulty: 1
-pid: "P1421"
-tags: Array(0)
-title: "小玉买文具"
-totalAccepted: "95590"
-totalSubmit: "174530"
-type: 1
-wantsTranslation: false
- */
 interface Problem {
 	open class Factory(val source: JsonObject) : Problem {
 		companion object {
-			operator fun invoke(pid: String, client: HttpClient): Factory? {
-				val source = client.executeGet("https://www.luogu.org/fe/problem/$pid", Headers.of("x-luogu-type", "content-only")) {
+			operator fun invoke(pid: String, client: HttpClient): Either<String, Factory> {
+				val source = client.contentOnlyGet("https://www.luogu.org/fe/problem/$pid") {
 					it.assert()
 					json(it.strData)
 				}
 
-				return if (source["currentData"] == null) null else Factory(source)
+				return if (source["code"].asInt != 200) Either.left(source["currentData"].asJsonObject["errorMessage"].asString)
+				else Either.right(Factory(source))
 			}
 		}
 
 		val data: JsonObject get() = source["currentData"].asJsonObject.get("problem").asJsonObject
+		val delegate = data.delegate
 
-		override val pid: String get() = data["pid"].asString
+		override val pid: String by delegate
 
 		override val difficulty: Difficulty
 			get() = data["difficulty"].asInt.let {
 				Difficulty.values()[it]
 			}
 
-		override val title: String get() = data["title"].asString
+		override val title: String by delegate
 
 		override val tags: List<LuoGuTag>
 			get() {
@@ -50,35 +42,25 @@ interface Problem {
 				}
 			}
 
-		override val type: Int
-			get() = data["type"].asInt
+		override val type: Int by delegate
 
-		override val totalAccepted: Long
-			get() = data["totalAccepted"].asLong
+		override val totalAccepted: Long by delegate
 
-		override val totalSubmit: Long
-			get() = data["totalSubmit"].asLong
+		override val totalSubmit: Long by delegate
 
-		override val wantsTranslation: Boolean
-			get() = data["wantsTranslation"].asBoolean
+		override val wantsTranslation: Boolean by delegate
 
-		override val background: String
-			get() = data["background"].asString
+		override val background: String by delegate
 
-		override val canEdit: Boolean
-			get() = data["canEdit"].asBoolean
+		override val canEdit: Boolean by delegate
 
-		override val description: String
-			get() = data["description"].asString
+		override val description: String by delegate
 
-		override val hint: String
-			get() = data["hint"].asString
+		override val hint: String by delegate
 
-		override val inputFormat: String
-			get() = data["inputFormat"].asString
+		override val inputFormat: String by delegate
 
-		override val outputFormat: String
-			get() = data["outputFormat"].asString
+		override val outputFormat: String by delegate
 
 		override val limits: List<Limit>
 			get() {
@@ -110,6 +92,10 @@ interface Problem {
 
 		fun newInstance(): Problem {
 			return ProblemData(pid, difficulty, tags, title, totalAccepted, totalSubmit, type, wantsTranslation, background, canEdit, description, hint, limits, inputFormat, outputFormat, provider, samples)
+		}
+
+		override fun toString(): String {
+			return data.toString()
 		}
 	}
 
