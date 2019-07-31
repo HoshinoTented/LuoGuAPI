@@ -3,8 +3,8 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.problem.Solution
 import org.hoshino9.luogu.record.Record
+import org.hoshino9.luogu.record.Solution
 import org.hoshino9.luogu.record.listener.RecordListener
 import org.hoshino9.luogu.record.postSolution
 import org.hoshino9.luogu.utils.USER_AGENT

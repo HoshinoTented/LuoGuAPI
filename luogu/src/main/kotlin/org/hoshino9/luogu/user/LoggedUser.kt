@@ -114,28 +114,6 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 	}
 
 	/**
-	 * 上传图片到**你谷**
-	 * @param file 图片的 File 对象
-	 * @throws IllegalAPIStatusCodeException 当 api 状态码不为 201 时抛出
-	 * @throws IllegalStatusCodeException 当 请求状态码不为 200 时抛出
-	 *
-	 * @see File
-	 */
-	fun postPhoto(file : File) {
-		luogu.executePost("app/upload", MultipartBody.Builder()
-				.setType(MultipartBody.FORM)
-				.addFormDataPart("picupload", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
-				.build(),
-				referer("app/upload")) { resp ->
-			resp.assert()
-			val content = resp.strData
-			json (content) {
-				if (this["code"]?.asInt != 201) throw IllegalAPIStatusCodeException(this["code"])
-			}
-		}
-	}
-
-	/**
 	 * 获取未阅读列表(就是右上角的新通知)
 	 * @return 返回一个 Message 和 Notice 数量的Pair
 	 */

@@ -3,7 +3,6 @@
 package org.hoshino9.luogu.user
 
 import org.hoshino9.luogu.LuoGuUtils
-import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.utils.page
 import org.jsoup.nodes.Document
 
@@ -20,15 +19,6 @@ class LoggedUserSpacePage(val loggedUser : LoggedUser) : UserSpacePage(loggedUse
 
 	val introductionSrc : String by lazy {
 		feInjection.get("currentUser").asJsonObject.get("introduce").asString
-	}
-
-	/**
-	 * 尝试过的题目
-	 * 返回一个 List
-	 * 题目的pid
-	 */
-	val triedProblems : List<Problem> by lazy {
-		parseProblems(rights[2].children())
 	}
 
 	/**

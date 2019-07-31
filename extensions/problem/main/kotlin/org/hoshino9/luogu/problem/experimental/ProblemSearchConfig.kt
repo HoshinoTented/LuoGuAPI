@@ -1,9 +1,8 @@
-package org.hoshino9.luogu.problem
+package org.hoshino9.luogu.problem.experimental
 
 import org.hoshino9.luogu.utils.EQUAL
 import org.hoshino9.luogu.utils.SEPARATOR
 import org.hoshino9.luogu.tag.ColoredLuoGuTag
-import org.hoshino9.luogu.problem.tags.ProblemStore
 import org.hoshino9.luogu.tag.LuoGuTag
 
 /**
@@ -23,7 +22,7 @@ data class ProblemSearchConfig @JvmOverloads constructor(
 		val sortBy : SortMode = SortMode.PID,
 		val tags : List<LuoGuTag> = emptyList(),
 		val searchContent : Boolean = false,
-		val type : List<ProblemStore> = emptyList()        //应该只是 `题库` 而已
+		val type: List<LuoGuTag> = emptyList()        //应该只是 `题库` 而已
 ) {
 	enum class SortMode {
 		PID,

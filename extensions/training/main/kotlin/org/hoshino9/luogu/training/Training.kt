@@ -3,7 +3,7 @@
 package org.hoshino9.luogu.training
 
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.problem.Problem
+import org.hoshino9.luogu.problem.experimental.Problem
 
 interface Training {
 	enum class Status(val content : String) {

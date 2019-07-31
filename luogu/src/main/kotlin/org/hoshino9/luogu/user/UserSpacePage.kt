@@ -4,8 +4,6 @@ package org.hoshino9.luogu.user
 
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.problem.Problem
-import org.hoshino9.luogu.problem.ProblemFromId
 import org.hoshino9.luogu.utils.emptyClient
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -19,7 +17,7 @@ open class UserSpacePage(val user: User) : AbstractLuoGuPage() {
 		page.body()
 	}
 
-	protected val rights : Elements by lazy {
+	val rights: Elements by lazy {
 		elem.getElementsByClass("lg-article am-hide-sm")
 	}
 
@@ -38,20 +36,5 @@ open class UserSpacePage(val user: User) : AbstractLuoGuPage() {
 		TODO()
 	}
 
-	/**
-	 * 通过的题目
-	 * 返回一个 List
-	 * 题目的pid
-	 */
-	open val passedProblems : List<Problem> by lazy {
-		parseProblems(rights[0].children())
-	}
-
 	val avatar: String get() = "https://cdn.luogu.org/upload/usericon/${user.uid}.png"
-
-	protected fun parseProblems(es : Elements) : List<Problem> {
-		return es.mapNotNull { elem ->
-			elem.takeIf { it.tagName() == "a" }?.text()?.let { ProblemFromId(it, emptyClient) }
-		}
-	}
 }

@@ -3,6 +3,7 @@ package org.hoshino9.luogu.problem.experimental
 import arrow.core.Either
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import org.hoshino9.luogu.IllegalAPIStatusCodeException
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.User
@@ -12,14 +13,15 @@ import org.hoshino9.luogu.page.ExperimentalLuoGuPage.Companion.contentOnlyGet
 interface Problem {
 	open class Factory(val source: JsonObject) : Problem {
 		companion object {
-			operator fun invoke(pid: String, client: HttpClient): Either<String, Factory> {
-				val source = client.contentOnlyGet("https://www.luogu.org/fe/problem/$pid") {
+			operator fun invoke(pid: String, client: HttpClient): Factory {
+				val source = client.contentOnlyGet("https://www.luogu.org/problem/$pid") {
 					it.assert()
 					json(it.strData)
 				}
 
-				return if (source["code"].asInt != 200) Either.left(source["currentData"].asJsonObject["errorMessage"].asString)
-				else Either.right(Factory(source))
+				if (source["code"].asInt != 200) throw IllegalAPIStatusCodeException(source["code"], source["currentData"].asJsonObject["errorMessage"])
+
+				return Factory(source)
 			}
 		}
 

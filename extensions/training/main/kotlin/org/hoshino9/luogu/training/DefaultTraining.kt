@@ -1,8 +1,7 @@
 package org.hoshino9.luogu.training
 
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.problem.Problem
-import org.hoshino9.luogu.problem.ProblemFromId
+import org.hoshino9.luogu.problem.experimental.Problem
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -46,7 +45,7 @@ open class DefaultTraining(override val mid: String, val luogu: LuoGu) : Abstrac
 			return elem.getElementsByClass(className).map {
 				val id = it.child(0).text()
 
-				ProblemFromId(id, luogu.client)
+				Problem.Factory(id, luogu.client)
 			}
 		}
 

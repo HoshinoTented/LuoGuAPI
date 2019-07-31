@@ -7,9 +7,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.problem.Problem
-import org.hoshino9.luogu.problem.ProblemListPage
-import org.hoshino9.luogu.problem.ProblemSearchConfig
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
@@ -155,20 +152,5 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		executeGet("login/logout?uid=$uid") { resp ->
 			resp.assert()
 		}
-	}
-
-	/**
-	 * 题目列表
-	 * @param page 页数, 默认为 **1**
-	 * @param filter 过滤器
-	 * @throws IllegalStatusCodeException
-	 * @return 返回题目列表
-	 *
-	 * @see Problem
-	 * @see ProblemSearchConfig
-	 */
-	@JvmOverloads
-	fun problemList(page : Int = 1, filter : ProblemSearchConfig = ProblemSearchConfig()) : List<Problem> {
-		return ProblemListPage(page, filter, client).list()
 	}
 }

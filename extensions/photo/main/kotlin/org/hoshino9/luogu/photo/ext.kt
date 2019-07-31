@@ -2,10 +2,16 @@
 
 package org.hoshino9.luogu.photo
 
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import org.hoshino9.luogu.IllegalAPIStatusCodeException
+import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import java.io.File
 
 /**
  * 图床列表
@@ -41,8 +47,31 @@ fun LoggedUser.deletePhoto(photo: Photo) {
  *
  * @see Photo
  */
-fun getPhotos(list: Element): List<Photo> {
+private fun getPhotos(list: Element): List<Photo> {
 	return list.getElementsByClass("lg-table-row").map {
 		Photo.Factory(it).newInstance()
+	}
+}
+
+
+/**
+ * 上传图片到**你谷**
+ * @param file 图片的 File 对象
+ * @throws IllegalAPIStatusCodeException 当 api 状态码不为 201 时抛出
+ * @throws IllegalStatusCodeException 当 请求状态码不为 200 时抛出
+ *
+ * @see File
+ */
+fun LoggedUser.postPhoto(file: File) {
+	luogu.executePost("app/upload", MultipartBody.Builder()
+			.setType(MultipartBody.FORM)
+			.addFormDataPart("picupload", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
+			.build(),
+			referer("app/upload")) { resp ->
+		resp.assert()
+		val content = resp.strData
+		json(content) {
+			if (this["code"]?.asInt != 201) throw IllegalAPIStatusCodeException(this["code"])
+		}
 	}
 }

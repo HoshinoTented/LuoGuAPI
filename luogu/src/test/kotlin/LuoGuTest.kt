@@ -7,8 +7,10 @@ import org.hoshino9.luogu.paste.deletePaste
 import org.hoshino9.luogu.paste.pasteList
 import org.hoshino9.luogu.paste.postPaste
 import org.hoshino9.luogu.photo.photoList
-import org.hoshino9.luogu.problem.ProblemContent
-import org.hoshino9.luogu.problem.ProblemFromId
+import org.hoshino9.luogu.problem.experimental.Problem
+import org.hoshino9.luogu.problem.experimental.passedProblems
+import org.hoshino9.luogu.problem.experimental.problemList
+import org.hoshino9.luogu.problem.experimental.triedProblems
 import org.hoshino9.luogu.training.trainingPage
 import org.hoshino9.luogu.user.LoggedUser
 import org.junit.Before
@@ -153,11 +155,8 @@ ${it.source}
 
 	@Test
 	fun problemListTest() {
-		luogu.problemList().forEach {
-			println("${it.name}(${it.id}) ${it.tags} (${it.passPercent.first} / ${it.passPercent.second})")
-			ProblemFromId(it.id, luogu.client).let { p ->
-				println("${p.name}(${p.id}) ${p.tags}(${p.difficulty}) (${p.passPercent.first} / ${p.passPercent.second})")
-			}
+		luogu.problemList().result.map { Problem.Factory(it, luogu.client) }.forEach {
+			println("${it.title}(${it.pid})[${it.difficulty}] ${it.tags} (${it.totalAccepted} / ${it.totalSubmit})")
 		}
 	}
 
@@ -173,7 +172,7 @@ ${it.source}
 				print("[${training.status.content}]")
 				println(training.name)
 				training.problems.forEach { problem ->
-					println(problem.id)
+					println(problem.pid)
 				}
 			}
 
@@ -184,8 +183,8 @@ ${it.source}
 	@Test
 	fun userTest() {
 		println("$user: ${user.spacePage.username}")
-		user.spacePage.passedProblems.run(::println)
-		user.spacePage.triedProblems.run(::println)
+		user.spacePage.passedProblems().run(::println)
+		user.spacePage.triedProblems().run(::println)
 		user.spacePage.gugugu.run(::println)
 	}
 
@@ -211,11 +210,6 @@ Content: $content
 				}
 			}
 		}
-	}
-
-	@Test
-	fun problemContent() {
-		ProblemContent.parse("P1001").run(::println)
 	}
 
 	@Test
