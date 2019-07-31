@@ -1,4 +1,9 @@
 [![Join the chat at https://gitter.im/LuoGuAPI/Lobby](https://badges.gitter.im/LuoGuAPI/Lobby.svg)](https://gitter.im/LuoGuAPI/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# 提示
+[#52](https://github.com/HoshinoTented/LuoGuAPI/issues/52)  
+本项目不再添加新功能，仅维护现有功能，直到洛谷开放api，就 archive 此项目  
+如果洛谷表明短时间内不会开放api，则此项目将继续添加新功能  
+
 # LuoGuAPI
 [**你谷**](https://www.luogu.org) 的api ~~\(然而大部分都是解析HTML\)~~  
 
