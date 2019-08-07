@@ -130,25 +130,6 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			addProperty("captcha", verifyCode)
 		}.toString())
 
-//		Request.Builder()
-//				.url("$baseUrl/api/auth/userPassLogin")
-//				.post(params)
-//				.build()
-//				.run(client::newCall)
-//				.execute().let { resp ->
-//					resp.assert()
-//					val content = resp.strData
-//
-//					json(content).delegate.let {
-//						val status : Int by it
-//						val data : String by it
-//
-//						if (status != 200) throw IllegalAPIStatusCodeException(status, data)
-//
-//						refresh()
-//					}
-//				}
-
 		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
 			resp.assert()
 			val content = resp.strData
