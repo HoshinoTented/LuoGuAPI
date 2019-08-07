@@ -2,9 +2,8 @@
 
 package org.hoshino9.luogu
 
-import okhttp3.Cookie
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.google.gson.JsonObject
+import okhttp3.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.user.LoggedUser
@@ -22,7 +21,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 
 	companion object {
 		@JvmName("newInstance")
-		operator fun invoke(clientId : String, uid : String) : LuoGu = LuoGu().apply {
+		operator fun invoke(clientId: String, uid: String): LuoGu = LuoGu().apply {
 			this.clientId = clientId
 			this.uid = uid
 
@@ -40,7 +39,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			)
 		}
 
-	var clientId : String
+	var clientId: String
 		get() {
 			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value().orEmpty()
 		}
@@ -55,7 +54,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
-	val csrfToken : String
+	val csrfToken: String
 		get() {
 			return executeGet { resp ->
 				resp.assert()
@@ -66,7 +65,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	/**
 	 * 主站滚动图片
 	 */
-	val sliderPhotos : List<SliderPhoto>
+	val sliderPhotos: List<SliderPhoto>
 		get() {
 			return executeGet { resp ->
 				resp.assert()
@@ -75,7 +74,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			}
 		}
 
-	val isLogged : Boolean
+	val isLogged: Boolean
 		get() {
 			return feInjection.get("currentUser") != null
 		}
@@ -83,7 +82,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	/**
 	 * 获得当前客户端登录的用户
 	 */
-	lateinit var loggedUser : LoggedUser
+	lateinit var loggedUser: LoggedUser
 
 	/**
 	 * 刷新客户端状态
@@ -97,8 +96,8 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * 获取验证码
 	 * @param out 输出流, 将会把验证码**图片**输出到这个流里
 	 */
-	fun verifyCode(out : OutputStream) {
-		executeGet("download/captcha") { resp ->
+	fun verifyCode(out: OutputStream) {
+		executeGet("api/verify/captcha") { resp ->
 			resp.assert()
 			resp.dataStream.copyTo(out)
 		}
@@ -118,34 +117,51 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * @see IllegalAPIStatusCodeException
 	 * @see IllegalStatusCodeException
 	 */
-	fun login(account : String, password : String, verifyCode : String) {
-		val params = listOf(
-				"username" to account,
-				"password" to password,
-				"cookie" to "0",
-				"redirect" to "",
-				"two_factor" to "undefined",
-				"verify" to verifyCode
-		).params()
+	fun login(account: String, password: String, verifyCode: String) {
+//		val params = listOf(
+//				"username" to account,
+//				"password" to password,
+//				"captcha" to verifyCode
+//		).params(
 
-		Request.Builder()
-				.url("$baseUrl/login/loginpage")
-				.post(params)
-				.build()
-				.run(client::newCall)
-				.execute().let { resp ->
-					resp.assert()
-					val content = resp.strData
+		val params = RequestBody.create(MediaType.parse("application/json"), JsonObject().apply {
+			addProperty("username", account)
+			addProperty("password", password)
+			addProperty("captcha", verifyCode)
+		}.toString())
 
-					json(content).delegate.let {
-						val code : Int by it
-						val message : String by it
+//		Request.Builder()
+//				.url("$baseUrl/api/auth/userPassLogin")
+//				.post(params)
+//				.build()
+//				.run(client::newCall)
+//				.execute().let { resp ->
+//					resp.assert()
+//					val content = resp.strData
+//
+//					json(content).delegate.let {
+//						val status : Int by it
+//						val data : String by it
+//
+//						if (status != 200) throw IllegalAPIStatusCodeException(status, data)
+//
+//						refresh()
+//					}
+//				}
 
-						if (code != 200) throw IllegalAPIStatusCodeException(code, message)
+		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
+			resp.assert()
+			val content = resp.strData
 
-						refresh()
-					}
-				}
+			json(content).delegate.let {
+				val status: Int? by it
+				val data: String? by it
+
+				if (status != null) throw IllegalAPIStatusCodeException(status, data)
+
+				refresh()
+			}
+		}
 	}
 
 	fun logout() {

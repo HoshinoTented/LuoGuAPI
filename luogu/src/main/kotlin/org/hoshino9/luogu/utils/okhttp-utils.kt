@@ -45,12 +45,7 @@ fun getRequest(url: String = "", headers: Headers): Request = Request.Builder()
 		.addHeader("User-Agent", USER_AGENT)
 		.build()
 
-@Deprecated("Request without referer will be refused", ReplaceWith("executePost"))
-inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyParams(), action : (Response) -> T) : T {
-	return executePost(url, body, Headers.Builder().build(), action)
-}
-
-inline fun <T> LuoGu.executePost(url : String = "", body : RequestBody = emptyParams(), headers : Headers, action : (Response) -> T) : T {
+inline fun <T> LuoGu.executePost(url: String = "", body: RequestBody = emptyParams(), headers: Headers /* 一般是 referer */, action: (Response) -> T): T {
 	return client.newCall(postRequest(url, body, headers)).execute().use { resp ->
 		resp.run(action)
 	}
