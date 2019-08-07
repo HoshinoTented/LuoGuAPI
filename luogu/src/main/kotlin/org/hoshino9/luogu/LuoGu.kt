@@ -118,12 +118,6 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * @see IllegalStatusCodeException
 	 */
 	fun login(account: String, password: String, verifyCode: String) {
-//		val params = listOf(
-//				"username" to account,
-//				"password" to password,
-//				"captcha" to verifyCode
-//		).params(
-
 		val params = RequestBody.create(MediaType.parse("application/json"), JsonObject().apply {
 			addProperty("username", account)
 			addProperty("password", password)
