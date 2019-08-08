@@ -67,7 +67,7 @@ val defaultClient : HttpClient
 
 // Response
 fun Response.assert() {
-	if (! isSuccessful) throw IllegalStatusCodeException(this)
+	if (! isSuccessful) throw IllegalStatusCodeException(code().toString(), strData)
 }
 
 val Response.strData : String
