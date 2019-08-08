@@ -125,7 +125,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		}.toString())
 
 		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
-			if (resp.code() == 403) {
+			if (resp.code() in arrayOf(403, 404)) {
 				val content = resp.strData
 
 				json(content).delegate.let {
