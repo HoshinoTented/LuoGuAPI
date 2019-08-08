@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu
 
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import okhttp3.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
@@ -76,7 +77,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 
 	val isLogged: Boolean
 		get() {
-			return feInjection.get("currentUser") != null
+			return feInjection.get("currentUser") != JsonNull.INSTANCE
 		}
 
 	/**
