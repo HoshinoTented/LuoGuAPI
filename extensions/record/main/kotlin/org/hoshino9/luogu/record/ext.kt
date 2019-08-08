@@ -23,7 +23,7 @@ fun LoggedUser.postSolution(solution: Solution, verifyCode: String = ""): Record
 					"lang" to solution.language.value.toString(),
 					"enableO2" to if (solution.enableO2) "1" else "0",
 					"verify" to verifyCode
-			).params(), referer("problemnew/show/${solution.pid}")
+			).params(), referer("problem/${solution.pid}")
 	) { resp ->
 		resp.assert()
 		val content = resp.strData
