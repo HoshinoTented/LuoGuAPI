@@ -20,7 +20,8 @@ abstract class AbstractLuoGuPage(open val client: OkHttpClient = emptyClient) : 
 			}
 		}
 
-	override val feInjection: JsonObject by lazy {
-		json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
+	override val feInjection: JsonObject
+		get() {
+			return json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
 	}
 }
