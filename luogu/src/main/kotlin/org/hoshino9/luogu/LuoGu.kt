@@ -125,17 +125,20 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		}.toString())
 
 		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
-			resp.assert()
-			val content = resp.strData
+			if (resp.code() == 403) {
+				val content = resp.strData
 
-			json(content).delegate.let {
-				val status: Int? by it
-				val data: String? by it
+				json(content).delegate.let {
+					val status: Int? by it
+					val data: String? by it
 
-				if (status != null) throw IllegalAPIStatusCodeException(status, data)
-
-				refresh()
+					if (status != null) throw IllegalAPIStatusCodeException(status, data)
+				}
 			}
+
+			resp.assert()
+
+			refresh()
 		}
 	}
 
