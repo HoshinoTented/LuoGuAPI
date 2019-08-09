@@ -16,7 +16,7 @@ allprojects {
 	}
 
 	dependencies {
-		compile(project(":luogu"))
+		compileOnly(project(":luogu"))
 		testCompile(kotlin("test-junit"))
 	}
 }

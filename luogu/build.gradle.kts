@@ -29,18 +29,11 @@ dependencies {
 	}
 }
 
-val sourcesJar = task<Jar>("sourcesJar") {
-	from(sourceSets.getByName("main").kotlin)
-	archiveClassifier.set("sources")
-}
-
 val dependenciesJar = task<Jar>("dependenciesJar") {
 	from(configurations.getByName("compile").map { if (it.isDirectory) it else zipTree(it) })
 	archiveClassifier.set("dependencies")
 }
 
 artifacts {
-	operator fun String.invoke(obj : Any) = add(this, obj)
-	"archives"(sourcesJar)
-	"archives"(dependenciesJar)
+	add("archives", dependenciesJar)
 }

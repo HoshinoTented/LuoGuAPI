@@ -1,3 +1,3 @@
 dependencies {
-	compile(project(":extensions:problem"))
+	compileOnly(project(":extensions:problem"))
 }
