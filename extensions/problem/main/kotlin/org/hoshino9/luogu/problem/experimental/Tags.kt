@@ -10,3 +10,11 @@ enum class Difficulty(val content: String) {
 	Purple("省选/NOI-"),
 	Black("NOI/NOI+/CTSC")
 }
+
+enum class Type(val id: String) {
+	LuoGu("P"),
+	CodeForces("CF"),
+	AtCoder("AT"),
+	SPOJ("SP"),
+	UVA("UVA")
+}
