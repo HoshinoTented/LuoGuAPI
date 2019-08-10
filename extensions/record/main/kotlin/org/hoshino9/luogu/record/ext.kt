@@ -20,7 +20,7 @@ fun LoggedUser.postSolution(solution: Solution, verifyCode: String = ""): Record
 	return luogu.executePost("api/problem/submit/${solution.pid}",
 			listOf(
 					"code" to solution.code,
-					"lang" to solution.language.value.toString(),
+					"lang" to Solution.Language.values().indexOf(solution.language).toString(),
 					"enableO2" to if (solution.enableO2) "1" else "0",
 					"verify" to verifyCode
 			).params(), referer("problem/${solution.pid}")
