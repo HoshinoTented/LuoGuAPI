@@ -5,7 +5,6 @@ package org.hoshino9.luogu.photo
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.hoshino9.luogu.IllegalAPIStatusCodeException
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
@@ -57,7 +56,7 @@ private fun getPhotos(list: Element): List<Photo> {
 /**
  * 上传图片到**你谷**
  * @param file 图片的 File 对象
- * @throws IllegalAPIStatusCodeException 当 api 状态码不为 201 时抛出
+ * @throws IllegalStatusCodeException 当 api 状态码不为 201 时抛出
  * @throws IllegalStatusCodeException 当 请求状态码不为 200 时抛出
  *
  * @see File
@@ -71,7 +70,7 @@ fun LoggedUser.postPhoto(file: File) {
 		resp.assert()
 		val content = resp.strData
 		json(content) {
-			if (this["code"]?.asInt != 201) throw IllegalAPIStatusCodeException(this["code"])
+			if (this["code"]?.asInt != 201) throw IllegalStatusCodeException(this["code"])
 		}
 	}
 }

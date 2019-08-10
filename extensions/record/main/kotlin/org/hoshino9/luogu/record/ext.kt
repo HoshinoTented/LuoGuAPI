@@ -3,7 +3,7 @@
 package org.hoshino9.luogu.record
 
 import com.google.gson.JsonObject
-import org.hoshino9.luogu.IllegalAPIStatusCodeException
+import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 
@@ -34,8 +34,8 @@ fun LoggedUser.postSolution(solution: Solution, verifyCode: String = ""): Record
 
 			if (status == 200) {
 				data as JsonObject
-				Record(data.get("rid").toString())
-			} else throw IllegalAPIStatusCodeException(status, data)
+				Record(data["rid"].toString())
+			} else throw IllegalStatusCodeException(status, data)
 		}
 	}
 }

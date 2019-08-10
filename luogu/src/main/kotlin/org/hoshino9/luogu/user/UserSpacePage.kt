@@ -3,14 +3,13 @@
 package org.hoshino9.luogu.user
 
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.utils.emptyClient
+import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 // FIXME: UserSpacePage 合并到 User 里
 
-open class UserSpacePage(val user: User) : AbstractLuoGuPage() {
+open class UserSpacePage(val user: User) : DeprecatedLuoGuPage() {
 	override val url: String = "$baseUrl/space/show?uid=${user.uid}"
 
 	val elem: Element by lazy {

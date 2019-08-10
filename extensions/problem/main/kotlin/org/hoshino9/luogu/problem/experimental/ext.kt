@@ -20,9 +20,11 @@ import org.jsoup.select.Elements
  * @see ProblemSearchConfig
  */
 @JvmOverloads
-fun LuoGu.problemList(page: Int = 1, filter: ProblemSearchConfig = ProblemSearchConfig()): ProblemListPage {
-	return ProblemListPage(page, filter, client)
+fun LuoGu.problemList(page: Int = 1, filter: ProblemSearchConfig = ProblemSearchConfig()): ProblemList {
+	return ProblemList(page, filter, client)
 }
+
+// FIXME 这下面的东西我都打算删掉了
 
 /**
  * 通过的题目

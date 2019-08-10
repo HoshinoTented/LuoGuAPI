@@ -19,8 +19,8 @@ main = do
 """))
 }
 
-fun LuoGu.listen(record: Record) {
-	record.listen(this) { _, msg ->
+fun LuoGu.listen(record: Record): WebSocket {
+	return record.listen(this) { _, msg ->
 		//		if (msg.type != "heartbeat") {
 //			msg.recordStatus.apply {
 //				println("memory / time: $memory / $time")
@@ -39,6 +39,8 @@ fun main() {
 		loadCookie()
 	}.luogu.apply {
 		val record = submit().apply(::println)
-		listen(record)
+		val socket = listen(Record("22484708"))
+		socket.close(1000, null)
+		println("close")
 	}
 }

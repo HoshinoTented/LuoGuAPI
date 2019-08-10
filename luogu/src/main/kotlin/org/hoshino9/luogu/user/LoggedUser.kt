@@ -17,7 +17,7 @@ import java.lang.IllegalStateException
  * 等到 Kotlin1.3 可以改用 `inline class`
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
-open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client) {
+open class LoggedUser(val luogu: LuoGu, uid: String) : User(uid) {
 	data class SignedInStatus(val qian: Qian, val goods: List<Thing>, val bads: List<Thing>, val continuation: Int) {
 		companion object Parser {
 			private val regex = Regex("[宜忌]：([^ ]+) ([^ ]+)")
@@ -123,7 +123,7 @@ open class LoggedUser(val luogu : LuoGu, uid : String) : User(uid, luogu.client)
 
 			json(resp.strData) {
 				get("code")?.asInt.let { code ->
-					if (code != 200) throw IllegalAPIStatusCodeException(code, get("message").asString)
+					if (code != 200) throw IllegalStatusCodeException(code, get("message").asString)
 					get("more").asJsonObject.let { more ->
 						more.get("messagenum").asInt to more.get("noticenum").asInt
 					}

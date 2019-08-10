@@ -5,8 +5,7 @@ package org.hoshino9.luogu
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import okhttp3.*
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
@@ -17,7 +16,7 @@ import java.io.OutputStream
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient) : AbstractLuoGuPage(client) {
+open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	data class SliderPhoto(val url: String?, val img: String)
 
 	companion object {
@@ -109,21 +108,21 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * @param account 账号
 	 * @param password 密码
 	 * @param verifyCode 验证码, 通过 [LuoGu.verifyCode] 获得
-	 * @throws IllegalAPIStatusCodeException 当登录失败时抛出
+	 * @throws IllegalStatusCodeException 当登录失败时抛出
 	 * @throws IllegalStatusCodeException 当请求码错误时抛出
 	 * @return 返回一个 LuoGuLoginResult 对象
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LoggedUser
-	 * @see IllegalAPIStatusCodeException
+	 * @see IllegalStatusCodeException
 	 * @see IllegalStatusCodeException
 	 */
 	fun login(account: String, password: String, verifyCode: String) {
-		val params = RequestBody.create(MediaType.parse("application/json"), JsonObject().apply {
+		val params = JsonObject().apply {
 			addProperty("username", account)
 			addProperty("password", password)
 			addProperty("captcha", verifyCode)
-		}.toString())
+		}.params()
 
 		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
 			if (resp.code() in arrayOf(403, 404)) {
@@ -133,7 +132,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 					val status: Int? by it
 					val data: String? by it
 
-					if (status != null) throw IllegalAPIStatusCodeException(status, data)
+					if (status != null) throw IllegalStatusCodeException(status, data)
 				}
 			}
 

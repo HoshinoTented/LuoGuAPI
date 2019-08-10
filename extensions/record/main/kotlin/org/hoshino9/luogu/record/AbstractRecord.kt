@@ -8,7 +8,6 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.USER_AGENT
 import org.hoshino9.luogu.record.listener.OnMessageType
 import org.hoshino9.luogu.record.listener.RecordListener
-import org.hoshino9.luogu.record.response.RecordResponse
 
 abstract class AbstractRecord : Record {
 	override fun listen(client : LuoGu, listener : OnMessageType) : WebSocket {

@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu.utils
 
+import com.google.gson.JsonObject
 import okhttp3.*
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
@@ -9,12 +10,12 @@ import org.hoshino9.luogu.LuoGuUtils
 import org.hoshino9.okhttp.HoshinoCookieJar
 import java.io.InputStream
 
-fun emptyParams() : RequestBody {
+fun emptyParams(): RequestBody {
 	return FormBody.Builder().build()
 }
 
 // Params
-fun <K : Any, V : Any> Iterable<Pair<K, V>>.params() : RequestBody {
+fun <K : Any, V : Any> Iterable<Pair<K, V>>.params(): RequestBody {
 	return FormBody.Builder().apply {
 		forEach { (k, v) ->
 			add(k.toString(), v.toString())
@@ -22,8 +23,12 @@ fun <K : Any, V : Any> Iterable<Pair<K, V>>.params() : RequestBody {
 	}.build()
 }
 
+fun JsonObject.params(): RequestBody {
+	return RequestBody.create(MediaType.parse("application/json"), toString())
+}
+
 // Headers
-fun referer(url : String = "") : Headers = Headers.Builder().add("referer", "${LuoGuUtils.baseUrl}/$url").build()
+fun referer(url: String = ""): Headers = Headers.Builder().add("referer", "${LuoGuUtils.baseUrl}/$url").build()
 
 val emptyHeaders: Headers
 	get() {
@@ -31,7 +36,7 @@ val emptyHeaders: Headers
 	}
 
 // Request
-fun LuoGu.postRequest(url : String, body : RequestBody, headers : Headers) : Request = Request.Builder()
+fun LuoGu.postRequest(url: String, body: RequestBody, headers: Headers): Request = Request.Builder()
 		.url("${LuoGuUtils.baseUrl}/$url")
 		.post(body)
 		.headers(headers)
@@ -58,9 +63,20 @@ inline fun <T> HttpClient.executeGet(url: String = "", headers: Headers = emptyH
 	}
 }
 
+inline fun <T> HttpClient.contentOnlyGet(url: String, action: (Response) -> T): T {
+	return executeGet(url, Headers.of("x-luogu-type", "content-only"), action)        //或者在 url 后添加 _contentOnly=1 但个人不推荐
+}
+
+fun HttpClient.apiGet(url: String): JsonObject {
+	return contentOnlyGet(url) {
+		it.assert()
+		json(it.strData)
+	}
+}
+
 // Client
-val emptyClient : HttpClient /*get() */ = OkHttpClient()
-val defaultClient : HttpClient
+val emptyClient: HttpClient /*get() */ = OkHttpClient()
+val defaultClient: HttpClient
 	get() = OkHttpClient.Builder()
 			.cookieJar(HoshinoCookieJar())
 			.build()
@@ -70,14 +86,14 @@ fun Response.assert() {
 	if (! isSuccessful) throw IllegalStatusCodeException(code().toString(), strData)
 }
 
-val Response.strData : String
+val Response.strData: String
 	get() {
 		return this.body() !!.string().apply {
 			// TODO LOG
 		}
 	}
 
-val Response.dataStream : InputStream
+val Response.dataStream: InputStream
 	get() {
 		return this.body() !!.byteStream()
 	}

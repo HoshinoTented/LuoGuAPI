@@ -1,14 +1,12 @@
 package org.hoshino9.luogu.problem.experimental
 
-import arrow.core.Either
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import org.hoshino9.luogu.IllegalAPIStatusCodeException
+import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
-import org.hoshino9.luogu.page.ExperimentalLuoGuPage.Companion.contentOnlyGet
 
 interface Problem {
 	open class Factory(val source: JsonObject) : Problem {
@@ -19,7 +17,7 @@ interface Problem {
 					json(it.strData)
 				}
 
-				if (source["code"].asInt != 200) throw IllegalAPIStatusCodeException(source["code"], source["currentData"].asJsonObject["errorMessage"])
+				if (source["code"].asInt != 200) throw IllegalStatusCodeException(source["code"], source["currentData"].asJsonObject["errorMessage"])
 
 				return Factory(source)
 			}

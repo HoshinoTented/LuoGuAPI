@@ -2,7 +2,7 @@
 
 package org.hoshino9.luogu.paste
 
-import org.hoshino9.luogu.IllegalAPIStatusCodeException
+import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
@@ -15,7 +15,7 @@ import org.jsoup.Jsoup
  * @return 返回剪切板的代码
  */
 @JvmOverloads
-fun LoggedUser.postPaste(code: String, public: Boolean = true, verifyCode: String = ""): Paste {
+fun LoggedUser.postPaste(code: String, public: Boolean = true, verifyCode: String = ""): String {
 	return luogu.executePost("paste/post", listOf(
 			"content" to code,
 			"verify" to verifyCode,
@@ -28,27 +28,18 @@ fun LoggedUser.postPaste(code: String, public: Boolean = true, verifyCode: Strin
 			val status: Int by it
 			val data: String? by it
 
-			if (status != 200) throw IllegalAPIStatusCodeException(status, data ?: "")
-			Paste.Factory(data !!, luogu.client).newInstance()
+			if (status != 200) throw IllegalStatusCodeException(status, data ?: "")
+			return data !!
 		}
 	}
 }
 
-fun LoggedUser.deletePaste(paste: Paste) {
-	luogu.executePost("paste/delete/${paste.id}", headers = referer("paste/${paste.id}")) { resp ->
+fun LoggedUser.deletePaste(id: String) {
+	luogu.executePost("paste/delete/$id", headers = referer("paste/$id")) { resp ->
 		resp.assert()
 	}
 }
 
-@JvmOverloads
-fun LoggedUser.pasteList(page: Int = 1): List<Paste> {
-	val regex = Regex("""https://www\.luogu\.org/paste/(\w+)""")
-	luogu.executeGet("paste?page=$page") { resp ->
-		resp.assert()
-		val content = resp.strData
-
-		return Jsoup.parse(content).toString().run { regex.findAll(this) }.map {
-			Paste.Factory(it.groupValues[1], luogu.client).newInstance()
-		}.toList()
-	}
+fun LoggedUser.pasteList(): PasteList {
+	return PasteList(luogu.client)
 }

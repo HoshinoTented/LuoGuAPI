@@ -3,6 +3,7 @@
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.discuss.DiscussListPage
 import org.hoshino9.luogu.discuss.posts
+import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.paste.deletePaste
 import org.hoshino9.luogu.paste.pasteList
 import org.hoshino9.luogu.paste.postPaste
@@ -127,13 +128,13 @@ ${it.user}
 
 	@Test
 	fun pasteListTest() {
-		user.pasteList().joinToString(separator = separator) {
+		user.pasteList().list.joinToString(separator = separator) {
 			//language=TEXT
 			"""user: ${it.user}
-date: ${it.date}
+date: ${it.time}
 is public: ${it.isPublic}
 source:
-${it.source}
+${it.data}
 """
 		}.run(::println)
 	}
@@ -192,7 +193,7 @@ ${it.source}
 	fun paste() {
 		"LuoGu API Test".let { content ->
 			user.postPaste(content).let { paste ->
-				println(paste.source)
+				println(Paste.PastePage(paste, luogu.client).newInstance().data)
 				user.deletePaste(paste)
 			}
 		}
