@@ -29,3 +29,29 @@ AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/l66p8yqgxg
 
 在 `luogu/build/libs` 下还会有  
 * `luogu-<version number>-dependencies.jar` 为运行时依赖  
+
+# Stable API
+洛谷已 **正式** 开放 API 的功能（未选中的代表 `LuoGuAPI` 还未支持）:  
+- [x] 登录
+- [ ] 注册
+- [ ] 两步验证
+- [x] 题目列表
+- [x] 题目内容
+- [x] 提交代码
+- [ ] 题目的操作
+- [ ] 比赛列表
+- [ ] 比赛内容
+- [ ] 比赛的操作
+
+洛谷还 **未正式** 开放但已经在开发中的 API（未选中同上）:  
+- [x] 剪切板列表
+- [x] 剪切板内容
+- [ ] 新建剪切板（未找到参数列表）
+- [x] 删除剪切板
+- [ ] 编辑剪切板
+- [ ] 博客的系列操作（不确定，可能已经正式开放）
+
+无法在 API 列表中寻找到的功能:
+- [ ] 图床
+- [ ] 讨论版
+- [ ] ~~试炼场~~
