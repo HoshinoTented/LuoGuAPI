@@ -86,6 +86,18 @@ fun Response.assert() {
 	if (! isSuccessful) throw IllegalStatusCodeException(code().toString(), strData)
 }
 
+fun Response.assertJson() {
+	if (! isSuccessful) json(strData).delegate.let {
+		val status: Int? by it
+
+		if (status != null) {
+			val data: String by it
+
+			throw IllegalStatusCodeException(status, data)
+		}
+	}
+}
+
 val Response.strData: String
 	get() {
 		return this.body() !!.string().apply {

@@ -24,8 +24,6 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		operator fun invoke(clientId: String, uid: String): LuoGu = LuoGu().apply {
 			this.clientId = clientId
 			this.uid = uid
-
-			refresh()
 		}
 	}
 
@@ -82,15 +80,17 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	/**
 	 * 获得当前客户端登录的用户
 	 */
-	lateinit var loggedUser: LoggedUser
+	val loggedUser: LoggedUser
+		get() = LoggedUser(this)
 
 	/**
-	 * 刷新客户端状态
+	 * 是否需要解锁
+	 * @return 返回解锁 mode (2fa 代表两步验证 secret 代表密码)
 	 */
-	@Synchronized
-	fun refresh() {
-		loggedUser = LoggedUser(this)
-	}
+	val needUnlock: String?
+		get() {
+			return feInjection["currentData"].asJsonObject["mode"]?.asString
+		}
 
 	/**
 	 * 获取验证码
@@ -100,6 +100,18 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		executeGet("api/verify/captcha") { resp ->
 			resp.assert()
 			resp.dataStream.copyTo(out)
+		}
+	}
+
+	/**
+	 * 解锁
+	 * 两步验证和密码解锁通用
+	 */
+	fun unlock(code: String) {
+		val params = JsonObject().apply { addProperty("code", code) }.params()
+
+		executePost("api/auth/unlock", params, referer("auth/unlock")) { resp ->
+			resp.assertJson()
 		}
 	}
 
@@ -125,25 +137,12 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		}.params()
 
 		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
-			if (resp.code() in arrayOf(403, 404)) {
-				val content = resp.strData
-
-				json(content).delegate.let {
-					val status: Int? by it
-					val data: String? by it
-
-					if (status != null) throw IllegalStatusCodeException(status, data)
-				}
-			}
-
-			resp.assert()
-
-			refresh()
+			resp.assertJson()
 		}
 	}
 
 	fun logout() {
-		executeGet("login/logout?uid=$uid") { resp ->
+		executeGet("api/auth/logout?uid=$uid") { resp ->
 			resp.assert()
 		}
 	}

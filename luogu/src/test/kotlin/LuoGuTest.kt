@@ -23,9 +23,9 @@ import java.util.Scanner
 
 open class LuoGuTest {
 	companion object {
-		private val testRoot = Paths.get("testResources")
-		private val verifyPath by lazy { testRoot.resolve("verify.png") }
-		private val configPath by lazy { testRoot.resolve("user.properties") }
+		internal val testRoot = Paths.get("testResources")
+		internal val verifyPath by lazy { testRoot.resolve("verify.png") }
+		internal val configPath by lazy { testRoot.resolve("user.properties") }
 		internal val config by lazy {
 			Properties().apply {
 				load(Files.newInputStream(configPath))
@@ -48,21 +48,6 @@ open class LuoGuTest {
 			luogu = LuoGu(id, uid)
 		} else throw IllegalStateException("No logged in")
 
-	}
-
-	fun login() {
-		luogu = LuoGu()
-		luogu.verifyCode(Files.newOutputStream(verifyPath.also { path ->
-			path.toFile().let {
-				if (it.exists().not()) {
-					it.parentFile.mkdirs()
-					it.createNewFile()
-				}
-			}
-		}))
-		println("Please input verify code")
-		val verifyCode : String = Scanner(System.`in`).next()
-		luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
 	}
 
 	fun saveCookie() {
