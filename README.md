@@ -34,7 +34,7 @@ AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/l66p8yqgxg
 洛谷已 **正式** 开放 API 的功能（未选中的代表 `LuoGuAPI` 还未支持）:  
 - [x] 登录
 - [ ] 注册
-- [ ] 两步验证
+- [x] 两步验证
 - [x] 题目列表
 - [x] 题目内容
 - [x] 提交代码

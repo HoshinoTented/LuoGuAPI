@@ -72,6 +72,9 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 			}
 		}
 
+	/**
+	 * 是否已登录
+	 */
 	val isLogged: Boolean
 		get() {
 			return feInjection.get("currentUser") != JsonNull.INSTANCE
@@ -106,6 +109,7 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	/**
 	 * 解锁
 	 * 两步验证和密码解锁通用
+	 * @see needUnlock
 	 */
 	fun unlock(code: String) {
 		val params = JsonObject().apply { addProperty("code", code) }.params()
@@ -122,11 +126,9 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * @param verifyCode 验证码, 通过 [LuoGu.verifyCode] 获得
 	 * @throws IllegalStatusCodeException 当登录失败时抛出
 	 * @throws IllegalStatusCodeException 当请求码错误时抛出
-	 * @return 返回一个 LuoGuLoginResult 对象
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LoggedUser
-	 * @see IllegalStatusCodeException
 	 * @see IllegalStatusCodeException
 	 */
 	fun login(account: String, password: String, verifyCode: String) {
