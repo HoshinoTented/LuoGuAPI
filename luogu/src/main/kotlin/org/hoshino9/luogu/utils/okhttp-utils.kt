@@ -4,6 +4,8 @@ package org.hoshino9.luogu.utils
 
 import com.google.gson.JsonObject
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils
@@ -24,7 +26,7 @@ fun <K : Any, V : Any> Iterable<Pair<K, V>>.params(): RequestBody {
 }
 
 fun JsonObject.params(): RequestBody {
-	return RequestBody.create(MediaType.parse("application/json"), toString())
+	return toString().toRequestBody("application/json".toMediaTypeOrNull())
 }
 
 // Headers
@@ -64,7 +66,7 @@ inline fun <T> HttpClient.executeGet(url: String = "", headers: Headers = emptyH
 }
 
 inline fun <T> HttpClient.contentOnlyGet(url: String, action: (Response) -> T): T {
-	return executeGet(url, Headers.of("x-luogu-type", "content-only"), action)        //或者在 url 后添加 _contentOnly=1 但个人不推荐
+	return executeGet(url, Headers.headersOf("x-luogu-type", "content-only"), action)        //或者在 url 后添加 _contentOnly=1 但个人不推荐
 }
 
 fun HttpClient.apiGet(url: String): JsonObject {
@@ -83,7 +85,7 @@ val defaultClient: HttpClient
 
 // Response
 fun Response.assert() {
-	if (! isSuccessful) throw IllegalStatusCodeException(code().toString(), strData)
+	if (! isSuccessful) throw IllegalStatusCodeException(code.toString(), strData)
 }
 
 fun Response.assertJson() {
@@ -100,12 +102,12 @@ fun Response.assertJson() {
 
 val Response.strData: String
 	get() {
-		return this.body() !!.string().apply {
+		return this.body !!.string().apply {
 			// TODO LOG
 		}
 	}
 
 val Response.dataStream: InputStream
 	get() {
-		return this.body() !!.byteStream()
+		return this.body !!.byteStream()
 	}

@@ -29,21 +29,21 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 
 	var uid: String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "_uid" }?.value().orEmpty()
+			return client.cookieJar.loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name == "_uid" }?.value.orEmpty()
 		}
 		set(value) {
-			client.cookieJar().saveFromResponse(
-					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "_uid=$value"))
+			client.cookieJar.saveFromResponse(
+					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "_uid=$value") !!)
 			)
 		}
 
 	var clientId: String
 		get() {
-			return client.cookieJar().loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name() == "__client_id" }?.value().orEmpty()
+			return client.cookieJar.loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name == "__client_id" }?.value.orEmpty()
 		}
 		set(value) {
-			client.cookieJar().saveFromResponse(
-					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "__client_id=$value"))
+			client.cookieJar.saveFromResponse(
+					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "__client_id=$value") !!)
 			)
 		}
 

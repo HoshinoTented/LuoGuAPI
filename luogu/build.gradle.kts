@@ -8,7 +8,7 @@ dependencies {
 	compile(kotlin("script-runtime"))
 	compile("io.arrow-kt:arrow-core-data:0.9.0")
 	compile("com.google.code.gson", "gson", "2.8.5")
-	compile("com.squareup.okhttp3", "okhttp", "3.11.0")
+	compile("com.squareup.okhttp3", "okhttp", "4.1.0")
 	compile("org.jsoup", "jsoup", "1.11.3")
 	testCompile(kotlin("test-junit"))
 

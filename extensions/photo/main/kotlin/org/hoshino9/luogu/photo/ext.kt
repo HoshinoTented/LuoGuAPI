@@ -3,8 +3,10 @@
 package org.hoshino9.luogu.photo
 
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
@@ -64,7 +66,7 @@ private fun getPhotos(list: Element): List<Photo> {
 fun LoggedUser.postPhoto(file: File) {
 	luogu.executePost("app/upload", MultipartBody.Builder()
 			.setType(MultipartBody.FORM)
-			.addFormDataPart("picupload", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
+			.addFormDataPart("picupload", file.name, file.asRequestBody("application/octet-stream".toMediaTypeOrNull()))
 			.build(),
 			referer("app/upload")) { resp ->
 		resp.assert()
