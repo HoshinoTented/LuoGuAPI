@@ -38,11 +38,10 @@ val emptyHeaders: Headers
 	}
 
 // Request
-fun LuoGu.postRequest(url: String, body: RequestBody, headers: Headers): Request = Request.Builder()
-		.url("${LuoGuUtils.baseUrl}/$url")
+fun HttpClient.postRequest(url: String, body: RequestBody, headers: Headers): Request = Request.Builder()
+		.url(url)
 		.post(body)
 		.headers(headers)
-		.addHeader("x-csrf-token", csrfToken)
 		.build()
 
 @JvmOverloads
@@ -52,10 +51,11 @@ fun getRequest(url: String = "", headers: Headers): Request = Request.Builder()
 		.addHeader("User-Agent", USER_AGENT)
 		.build()
 
-inline fun <T> LuoGu.executePost(url: String = "", body: RequestBody = emptyParams(), headers: Headers /* 一般是 referer */, action: (Response) -> T): T {
-	return client.newCall(postRequest(url, body, headers)).execute().use { resp ->
-		resp.run(action)
-	}
+inline fun <T> LuoGu.executePost(url: String = "", body: RequestBody = emptyParams(), headers: Headers /* 一般是 referer */, action: (Response) -> T): T =
+		client.executePost("${LuoGuUtils.baseUrl}/$url", body, headers.newBuilder().add("x-csrf-token", csrfToken).build(), action)
+
+inline fun <T> HttpClient.executePost(url: String = "", body: RequestBody = emptyParams(), headers: Headers = emptyHeaders, action: (Response) -> T): T {
+	return newCall(postRequest(url, body, headers)).execute().use(action)
 }
 
 inline fun <T> LuoGu.executeGet(url: String = "", headers: Headers = emptyHeaders, action: (Response) -> T): T = client.executeGet("${LuoGuUtils.baseUrl}/$url", headers, action)
