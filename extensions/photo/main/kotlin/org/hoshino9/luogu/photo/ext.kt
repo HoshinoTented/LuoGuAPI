@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu.photo
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -75,39 +76,40 @@ fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, co
  *
  * @see Photo
  */
-fun LoggedUser.photoList(): List<Photo> {
-	luogu.executeGet("app/upload") { resp ->
-		resp.assert()
-
-		val page = resp.strData
-		return getPhotos(Jsoup.parse(page))
-	}
+fun LoggedUser.photoList(page: Int): List<Photo.Factory> {
+	return PhotoListPage(page, luogu.client).list
 }
 
 /**
  * 删除图片
  * @param photo 需要删除的图片
  */
-fun LoggedUser.deletePhoto(photo: Photo) {
+fun LoggedUser.deletePhoto(photo: List<String>) {
 	photo.run {
-		luogu.executePost("app/upload?delete=1&uploadid=$id", headers = referer("app/upload")) {
+		val params = JsonObject().apply {
+			add("images", JsonArray().apply {
+				photo.forEach(::add)
+			})
+		}.params()
+
+		luogu.executePost("api/image/delete", body = params, headers = referer("image")) {
 			it.assert()
 		}
 	}
 }
 
-/**
- * 获取图床图片列表
- * @param list 图片列表的元素
- * @return 返回一个 Photo 列表
- *
- * @see Photo
- */
-private fun getPhotos(list: Element): List<Photo> {
-	return list.getElementsByClass("lg-table-row").map {
-		Photo.Factory(it).newInstance()
-	}
-}
+///**
+// * 获取图床图片列表
+// * @param list 图片列表的元素
+// * @return 返回一个 Photo 列表
+// *
+// * @see Photo
+// */
+//private fun getPhotos(list: Element): List<Photo> {
+//	return list.getElementsByClass("lg-table-row").map {
+//		Photo.Factory(it).newInstance()
+//	}
+//}
 
 
 /**
