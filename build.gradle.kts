@@ -3,7 +3,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
 	maven
-	kotlin("jvm") version "1.3.40"
+	kotlin("jvm") version "1.3.40" apply false
+	java
+	`maven-publish`
+	id("com.jfrog.bintray") version "1.7.3"
 }
 
 
@@ -34,5 +37,51 @@ allprojects {
 
 	artifacts {
 		add("archives", sourcesJar)
+	}
+}
+
+subprojects {
+	apply {
+		plugin("maven")
+		plugin("java")
+		plugin("maven-publish")
+		plugin("com.jfrog.bintray")
+	}
+
+	bintray {
+		user = "ice1000"
+		key = findProperty("key").toString()
+		setConfigurations("archives")
+		pkg.apply {
+			name = rootProject.name
+			repo = "ice1000"
+			githubRepo = "HoshinoTented/LuoGuAPI"
+			publicDownloadNumbers = true
+			vcsUrl = "https://github.com/HoshinoTented/LuoGuAPI.git"
+			version.apply {
+				vcsTag = "${project.version}"
+				name = vcsTag
+				websiteUrl = "https://github.com/HoshinoTented/LuoGuAPI/releases/tag/$vcsTag"
+			}
+		}
+	}
+
+	publishing {
+		(publications) {
+			create<MavenPublication>("maven") {
+				from(components["java"])
+				groupId = project.group.toString()
+				artifactId = "${rootProject.name}-${project.name}"
+				version = project.version.toString()
+				artifact(tasks["sourcesJar"])
+				pom.withXml {
+					val root = asNode()
+					root.appendNode("description", "API of LuoGu website")
+					root.appendNode("name", project.name)
+					root.appendNode("url", "https://github.com/HoshinoTented/LuoGuAPI")
+					root.children().last()
+				}
+			}
+		}
 	}
 }
