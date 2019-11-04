@@ -8,10 +8,8 @@ import org.hoshino9.luogu.paste.deletePaste
 import org.hoshino9.luogu.paste.pasteList
 import org.hoshino9.luogu.paste.postPaste
 import org.hoshino9.luogu.photo.photoList
-import org.hoshino9.luogu.problem.experimental.Problem
-import org.hoshino9.luogu.problem.experimental.passedProblems
-import org.hoshino9.luogu.problem.experimental.problemList
-import org.hoshino9.luogu.problem.experimental.triedProblems
+import org.hoshino9.luogu.problem.Problem
+import org.hoshino9.luogu.problem.problemList
 import org.hoshino9.luogu.training.trainingPage
 import org.hoshino9.luogu.user.LoggedUser
 import org.junit.Before
@@ -19,7 +17,6 @@ import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Properties
-import java.util.Scanner
 
 open class LuoGuTest {
 	companion object {
@@ -57,33 +54,10 @@ open class LuoGuTest {
 	}
 
 	@Test
-	fun signInTest() {
-		val toString: (LoggedUser.SignedInStatus.Thing) -> String = {
-			"${it.name}: ${it.description}"
-		}
-
-		val status = try {
-			user.signInStatus
-		} catch (e : IllegalStateException) {
-			println("failed, trying signing in...")
-			user.signIn()
-			user.signInStatus
-		}
-
-		//language=TEXT
-		"""${status.qian.show}
-宜:
-${status.goods.joinToString(separator = "\n", transform = toString)}
-
-忌:
-${status.bads.joinToString(separator = "\n", transform = toString)}
-""".run(::println)
-
-	}
-
-	@Test
 	fun photoListTest() {
-		user.photoList().joinToString {
+		user.photoList(1).joinToString {
+			val it = it.newInstance()
+
 			//language=TEXT
 			"""user: ${it.user}
 url: ${it.url}
@@ -168,10 +142,9 @@ ${it.data}
 
 	@Test
 	fun userTest() {
-		println("$user: ${user.spacePage.username}")
-		user.spacePage.passedProblems().run(::println)
-		user.spacePage.triedProblems().run(::println)
-		user.spacePage.gugugu.run(::println)
+		println("$user: ${user.name}")
+		user.passedProblems.run(::println)
+		user.submittedProblems.run(::println)
 	}
 
 	//	@Test

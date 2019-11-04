@@ -1,8 +1,5 @@
-package org.hoshino9.luogu.problem.experimental
+package org.hoshino9.luogu.problem
 
-import org.hoshino9.luogu.utils.EQUAL
-import org.hoshino9.luogu.utils.SEPARATOR
-import org.hoshino9.luogu.tag.ColoredLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 
 /**

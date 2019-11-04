@@ -1,8 +1,6 @@
-package org.hoshino9.luogu.problem.experimental
+package org.hoshino9.luogu.problem
 
 import com.google.gson.JsonObject
-import org.hoshino9.luogu.problem.experimental.Problem
-import org.hoshino9.luogu.utils.HttpClient
 
 interface LoggedProblem : Problem {
 	open class Factory(source: JsonObject) : Problem.Factory(source), LoggedProblem {

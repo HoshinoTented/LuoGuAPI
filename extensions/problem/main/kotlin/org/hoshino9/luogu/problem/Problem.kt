@@ -1,4 +1,4 @@
-package org.hoshino9.luogu.problem.experimental
+package org.hoshino9.luogu.problem
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject

@@ -29,7 +29,7 @@ fun LoggedUser.postPaste(code: String, public: Boolean = true, verifyCode: Strin
 			val data: String? by it
 
 			if (status != 200) throw IllegalStatusCodeException(status, data ?: "")
-			return data !!
+			data !!
 		}
 	}
 }

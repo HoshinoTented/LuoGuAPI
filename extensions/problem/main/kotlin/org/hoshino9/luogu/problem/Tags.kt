@@ -1,4 +1,4 @@
-package org.hoshino9.luogu.problem.experimental
+package org.hoshino9.luogu.problem
 
 enum class Difficulty(val content: String) {
 	Unknown("暂无评定"),

@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.training
 
 import org.hoshino9.luogu.*
-import org.hoshino9.luogu.problem.experimental.Problem
+import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
