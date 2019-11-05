@@ -75,7 +75,7 @@ interface Problem {
 
 		override val provider: User
 			get() {
-				return User(data["provider"].asJsonObject["uid"].asInt.toString())
+				return User(data["provider"].asJsonObject["uid"].asInt)
 			}
 
 		override val samples: List<Sample>

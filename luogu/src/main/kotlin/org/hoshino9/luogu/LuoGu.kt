@@ -61,18 +61,6 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		}
 
 	/**
-	 * 主站滚动图片
-	 */
-	val sliderPhotos: List<SliderPhoto>
-		get() {
-			return executeGet { resp ->
-				resp.assert()
-
-				resp.strData.run(Jsoup::parse).run(LuoGuUtils::sliderPhotosFromPage)
-			}
-		}
-
-	/**
 	 * 是否已登录
 	 */
 	val isLogged: Boolean

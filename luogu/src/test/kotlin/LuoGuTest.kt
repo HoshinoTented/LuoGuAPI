@@ -1,8 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.discuss.DiscussListPage
-import org.hoshino9.luogu.discuss.posts
 import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.paste.deletePaste
 import org.hoshino9.luogu.paste.pasteList
@@ -10,7 +8,6 @@ import org.hoshino9.luogu.paste.postPaste
 import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.problemList
-import org.hoshino9.luogu.training.trainingPage
 import org.hoshino9.luogu.user.LoggedUser
 import org.junit.Before
 import org.junit.Test
@@ -99,44 +96,9 @@ ${it.data}
 	}
 
 	@Test
-	fun sliderPhotoTest() {
-		luogu.sliderPhotos.forEach {
-			println(it)
-//			val time = measureTimeMillis {
-//				defaultClient.executeGet(it.img) { resp ->
-//					resp.assert()
-//					resp.body() !!.byteStream().copyTo(testRoot.resolve(it.img.hashCode().toString() + ".png").toFile().outputStream())
-//				}
-//			}
-//
-//			println("used $time ms")
-		}
-	}
-
-	@Test
 	fun problemListTest() {
 		luogu.problemList().result.map { Problem.Factory(it, luogu.client) }.forEach {
 			println("${it.title}(${it.pid})[${it.difficulty}] ${it.tags} (${it.totalAccepted} / ${it.totalSubmit})")
-		}
-	}
-
-	@Test
-	fun training() {
-		luogu.trainingPage.also {
-			println("passed: ${it.passedCount}")
-			println("newest passed: ${it.lastPassedBlock}")
-			println("skip: ${it.skipPercent}")
-		}.trainingBlocks.forEach {
-			println(it.name)
-			it.trainings.forEach { training ->
-				print("[${training.status.content}]")
-				println(training.name)
-				training.problems.forEach { problem ->
-					println(problem.pid)
-				}
-			}
-
-			println(separator)
 		}
 	}
 
@@ -155,24 +117,5 @@ ${it.data}
 				user.deletePaste(paste)
 			}
 		}
-	}
-
-	@Test
-	fun discuss() {
-		DiscussListPage.Factory("", 1, luogu.client).let { list ->
-			list.discusses.first().infoPage.let { info ->
-				info.mainComment.run {
-					"""User: $user
-Date: $date
-Content: $content
-					""".run(::println)
-				}
-			}
-		}
-	}
-
-	@Test
-	fun posts() {
-		luogu.posts.run(::println)
 	}
 }

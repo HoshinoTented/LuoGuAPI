@@ -13,9 +13,6 @@ dependencies {
 	testCompile(kotlin("test-junit"))
 
 	val plugins = listOf(
-			"comment",
-			"discuss",
-			"training",
 			"paintboard",
 			"photo",
 			"paste",
