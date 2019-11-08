@@ -9,6 +9,7 @@ import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.problemList
 import org.hoshino9.luogu.user.LoggedUser
+import org.hoshino9.luogu.user.User
 import org.junit.Before
 import org.junit.Test
 import java.nio.file.Files
@@ -116,6 +117,14 @@ ${it.data}
 				println(Paste.PastePage(paste, luogu.client).newInstance().data)
 				user.deletePaste(paste)
 			}
+		}
+	}
+
+	@Test
+	fun follow() {
+		luogu.loggedUser.let { user ->
+			User.follower(user, 1).map(::println)
+			User.following(user, 1).map(::println)
 		}
 	}
 }

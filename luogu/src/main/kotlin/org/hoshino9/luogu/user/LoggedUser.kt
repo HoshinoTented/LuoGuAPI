@@ -18,7 +18,7 @@ import java.lang.IllegalStateException
  * 等到 Kotlin1.3 可以改用 `inline class`
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
-open class LoggedUser(val luogu: LuoGu, uid: Int) : User(uid) {
+open class LoggedUser(val luogu: LuoGu, uid: Int) : User(uid, luogu.client) {
 	companion object {
 		/**
 		 * 实例化一个 LoggedUser 对象
@@ -31,9 +31,6 @@ open class LoggedUser(val luogu: LuoGu, uid: Int) : User(uid) {
 			return LoggedUser(luogu, luogu.uid.toInt())
 		}
 	}
-
-	override val client: OkHttpClient
-		get() = luogu.client
 
 	/**
 	 * (un)?follow

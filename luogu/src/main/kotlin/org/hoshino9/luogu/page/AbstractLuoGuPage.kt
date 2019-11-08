@@ -9,4 +9,6 @@ import org.hoshino9.luogu.utils.*
 abstract class AbstractLuoGuPage(open val client: OkHttpClient = emptyClient) : LuoGuPage {
 	override val feInjection: JsonObject
 		get() = client.apiGet(url)
+
+	val currentData: JsonObject get() = feInjection["currentData"].asJsonObject
 }

@@ -6,12 +6,14 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
+import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
 typealias ProblemID = String
+typealias UID = Int
 
 interface IUser {
 	val uid: Int
@@ -26,16 +28,28 @@ interface IUser {
 }
 
 @JsonAdapter(User.Companion.Deserializer::class)
-open class User(override val uid: Int) : AbstractLuoGuPage(), IUser {
+open class User(override val uid: UID, client: OkHttpClient = emptyClient) : AbstractLuoGuPage(client), IUser {
 	companion object {
 		object Deserializer : JsonDeserializer<User> {
 			override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): User {
 				return User(json.asJsonObject["uid"].toString().toInt())
 			}
 		}
+
+		private fun follow(type: String, user: User, page: Int): List<UID> = emptyClient.apiGet("https://www.luogu.org/fe/api/user/$type?user=${user.uid}&page=$page").let { obj ->
+			val users = obj["users"].asJsonObject
+
+			users["result"].asJsonArray.map {
+				it.asJsonObject["uid"].asInt
+			}
+		}
+
+		fun follower(user: User, page: Int): List<UID> = follow("followers", user, page)
+		fun following(user: User, page: Int): List<UID> = follow("followings", user, page)
 	}
 
-	private val data = feInjection["currentData"].asJsonObject
+	val data = currentData
+
 	private val userData = data["user"].asJsonObject
 	private val delegate = userData.delegate
 
