@@ -2,18 +2,13 @@ package org.hoshino9.luogu.test
 
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.user.LoggedUser
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.Properties
 
 abstract class BaseTest {
 	companion object {
-		internal val testRoot = Paths.get("testResources")
-		internal val verifyPath by lazy { testRoot.resolve("verify.png") }
-		internal val configPath by lazy { testRoot.resolve("user.properties") }
 		internal val config by lazy {
 			Properties().apply {
-				load(Files.newInputStream(configPath))
+				load(BaseTest::class.java.getResourceAsStream("user.properties"))
 			}
 		}
 	}
