@@ -13,9 +13,6 @@ import java.lang.IllegalStateException
 
 /**
  * **你谷**用户类
- * 但仅限于已登录的用户
- * 未登录的用户请用 `String` 代替
- * 等到 Kotlin1.3 可以改用 `inline class`
  */
 @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
 open class LoggedUser(val luogu: LuoGu, uid: Int) : User(uid, luogu.client) {
