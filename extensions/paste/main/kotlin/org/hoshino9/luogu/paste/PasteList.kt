@@ -5,7 +5,7 @@ import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.HttpClient
 
 class PasteList(client: HttpClient) : AbstractLuoGuPage(client) {
-	override val url: String = "https://www.luogu.org/fe/paste/list"        // FIXME: 试验阶段的 API
+	override val url: String = "https://www.luogu.org/paste"        // FIXME: 试验阶段的 API
 
 	private val data get() = feInjection["currentData"].asJsonObject["pastes"].asJsonObject["result"].asJsonArray
 

@@ -10,6 +10,7 @@ out/
 
 # test resources
 /testResources/
+verify.png
 user.properties
 
 # wiki

@@ -2,6 +2,8 @@
 
 package org.hoshino9.luogu.paste
 
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
@@ -15,27 +17,35 @@ import org.jsoup.Jsoup
  * @return 返回剪切板的代码
  */
 @JvmOverloads
-fun LoggedUser.postPaste(code: String, public: Boolean = true, verifyCode: String = ""): String {
-	return luogu.executePost("paste/post", listOf(
-			"content" to code,
-			"verify" to verifyCode,
-			"public" to if (public) "1" else "0"
-	).params(), referer("paste")) { resp ->
+fun LoggedUser.newPaste(code: String, public: Boolean = true, verifyCode: String = ""): String {
+	return luogu.executePost("paste/new", JsonObject().apply {
+		addProperty("data", code)
+		addProperty("public", public)
+	}.params(), referer("paste")) { resp ->
 		resp.assert()
 
 		val content = resp.strData
+		println(content)
 		json(content).delegate.let {
-			val status: Int by it
-			val data: String? by it
+			val id: String by it
 
-			if (status != 200) throw IllegalStatusCodeException(status, data ?: "")
-			data !!
+			id
 		}
 	}
 }
 
 fun LoggedUser.deletePaste(id: String) {
 	luogu.executePost("paste/delete/$id", headers = referer("paste/$id")) { resp ->
+		resp.assert()
+	}
+}
+
+fun LoggedUser.editPaste(id: String, data: String, public: Boolean) {
+	luogu.executePost("paste/edit/$id", JsonObject().apply {
+		addProperty("data", data)
+		addProperty("id", id)
+		addProperty("public", public)
+	}.params(), referer("paste/$id")) { resp ->
 		resp.assert()
 	}
 }

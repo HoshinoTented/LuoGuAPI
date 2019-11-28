@@ -4,11 +4,10 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.paste.Paste
 import org.hoshino9.luogu.paste.deletePaste
 import org.hoshino9.luogu.paste.pasteList
-import org.hoshino9.luogu.paste.postPaste
+import org.hoshino9.luogu.paste.newPaste
 import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.problemList
-import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.user.User
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +17,7 @@ import java.util.Properties
 
 open class LuoGuTest {
 	companion object {
-		internal val testRoot = Paths.get("testResources")
+		internal val testRoot = Paths.get("luogu/src/main/resources")
 		internal val verifyPath by lazy { testRoot.resolve("verify.png") }
 		internal val configPath by lazy { testRoot.resolve("user.properties") }
 		internal val config by lazy {
@@ -113,7 +112,7 @@ ${it.data}
 	//	@Test
 	fun paste() {
 		"LuoGu API Test".let { content ->
-			user.postPaste(content).let { paste ->
+			user.newPaste(content).let { paste ->
 				println(Paste.PastePage(paste, luogu.client).newInstance().data)
 				user.deletePaste(paste)
 			}

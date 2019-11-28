@@ -8,7 +8,7 @@ import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
-	const val domain = "www.luogu.org"
+	const val domain = "www.luogu.com.cn"
 	const val baseUrl = "https://$domain"
 	val httpUrl: HttpUrl get() = baseUrl.toHttpUrl()
 
