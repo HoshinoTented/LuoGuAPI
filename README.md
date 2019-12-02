@@ -53,8 +53,8 @@ compile 'org.hoshino9:[submodule name]:0.0.2'
 * `<module name>-<version number>.jar` 为本体  
 * `<module name>-<version number>-sources.jar` 为源码
 
-在 `luogu/build/libs` 下还会有  
-* `luogu-<version number>-dependencies.jar` 为运行时依赖  
+在 `core/build/libs` 下还会有  
+* `core-<version number>-dependencies.jar` 为运行时依赖  
 
 # Stable API
 洛谷已 **正式** 开放 API 的功能（未选中的代表 `LuoGuAPI` 还未支持）:  
@@ -69,13 +69,13 @@ compile 'org.hoshino9:[submodule name]:0.0.2'
 - [ ] 比赛列表
 - [ ] 比赛内容
 - [ ] 比赛的操作
-
-洛谷还 **未正式** 开放但已经在开发中的 API（未选中同上）:  
 - [x] 剪切板列表
 - [x] 剪切板内容
-- [ ] 新建剪切板（未找到参数列表）
+- [x] 新建剪切板
 - [x] 删除剪切板
-- [ ] 编辑剪切板
+- [x] 编辑剪切板
+
+洛谷还 **未正式** 开放但已经在开发中的 API（未选中同上）:  
 - [ ] 博客的系列操作（不确定，可能已经正式开放）
 
 无法在 API 列表中寻找到的功能:

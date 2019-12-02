@@ -16,8 +16,8 @@ allprojects {
 	}
 
 	dependencies {
-		compileOnly(project(":luogu"))
-		testCompile(project(":luogu"))
+		compileOnly(project(":core"))
+		testCompile(project(":core"))
 		testCompile(kotlin("test-junit"))
 	}
 }

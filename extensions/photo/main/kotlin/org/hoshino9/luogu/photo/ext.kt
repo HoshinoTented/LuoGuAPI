@@ -22,7 +22,7 @@ import java.io.File
  * @return 返回一个 Json 对象
  */
 fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
-	return luogu.executeGet("api/image/generateUploadLink?watermarkType=1&captcha=$verifyCode") {
+	return luogu.executeGet("api/image/generateUploadLink?watermarkType=$watermark&captcha=$verifyCode") {
 		it.assert()
 
 		json(it.strData)

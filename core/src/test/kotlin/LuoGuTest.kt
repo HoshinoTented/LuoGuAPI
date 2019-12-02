@@ -17,7 +17,7 @@ import java.util.Properties
 
 open class LuoGuTest {
 	companion object {
-		internal val testRoot = Paths.get("luogu/src/main/resources")
+		internal val testRoot = Paths.get("core/src/main/resources")
 		internal val verifyPath by lazy { testRoot.resolve("verify.png") }
 		internal val configPath by lazy { testRoot.resolve("user.properties") }
 		internal val config by lazy {

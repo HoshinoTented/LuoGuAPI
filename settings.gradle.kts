@@ -1,4 +1,4 @@
-include(":extensions", ":luogu")
+include(":extensions", ":core")
 
 val plugins = listOf(
 		"paintboard",

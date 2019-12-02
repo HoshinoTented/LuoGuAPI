@@ -8,7 +8,7 @@ abstract class BaseTest {
 	companion object {
 		internal val config by lazy {
 			Properties().apply {
-				load(BaseTest::class.java.getResourceAsStream("user.properties"))
+				load(BaseTest::class.java.classLoader.getResourceAsStream("user.properties"))
 			}
 		}
 	}
