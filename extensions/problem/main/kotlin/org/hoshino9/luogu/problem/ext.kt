@@ -12,7 +12,7 @@ import org.hoshino9.luogu.LuoGu
  * @throws IllegalStatusCodeException
  * @return 返回题目列表
  *
- * @see Problem
+ * @see IProblem
  * @see ProblemSearchConfig
  */
 @JvmOverloads

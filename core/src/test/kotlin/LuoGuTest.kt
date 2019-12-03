@@ -6,7 +6,7 @@ import org.hoshino9.luogu.paste.deletePaste
 import org.hoshino9.luogu.paste.pasteList
 import org.hoshino9.luogu.paste.newPaste
 import org.hoshino9.luogu.photo.photoList
-import org.hoshino9.luogu.problem.Problem
+import org.hoshino9.luogu.problem.IProblem
 import org.hoshino9.luogu.problem.problemList
 import org.hoshino9.luogu.user.User
 import org.junit.Before
@@ -93,13 +93,6 @@ source:
 ${it.data}
 """
 		}.run(::println)
-	}
-
-	@Test
-	fun problemListTest() {
-		luogu.problemList().result.map { Problem.Factory(it, luogu.client) }.forEach {
-			println("${it.title}(${it.pid})[${it.difficulty}] ${it.tags} (${it.totalAccepted} / ${it.totalSubmit})")
-		}
 	}
 
 	@Test
