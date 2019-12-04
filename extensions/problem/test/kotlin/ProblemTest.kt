@@ -8,7 +8,7 @@ import org.junit.Test
 class ProblemTest : BaseTest() {
 	@Test
 	fun problemList() {
-		luogu.problemList().result.map { ProblemFactory.newInstance(it, luogu.client, ::BaseProblem) }.forEach {
+		luogu.problemList().result.map {
 			println("${it.title}(${it.pid})[${it.difficulty}] ${it.tags} (${it.totalAccepted} / ${it.totalSubmit})")
 		}
 	}

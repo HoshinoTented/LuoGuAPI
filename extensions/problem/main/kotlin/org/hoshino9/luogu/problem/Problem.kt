@@ -9,19 +9,6 @@ import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
 
-object ProblemFactory {
-	inline fun <T : IBaseProblem> newInstance(pid: String, client: HttpClient, constructor: (JsonObject) -> T): T {
-		val source = client.contentOnlyGet("$baseUrl/problem/$pid") {
-			it.assert()
-			json(it.strData)
-		}
-
-		if (source["code"].asInt != 200) throw IllegalStatusCodeException(source["code"], source["currentData"].asJsonObject["errorMessage"])
-
-		return constructor(source)
-	}
-}
-
 interface IBaseProblem {
 	/**
 	 * 难度
