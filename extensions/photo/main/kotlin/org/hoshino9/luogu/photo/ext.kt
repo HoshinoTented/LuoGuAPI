@@ -9,6 +9,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.hoshino9.luogu.IllegalStatusCodeException
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
@@ -60,7 +61,7 @@ fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, co
 				.addFormDataPart("file", photo.name, photo.asRequestBody(contentType))
 				.build()
 
-		luogu.client.executePost(host, body, referer("https://www.luogu.org/image")) {
+		luogu.client.executePost(host, body, referer("$baseUrl/image")) {
 			it.assert()
 
 			json(it.strData) {

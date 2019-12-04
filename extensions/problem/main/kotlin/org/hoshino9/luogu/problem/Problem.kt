@@ -10,7 +10,7 @@ import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
 
 object ProblemFactory {
-	fun <T> newInstance(pid: String, client: HttpClient, constructor: (JsonObject) -> T): T {
+	inline fun <T : IBaseProblem> newInstance(pid: String, client: HttpClient, constructor: (JsonObject) -> T): T {
 		val source = client.contentOnlyGet("$baseUrl/problem/$pid") {
 			it.assert()
 			json(it.strData)
@@ -23,17 +23,48 @@ object ProblemFactory {
 }
 
 interface IBaseProblem {
+	/**
+	 * 难度
+	 */
 	val difficulty: Difficulty
+
+	/**
+	 * 题目 id
+	 */
 	val pid: String
+
+	/**
+	 * 题目标签
+	 */
 	val tags: List<LuoGuTag>
+
+	/**
+	 * 题目标题
+	 */
 	val title: String
+
+	/**
+	 * 题目总通过量
+	 */
 	val totalAccepted: Long
+
+	/**
+	 * 题目总提交量
+	 */
 	val totalSubmit: Long
+
+	/**
+	 * 题目所在题库类型
+	 */
 	val type: Type
+
+	/**
+	 * 题目是否需要翻译
+	 */
 	val wantsTranslation: Boolean
 }
 
-open class BaseProblem(val source: JsonObject) : IBaseProblem {
+open class BaseProblem(private val source: JsonObject) : IBaseProblem {
 	protected val data: JsonObject get() = source["currentData"].asJsonObject["problem"].asJsonObject
 	protected val delegate = data.delegate
 

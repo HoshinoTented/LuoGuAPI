@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import org.hoshino9.luogu.HTMLParseException
 import org.hoshino9.luogu.LuoGuUtils
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
@@ -12,7 +13,7 @@ import org.jsoup.nodes.Element
 
 interface Paste {
 	open class PastePage(id: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
-		override val url: String = "https://www.luogu.org/fe/paste/$id"
+		override val url: String = "$baseUrl/paste/$id"
 
 		private val data get() = feInjection["currentData"].asJsonObject["paste"].asJsonObject
 
