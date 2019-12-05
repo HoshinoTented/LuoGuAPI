@@ -9,7 +9,7 @@ import org.hoshino9.luogu.utils.HttpClient
 class PhotoListPage(val page: Int, client: HttpClient) : AbstractLuoGuPage(client) {
 	override val url: String get() = "$baseUrl/image?page=$page"
 
-	val data = feInjection["currentData"].asJsonObject["images"].asJsonObject
+	private val data: JsonObject = feInjection["currentData"].asJsonObject["images"].asJsonObject
 
 	val list: List<Photo.Factory>
 		get() {

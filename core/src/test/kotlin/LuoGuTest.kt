@@ -1,13 +1,8 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.paste.Paste
-import org.hoshino9.luogu.paste.deletePaste
-import org.hoshino9.luogu.paste.pasteList
-import org.hoshino9.luogu.paste.newPaste
+import org.hoshino9.luogu.paste.*
 import org.hoshino9.luogu.photo.photoList
-import org.hoshino9.luogu.problem.IProblem
-import org.hoshino9.luogu.problem.problemList
 import org.hoshino9.luogu.user.User
 import org.junit.Before
 import org.junit.Test
@@ -106,7 +101,7 @@ ${it.data}
 	fun paste() {
 		"LuoGu API Test".let { content ->
 			user.newPaste(content).let { paste ->
-				println(Paste.PastePage(paste, luogu.client).newInstance().data)
+				println(PastePage(paste, luogu.client).newInstance().data)
 				user.deletePaste(paste)
 			}
 		}
