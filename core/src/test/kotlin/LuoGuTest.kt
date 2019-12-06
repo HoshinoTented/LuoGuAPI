@@ -48,8 +48,6 @@ open class LuoGuTest {
 	@Test
 	fun photoListTest() {
 		user.photoList(1).joinToString {
-			val it = it.newInstance()
-
 			//language=TEXT
 			"""user: ${it.user}
 url: ${it.url}

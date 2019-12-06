@@ -2,20 +2,10 @@ package org.hoshino9.luogu.photo
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import org.hoshino9.luogu.HTMLParseException
-import org.hoshino9.luogu.LuoGuUtils
-import org.hoshino9.luogu.MatchException
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.gson
-import org.jsoup.nodes.Element
 
-interface Photo {
-	open class Factory(val obj: JsonObject) {
-		fun newInstance(): Photo {
-			return gson.fromJson(obj, PhotoData::class.java)
-		}
-	}
-
+interface IPhoto {
 	val id: String
 	val size: Int
 	val date: String
@@ -23,16 +13,22 @@ interface Photo {
 	val url: String
 }
 
-data class PhotoData(
+open class Photo(
 		override val id: String,
 		override val size: Int,
 		@SerializedName("uploadTime") override val date: String,
 		@SerializedName("provider") override val user: User,
 		override val url: String
-) : Photo {
+) : IPhoto {
+	companion object {
+		operator fun invoke(obj: JsonObject): IPhoto {
+			return gson.fromJson(obj, Photo::class.java)
+		}
+	}
+
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is Photo) return false
+		if (other !is IPhoto) return false
 
 		if (id != other.id) return false
 

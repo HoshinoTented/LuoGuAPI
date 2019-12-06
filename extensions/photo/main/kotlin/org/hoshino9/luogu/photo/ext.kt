@@ -5,15 +5,11 @@ package org.hoshino9.luogu.photo
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import java.io.File
 
 /**
@@ -75,9 +71,9 @@ fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, co
  * 图床列表
  * @return 返回一个图片的列表
  *
- * @see Photo
+ * @see IPhoto
  */
-fun LoggedUser.photoList(page: Int): List<Photo.Factory> {
+fun LoggedUser.photoList(page: Int): List<IPhoto> {
 	return PhotoListPage(page, luogu.client).list
 }
 
