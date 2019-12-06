@@ -17,8 +17,6 @@ import java.io.OutputStream
  */
 @Suppress("MemberVisibilityCanBePrivate")
 open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
-	data class SliderPhoto(val url: String?, val img: String)
-
 	companion object {
 		@JvmName("newInstance")
 		operator fun invoke(clientId: String, uid: String): LuoGu = LuoGu().apply {
