@@ -17,7 +17,7 @@ import org.jsoup.Jsoup
  * @return 返回剪切板的代码
  */
 @JvmOverloads
-fun LoggedUser.newPaste(code: String, public: Boolean = true, verifyCode: String = ""): String {
+fun LoggedUser.newPaste(code: String, public: Boolean = true): String {
 	return luogu.executePost("paste/new", JsonObject().apply {
 		addProperty("data", code)
 		addProperty("public", public)
@@ -26,10 +26,8 @@ fun LoggedUser.newPaste(code: String, public: Boolean = true, verifyCode: String
 
 		val content = resp.strData
 		println(content)
-		json(content).delegate.let {
-			val id: String by it
-
-			id
+		json(content).let {
+			it["id"].asString
 		}
 	}
 }
@@ -50,6 +48,6 @@ fun LoggedUser.editPaste(id: String, data: String, public: Boolean) {
 	}
 }
 
-fun LoggedUser.pasteList(): PasteList {
-	return PasteList(luogu.client)
+fun LoggedUser.pasteList(page: Int = 1): PasteList {
+	return PasteList(page, luogu.client)
 }
