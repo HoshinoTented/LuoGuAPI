@@ -52,7 +52,7 @@ fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, co
 				.addFormDataPart("success_action_status", "200")
 				.addFormDataPart("OSSAccessKeyId", accessKeyID)
 				.addFormDataPart("policy", policy)
-				.addFormDataPart("key", "upload/image_hosting/\${filename}")
+				.addFormDataPart("key", "upload/image_hosting/__upload/\${filename}")
 				.addFormDataPart("name", photo.name)
 				.addFormDataPart("file", photo.name, photo.asRequestBody(contentType))
 				.build()
@@ -61,7 +61,7 @@ fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, co
 			it.assert()
 
 			json(it.strData) {
-				get("id").asString
+				get("image").asJsonObject["id"].asString
 			}
 		}
 	}
