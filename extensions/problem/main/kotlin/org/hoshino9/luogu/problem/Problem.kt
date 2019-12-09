@@ -1,7 +1,9 @@
 package org.hoshino9.luogu.problem
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.tag.IdLuoGuTag
@@ -51,14 +53,13 @@ interface IBaseProblem {
 	val wantsTranslation: Boolean
 }
 
-open class BaseProblem(private val source: JsonObject) : IBaseProblem {
-	protected val data: JsonObject get() = source["currentData"].asJsonObject["problem"].asJsonObject
-	protected val delegate = data.delegate
+open class BaseProblem(protected val source: JsonObject) : IBaseProblem {
+	protected val delegate = source.delegate
 
 	override val pid: String by delegate
 
 	override val difficulty: Difficulty
-		get() = data["difficulty"].asInt.let {
+		get() = source["difficulty"].asInt.let {
 			Difficulty.values()[it]
 		}
 
@@ -66,30 +67,40 @@ open class BaseProblem(private val source: JsonObject) : IBaseProblem {
 
 	override val tags: List<LuoGuTag>
 		get() {
-			return data["tags"].asJsonArray.map {
+			return source["tags"].asJsonArray.map {
 				IdLuoGuTag(it.asInt)
 			}
 		}
 
 	override val type: Type
 		get() {
-			return Type.values().first { it.id == data["type"].asString }
+			return Type.values().first { it.id == source["type"].asString }
 		}
 
 	override val totalAccepted: Long
 		get() {
-			return data["totalAccepted"].toString().toLong()
+			return source["totalAccepted"].run(::parseTotal)
 		}
 
 	override val totalSubmit: Long
 		get() {
-			return data["totalSubmit"].toString().toLong()
+			return source["totalSubmit"].run(::parseTotal)
 		}
 
 	override val wantsTranslation: Boolean by delegate
 
+	private fun parseTotal(elem: JsonElement): Long {
+		elem as JsonPrimitive
+
+		return when {
+			elem.isString -> elem.asString.toLong()
+			elem.isNumber -> elem.asLong
+			else -> throw IllegalArgumentException(elem.toString())
+		}
+	}
+
 	override fun toString(): String {
-		return data.toString()
+		return source.toString()
 	}
 }
 
@@ -169,7 +180,7 @@ open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
 
 	override val limits: List<IProblem.Limit>
 		get() {
-			val json = data["limits"].asJsonObject
+			val json = source["limits"].asJsonObject
 			val memory = json["memory"].asJsonArray
 			val time = json["time"].asJsonArray
 
@@ -180,12 +191,12 @@ open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
 
 	override val provider: User
 		get() {
-			return User(data["provider"].asJsonObject["uid"].asInt)
+			return User(source["provider"].asJsonObject["uid"].asInt)
 		}
 
 	override val samples: List<IProblem.Sample>
 		get() {
-			return data["samples"].asJsonArray.map {
+			return source["samples"].asJsonArray.map {
 				it as JsonArray
 
 				val `in` = it[0].asString

@@ -1,6 +1,7 @@
 include(":extensions", ":core")
 
 val plugins = listOf(
+		"contest",
 		"paintboard",
 		"photo",
 		"paste",
