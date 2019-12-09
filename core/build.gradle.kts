@@ -5,6 +5,7 @@ val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(Kotlin
 
 dependencies {
 	compile(kotlin("stdlib"))
+	compile(kotlin("reflect"))
 	compile(kotlin("script-runtime"))
 	compile("com.google.code.gson", "gson", "2.8.5")        // JSON parser
 	compile("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library
