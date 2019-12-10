@@ -9,14 +9,49 @@ sealed class Host {
 }
 
 interface IBaseContest {
+	/**
+	 * 比赛 ID
+	 */
 	val id: Int
+
+	/**
+	 * 比赛名次
+	 */
 	val name: String
+
+	/**
+	 * 比赛举办者
+	 */
 	val host: Host
+
+	/**
+	 * 比赛题目数量
+	 */
 	val problemCount: Int
+
+	/**
+	 * 是否 Rated
+	 */
 	val rated: Boolean
+
+	/**
+	 * 比赛规则类型
+	 */
 	val ruleType: RuleType
+
+	/**
+	 * 比赛类型（可见类型）
+	 */
 	val visibilityType: VisibilityType
+
+	/**
+	 * 比赛开始时间（时间戳）
+	 */
 	val startTime: Long
+
+	/**
+	 * 比赛结束时间（时间戳）
+	 */
 	val endTime: Long
 }
 
@@ -47,7 +82,14 @@ open class BaseContest(protected val source: JsonObject) : IBaseContest {
 }
 
 interface IContest : IBaseContest {
+	/**
+	 * 比赛介绍
+	 */
 	val description: String
+
+	/**
+	 * 比赛总参加人数
+	 */
 	val totalParticipants: Int
 }
 

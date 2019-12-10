@@ -10,13 +10,8 @@ class ContestTest : BaseTest() {
 	@Test
 	fun contestList() {
 		luogu.contestListPage().let {
-			println(it.count)
-
-			it.contests.forEach {
-				it.printAllMember()
-
-				println("===============================")
-			}
+			it.printAllMember()
+			it.contests.forEach { it.printAllMember() }
 		}
 	}
 
@@ -25,7 +20,10 @@ class ContestTest : BaseTest() {
 		luogu.contestListPage().contests.first().id.let {
 			println(it)
 
-			luogu.contestPage(it).contest.printAllMember()
+			luogu.contestPage(it).run {
+				printAllMember()
+				contest.printAllMember()
+			}
 		}
 	}
 }
