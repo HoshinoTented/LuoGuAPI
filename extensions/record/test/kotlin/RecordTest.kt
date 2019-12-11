@@ -9,5 +9,7 @@ class RecordTest : BaseTest() {
 		user.postSolution(Solution("P1001", Solution.Language.Haskell, "main = putStrLn \"Hello world!\"")).listen(luogu) { socket, msg ->
 			println(msg)
 		}
+
+		Thread.sleep(10000)
 	}
 }
