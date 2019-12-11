@@ -9,20 +9,16 @@ import kotlin.reflect.full.memberProperties
 class ContestTest : BaseTest() {
 	@Test
 	fun contestList() {
-		luogu.contestListPage().let {
-			it.printAllMember()
-			it.contests.forEach { it.printAllMember() }
+		luogu.contestListPage().run {
+			printAllMember()
 		}
 	}
 
 	@Test
 	fun contestInfo() {
 		luogu.contestListPage().contests.first().id.let {
-			println(it)
-
 			luogu.contestPage(it).run {
 				printAllMember()
-				contest.printAllMember()
 			}
 		}
 	}
