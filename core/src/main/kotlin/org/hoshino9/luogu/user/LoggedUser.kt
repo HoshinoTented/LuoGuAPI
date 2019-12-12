@@ -22,7 +22,7 @@ open class LoggedUser(source: JsonObject, val luogu: LuoGu) : User(source), ILog
 	/**
 	 * (un)?follow
 	 */
-	fun doFollow(user: User, isFollow: Boolean = true): Boolean {
+	fun doFollow(user: IBaseUser, isFollow: Boolean = true): Boolean {
 		return JsonObject().apply {
 			addProperty("uid", user.uid)
 			addProperty("relationship", if (isFollow) 1 else 0)
