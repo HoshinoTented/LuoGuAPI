@@ -2,6 +2,8 @@ package org.hoshino9.luogu.test
 
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.user.LoggedUser
+import org.hoshino9.luogu.user.User
+import org.hoshino9.luogu.user.currentUser
 import java.util.Properties
 
 abstract class BaseTest {
@@ -22,7 +24,7 @@ abstract class BaseTest {
 
 		if (id != null && uid != null) {
 			luogu = LuoGu(id, uid)
-			user = luogu.loggedUser
+			user = luogu.currentUser.user
 		} else throw IllegalStateException("No logged in")
 	}
 }

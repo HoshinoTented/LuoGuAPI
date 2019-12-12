@@ -12,21 +12,18 @@ interface IPaste {
 	val user: User
 	val time: Long
 	val data: String
-	val isPublic: Boolean
+	val public: Boolean
 }
 
-open class Paste(
-		override val id: String,
-		override val user: User,
-		override val time: Long,
-		override val data: String,
-		@SerializedName("public") override val isPublic: Boolean
-) : IPaste {
-	companion object {
-		operator fun invoke(obj: JsonObject): IPaste {
-			return gson.fromJson(obj, Paste::class.java)
-		}
-	}
+open class Paste(val source: JsonObject) : IPaste {
+	protected val delegate = source.delegate
+
+	override val id: String by delegate
+	override val time: Long by delegate
+	override val data: String by delegate
+	override val public: Boolean by delegate
+	override val user: User
+		get() = User(source["user"].asJsonObject)
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

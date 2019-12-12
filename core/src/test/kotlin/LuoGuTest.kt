@@ -4,6 +4,7 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.paste.*
 import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.user.User
+import org.hoshino9.luogu.user.currentUser
 import org.junit.Before
 import org.junit.Test
 import java.nio.file.Files
@@ -22,16 +23,16 @@ open class LuoGuTest {
 		}
 	}
 
-	lateinit var luogu : LuoGu
+	lateinit var luogu: LuoGu
 
-	val user by lazy { this.luogu.loggedUser }
+	val user by lazy { this.luogu.currentUser.user }
 
 	val separator = "${"=".repeat(100)}\n"
 
 	@Before
 	fun loadCookie() {
-		val id : String? = config.getProperty("__client_id")
-		val uid : String? = config.getProperty("_uid")
+		val id: String? = config.getProperty("__client_id")
+		val uid: String? = config.getProperty("_uid")
 
 		if (id != null && uid != null) {
 			luogu = LuoGu(id, uid)
@@ -43,18 +44,6 @@ open class LuoGuTest {
 		config.setProperty("__client_id", luogu.clientId)
 		config.setProperty("_uid", luogu.uid)
 		config.store(Files.newOutputStream(configPath), null)
-	}
-
-	@Test
-	fun photoListTest() {
-		user.photoList(1).joinToString {
-			//language=TEXT
-			"""user: ${it.user}
-url: ${it.url}
-date: ${it.date}
-${it.user}
-"""
-		}.run(::println)
 	}
 
 	//	@Test
@@ -76,40 +65,7 @@ ${it.user}
 //	}
 
 	@Test
-	fun pasteListTest() {
-		user.pasteList().list.joinToString(separator = separator) {
-			//language=TEXT
-			"""user: ${it.user}
-date: ${it.time}
-is public: ${it.isPublic}
-source:
-${it.data}
-"""
-		}.run(::println)
-	}
-
-	@Test
 	fun userTest() {
 		println("$user: ${user.name}")
-		user.passedProblems.run(::println)
-		user.submittedProblems.run(::println)
-	}
-
-	//	@Test
-	fun paste() {
-		"LuoGu API Test".let { content ->
-			user.newPaste(content).let { paste ->
-				println(PastePage(paste, luogu.client).newInstance().data)
-				user.deletePaste(paste)
-			}
-		}
-	}
-
-	@Test
-	fun follow() {
-		luogu.loggedUser.let { user ->
-			User.follower(user, 1).map(::println)
-			User.following(user, 1).map(::println)
-		}
 	}
 }

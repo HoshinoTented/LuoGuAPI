@@ -191,7 +191,7 @@ open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
 
 	override val provider: User
 		get() {
-			return User(source["provider"].asJsonObject["uid"].asInt)
+			return User(source["provider"].asJsonObject)
 		}
 
 	override val samples: List<IProblem.Sample>

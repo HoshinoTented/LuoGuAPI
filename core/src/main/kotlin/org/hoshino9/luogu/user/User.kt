@@ -5,6 +5,7 @@ package org.hoshino9.luogu.user
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
@@ -15,72 +16,31 @@ import java.lang.reflect.Type
 typealias ProblemID = String
 typealias UID = Int
 
-interface IUser {
+interface IBaseUser {
 	val uid: Int
-	val ranking: Int
 	val name: String
 	val color: String
+	val badge: String?
+	val slogan: String
+	val ccfLevel: Int
 	val isAdmin: Boolean
-	val background: String
-	val introduction: String
-	val passedProblems: List<ProblemID>
-	val submittedProblems: List<ProblemID>
+	val isBanned: Boolean
 }
 
-@JsonAdapter(User.Companion.Deserializer::class)
-open class User(override val uid: UID, client: OkHttpClient = emptyClient) : AbstractLuoGuPage(client), IUser {
-	companion object {
-		object Deserializer : JsonDeserializer<User> {
-			override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): User {
-				return User(json.asJsonObject["uid"].toString().toInt())
-			}
-		}
+open class BaseUser(val source: JsonObject) : IBaseUser {
+	protected val delegate = source.delegate
 
-		private fun follow(type: String, user: User, page: Int): List<UID> = emptyClient.apiGet("$baseUrl/fe/api/user/$type?user=${user.uid}&page=$page").let { obj ->
-			val users = obj["users"].asJsonObject
-
-			users["result"].asJsonArray.map {
-				it.asJsonObject["uid"].asInt
-			}
-		}
-
-		fun follower(user: User, page: Int): List<UID> = follow("followers", user, page)
-		fun following(user: User, page: Int): List<UID> = follow("followings", user, page)
-	}
-
-	val data = currentData
-
-	private val userData = data["user"].asJsonObject
-	private val delegate = userData.delegate
-
-	override val background: String by delegate
-	override val introduction: String by delegate
-	override val isAdmin: Boolean by delegate
+	override val uid: Int by delegate
 	override val name: String by delegate
-	override val ranking: Int by delegate
 	override val color: String by delegate
-
-	private fun problemList(attr: String): List<ProblemID> {
-		return data[attr].asJsonArray.map {
-			it.asJsonObject.let {
-				it["pid"].asString
-			}
-		}
-	}
-
-	override val passedProblems: List<ProblemID> get() = problemList("passedProblems")
-	override val submittedProblems: List<ProblemID> get() = problemList("submittedProblems")
-
-	override val url: String
-		get() = "$baseUrl/user/$uid"
+	override val badge: String? by delegate
+	override val slogan: String by delegate
+	override val ccfLevel: Int by delegate
+	override val isAdmin: Boolean by delegate
+	override val isBanned: Boolean by delegate
 
 	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (other !is User) return false
-
-		if (uid != other.uid) return false
-
-		return true
+		return (other as? BaseUser)?.uid == uid
 	}
 
 	override fun hashCode(): Int {
@@ -90,4 +50,47 @@ open class User(override val uid: UID, client: OkHttpClient = emptyClient) : Abs
 	override fun toString(): String {
 		return uid.toString()
 	}
+}
+
+interface IUser : IBaseUser {
+	val ranking: Int
+	val introduction: String
+}
+
+open class User(source: JsonObject) : BaseUser(source), IUser {
+	override val uid: Int by delegate
+	override val badge: String? by delegate
+	override val ccfLevel: Int by delegate
+	override val isBanned: Boolean by delegate
+	override val slogan: String by delegate
+	override val introduction: String by delegate
+	override val isAdmin: Boolean by delegate
+	override val name: String by delegate
+	override val ranking: Int by delegate
+	override val color: String by delegate
+}
+
+open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
+	override val url: String get() = "$baseUrl/user/$uid"
+
+	protected val data = currentData
+
+	open val user: User
+		get() {
+			return User(data["user"].asJsonObject)
+		}
+
+	private fun problemList(attr: String): List<ProblemID> {
+		return data[attr].asJsonArray.map {
+			it.asJsonObject.let {
+				it["pid"].asString
+			}
+		}
+	}
+
+	val passedProblems: List<ProblemID> get() = problemList("passedProblems")
+	val submittedProblems: List<ProblemID> get() = problemList("submittedProblems")
+
+	fun followers(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followers)
+	fun followings(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followings)
 }

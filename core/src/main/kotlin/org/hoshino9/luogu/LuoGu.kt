@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import okhttp3.*
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUser
+import org.hoshino9.luogu.user.LoggedUserPage
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import java.io.OutputStream
@@ -65,12 +66,6 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 		get() {
 			return feInjection.get("currentUser") != JsonNull.INSTANCE
 		}
-
-	/**
-	 * 获得当前客户端登录的用户
-	 */
-	val loggedUser: LoggedUser
-		get() = LoggedUser(this)
 
 	/**
 	 * 是否需要解锁
