@@ -1,5 +1,6 @@
 package org.hoshino9.luogu.user
 
+import com.google.gson.JsonObject
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -31,15 +32,18 @@ open class LoggedUser(val luogu: LuoGu, uid: Int) : User(uid, luogu.client) {
 
 	/**
 	 * (un)?follow
-	 *
-	 * TODO may be deprecated
 	 */
 	fun doFollow(user : User, isFollow : Boolean = true) : Boolean {
 		return if (luogu.isLogged) {
-			luogu.executeGet("space/show?uid=${user.uid}&uid=${this.uid}&follow=${if (isFollow) 1 else 0}") {
-				it.assert()
+			JsonObject().apply {
+				addProperty("uid", user.uid)
+				addProperty("relationship", if (isFollow) 1 else 0)
+			}.params().let { param ->
+				luogu.executePost("fe/api/user/updateRelationShip", param, referer("user/$uid#following")) {
+					it.assert()
 
-				true
+					true
+				}
 			}
 		} else false
 	}

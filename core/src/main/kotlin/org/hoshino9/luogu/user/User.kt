@@ -36,7 +36,7 @@ open class User(override val uid: UID, client: OkHttpClient = emptyClient) : Abs
 			}
 		}
 
-		private fun follow(type: String, user: User, page: Int): List<UID> = emptyClient.apiGet("https://www.luogu.org/fe/api/user/$type?user=${user.uid}&page=$page").let { obj ->
+		private fun follow(type: String, user: User, page: Int): List<UID> = emptyClient.apiGet("$baseUrl/fe/api/user/$type?user=${user.uid}&page=$page").let { obj ->
 			val users = obj["users"].asJsonObject
 
 			users["result"].asJsonArray.map {
