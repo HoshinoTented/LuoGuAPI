@@ -4,12 +4,14 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.user.BaseUser
+import org.hoshino9.luogu.user.IBaseUser
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
 
 interface IPaste {
 	val id: String
-	val user: User
+	val user: IBaseUser
 	val time: Long
 	val data: String
 	val public: Boolean
@@ -22,8 +24,8 @@ open class Paste(val source: JsonObject) : IPaste {
 	override val time: Long by delegate
 	override val data: String by delegate
 	override val public: Boolean by delegate
-	override val user: User
-		get() = User(source["user"].asJsonObject)
+	override val user: IBaseUser
+		get() = BaseUser(source["user"].asJsonObject)
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

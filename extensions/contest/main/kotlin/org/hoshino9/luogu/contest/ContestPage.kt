@@ -1,6 +1,7 @@
 package org.hoshino9.luogu.contest
 
 import com.google.gson.JsonObject
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.delegate
@@ -9,7 +10,7 @@ import org.hoshino9.luogu.utils.emptyClient
 class ContestPage(val id: Int, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
 	data class Problem(val id: String, val score: Int, val submitted: Boolean)
 
-	override val url: String get() = "https://www.luogu.com.cn/contest/$id"
+	override val url: String get() = "$baseUrl/contest/$id"
 
 	private val data = feInjection["currentData"].asJsonObject
 	private val delegate = data.delegate

@@ -6,8 +6,11 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
+import org.hoshino9.luogu.user.BaseUser
+import org.hoshino9.luogu.user.IBaseUser
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
 
@@ -157,7 +160,7 @@ interface IProblem : IBaseProblem {
 	/**
 	 * 题目提供者
 	 */
-	val provider: User
+	val provider: IBaseUser
 
 	/**
 	 * 输入输出样例
@@ -189,9 +192,9 @@ open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
 			}
 		}
 
-	override val provider: User
+	override val provider: IBaseUser
 		get() {
-			return User(source["provider"].asJsonObject)
+			return BaseUser(source["provider"].asJsonObject)
 		}
 
 	override val samples: List<IProblem.Sample>
@@ -205,4 +208,12 @@ open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
 				IProblem.Sample(`in`, out)
 			}
 		}
+}
+
+open class ProblemPage(val pid: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
+	override val url: String get() = "$baseUrl/problem/$pid"
+
+	val problem: IProblem by lazy {
+		Problem(currentData["problem"].asJsonObject)
+	}
 }

@@ -1,5 +1,6 @@
 import org.hoshino9.luogu.problem.BaseProblem
 import org.hoshino9.luogu.problem.Problem
+import org.hoshino9.luogu.problem.ProblemPage
 import org.hoshino9.luogu.problem.problemList
 import org.hoshino9.luogu.test.BaseTest
 import org.hoshino9.luogu.test.printAllMember
@@ -11,5 +12,10 @@ class ProblemTest : BaseTest() {
 		luogu.problemList().result.map {
 			it.printAllMember()
 		}
+	}
+
+	@Test
+	fun problemInfo() {
+		ProblemPage("P1000").printAllMember()
 	}
 }
