@@ -5,6 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.features.json.GsonSerializer
@@ -13,6 +14,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import io.ktor.http.Cookie
+import io.ktor.http.HttpMethod
 import io.ktor.http.Url
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
@@ -41,7 +43,7 @@ fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.()
 
 val emptyClient = HttpClient { emptyClientConfig() }
 val defaultClient
-	get() = HttpClient {
+	get() = HttpClient(OkHttp) {
 		defaultClientConfig {
 			storage = AcceptAllCookiesStorage()
 		}
@@ -69,6 +71,7 @@ suspend fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -> Unit 
 
 suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
 	return client.call(url) {
+		method = HttpMethod.Post
 		headers.append("x-csrf-token", csrfToken)
 		block()
 	}

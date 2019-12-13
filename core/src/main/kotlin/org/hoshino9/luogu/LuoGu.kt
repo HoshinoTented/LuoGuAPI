@@ -10,6 +10,8 @@ import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import io.ktor.http.contentType
