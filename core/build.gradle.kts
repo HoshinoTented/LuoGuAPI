@@ -17,6 +17,7 @@ dependencies {
 	api(ktor("client-core", ktorVersion))
 	api(ktor("client-core-jvm", ktorVersion))
 	api(ktor("client-okhttp", ktorVersion))
+	api(ktor("client-websockets", ktorVersion))
 	api(ktor("client-gson", ktorVersion))
 	api("com.google.code.gson", "gson", "2.8.5")        // JSON parser
 	api("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library

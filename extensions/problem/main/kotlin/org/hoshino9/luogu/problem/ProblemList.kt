@@ -4,9 +4,10 @@ import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.emptyClient
 
-open class ProblemList(val page: Int, val filter: ProblemSearchConfig, client: OkHttpClient = emptyClient) : AbstractLuoGuPage(client) {
+open class ProblemList(val page: Int, val filter: ProblemSearchConfig, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
 	override val url: String get() = "$baseUrl/problem/list?page=$page&$filter"
 
 	private val data: JsonObject

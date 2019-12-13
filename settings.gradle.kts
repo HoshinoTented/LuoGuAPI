@@ -1,16 +1,17 @@
 include(":extensions", ":core")
 
 val plugins = listOf(
-		"contest",
-		"paintboard",
-		"photo",
-		"paste",
-		"problem",
-		"record").map {
+		"contest"
+		, "paintboard"
+		, "photo"
+		, "paste"
+		, "problem"
+		, "record"
+).map {
 	":extensions:$it"
 }.toTypedArray()
 
-//include(*plugins)
+include(*plugins)
 
 pluginManagement {
 	repositories {

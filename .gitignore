@@ -12,6 +12,7 @@ out/
 /testResources/
 verify.png
 user.properties
+luogu-*
 
 # wiki
 wiki

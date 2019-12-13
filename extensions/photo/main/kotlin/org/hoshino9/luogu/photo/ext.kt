@@ -4,6 +4,10 @@ package org.hoshino9.luogu.photo
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import io.ktor.client.call.receive
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.get
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -18,12 +22,8 @@ import java.io.File
  * @param verifyCode 验证码
  * @return 返回一个 Json 对象
  */
-fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
-	return luogu.executeGet("api/image/generateUploadLink?watermarkType=$watermark&captcha=$verifyCode") {
-		it.assert()
-
-		json(it.strData)
-	}
+suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
+	return luogu.client.get<String>("$baseUrl/api/image/generateUploadLink?watermarkType=$watermark&captcha=$verifyCode").run(::json)
 }
 
 /**
@@ -37,35 +37,48 @@ fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonO
  *
  * @see [generateUploadLink]
  */
-fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: MediaType): String {
-	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { dlgt ->
-		val accessKeyID: String by dlgt
-		val callback: String by dlgt
-		val host: String by dlgt
-		val policy: String by dlgt
-		val signature: String by dlgt
-
-		val body = MultipartBody.Builder()
-				.setType(MultipartBody.FORM)
-				.addFormDataPart("signature", signature)
-				.addFormDataPart("callback", callback)
-				.addFormDataPart("success_action_status", "200")
-				.addFormDataPart("OSSAccessKeyId", accessKeyID)
-				.addFormDataPart("policy", policy)
-				.addFormDataPart("key", "upload/image_hosting/__upload/\${filename}")
-				.addFormDataPart("name", photo.name)
-				.addFormDataPart("file", photo.name, photo.asRequestBody(contentType))
-				.build()
-
-		luogu.client.executePost(host, body, referer("$baseUrl/image")) {
-			it.assert()
-
-			json(it.strData) {
-				get("image").asJsonObject["id"].asString
-			}
-		}
-	}
-}
+//suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: MediaType): String {
+//	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { dlgt ->
+//		val accessKeyID: String by dlgt
+//		val callback: String by dlgt
+//		val host: String by dlgt
+//		val policy: String by dlgt
+//		val signature: String by dlgt
+//
+//		val body = MultipartBody.Builder()
+//				.setType(MultipartBody.FORM)
+//				.addFormDataPart("signature", signature)
+//				.addFormDataPart("callback", callback)
+//				.addFormDataPart("success_action_status", "200")
+//				.addFormDataPart("OSSAccessKeyId", accessKeyID)
+//				.addFormDataPart("policy", policy)
+//				.addFormDataPart("key", "upload/image_hosting/__upload/\${filename}")
+//				.addFormDataPart("name", photo.name)
+//				.addFormDataPart("file", photo.name, photo.asRequestBody(contentType))
+//				.build()
+//
+//		val body0 = MultiPartFormDataContent(formData {
+//			append("signature", signature)
+//			append("callback", callback)
+//			append("success_action_status", "200")
+//			append("OSSAccessKeyId", accessKeyID)
+//			append("policy", policy)
+//			append("key", "upload/image_hosting/__upload/\${filename}")
+//			append("name", photo.name)
+//
+//			append()
+//			append("file", photo.name, photo.asRequestBody(contentType))
+//		})
+//
+//		luogu.client.executePost(host, body, referer("$baseUrl/image")) {
+//			it.assert()
+//
+//			json(it.strData) {
+//				get("image").asJsonObject["id"].asString
+//			}
+//		}
+//	}
+//}
 
 /**
  * 图床列表
@@ -81,17 +94,18 @@ fun LoggedUser.photoList(page: Int): List<IPhoto> {
  * 删除图片
  * @param photo 需要删除的图片
  */
-fun LoggedUser.deletePhoto(photo: List<String>) {
+suspend fun LoggedUser.deletePhoto(photo: List<String>) {
 	photo.run {
-		val params = JsonObject().apply {
+		val json = JsonObject().apply {
 			add("images", JsonArray().apply {
 				photo.forEach(::add)
 			})
-		}.params()
+		}.params
 
-		luogu.executePost("api/image/delete", body = params, headers = referer("image")) {
-			it.assert()
-		}
+		luogu.apiPost("api/image/delete") {
+			referer("image")
+			body = json
+		}.receive<String>()
 	}
 }
 

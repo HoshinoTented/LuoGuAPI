@@ -10,6 +10,7 @@ import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
@@ -19,10 +20,20 @@ import io.ktor.http.Url
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import java.net.URLEncoder
+
+private fun String.encode(): String {
+	return URLEncoder.encode(this, "UTF-8")
+}
 
 val JsonObject.params: TextContent
 	get() {
 		return TextContent(toString(), ContentType.Application.Json)
+	}
+
+val Iterable<Pair<String, String>>.params: TextContent
+	get() {
+		return TextContent(joinToString(separator = "&") { "${it.first.encode()}=${it.second.encode()}" }, ContentType.Application.FormUrlEncoded)
 	}
 
 fun HttpClientConfig<*>.emptyClientConfig() {
@@ -39,6 +50,8 @@ fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.()
 	install(JsonFeature) {
 		serializer = GsonSerializer()
 	}
+
+	install(WebSockets)
 }
 
 val emptyClient = HttpClient { emptyClientConfig() }
@@ -70,7 +83,7 @@ suspend fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -> Unit 
 }
 
 suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
-	return client.call(url) {
+	return client.call("$baseUrl/$url") {
 		method = HttpMethod.Post
 		headers.append("x-csrf-token", csrfToken)
 		block()

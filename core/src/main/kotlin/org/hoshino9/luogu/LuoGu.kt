@@ -108,7 +108,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 	suspend fun unlock(code: String): String {
 		val params = JsonObject().apply { addProperty("code", code) }
 
-		return apiPost("$baseUrl/api/auth/unlock") {
+		return apiPost("api/auth/unlock") {
 			referer("auth/unlock")
 			body = params.params
 		}.receive()
@@ -133,7 +133,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 			addProperty("captcha", verifyCode)
 		}
 
-		apiPost("$baseUrl/api/auth/userPassLogin") {
+		apiPost("api/auth/userPassLogin") {
 			referer("auth/login")
 			body = json.params
 		}.receive<String>()
