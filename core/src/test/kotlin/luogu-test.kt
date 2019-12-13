@@ -4,7 +4,7 @@ import org.hoshino9.luogu.LuoGu
 import java.nio.file.Files
 import java.util.Scanner
 
-fun main() {
+suspend fun main() {
 	LuoGuTest().run {
 		login()
 		println("logged in: $user")
@@ -29,7 +29,7 @@ fun main() {
 	}
 }
 
-fun LuoGuTest.login() {
+suspend fun LuoGuTest.login() {
 	luogu = LuoGu()
 	luogu.verifyCode(Files.newOutputStream(verifyPath.also { path ->
 		path.toFile().let {

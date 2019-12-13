@@ -4,10 +4,17 @@ package org.hoshino9.luogu
 
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
-import okhttp3.*
+import io.ktor.client.call.receive
+import io.ktor.client.features.cookies.cookies
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.http.Cookie
+import io.ktor.http.Url
+import io.ktor.http.contentType
+import kotlinx.coroutines.runBlocking
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUser
-import org.hoshino9.luogu.user.LoggedUserPage
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import java.io.OutputStream
@@ -17,33 +24,38 @@ import java.io.OutputStream
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
+open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	companion object {
 		@JvmName("newInstance")
-		operator fun invoke(clientId: String, uid: String): LuoGu = LuoGu().apply {
-			this.clientId = clientId
-			this.uid = uid
+		operator fun invoke(clientId: String, uid: String): LuoGu {
+			val url = Url(baseUrl)
+
+			return LuoGu(
+					specifiedCookieClient(
+							listOf(
+									url to Cookie("_uid", uid),
+									url to Cookie("__client_id", clientId))
+					)
+			)
 		}
 	}
 
-	var uid: String
+	val uid: Cookie
 		get() {
-			return client.cookieJar.loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name == "_uid" }?.value.orEmpty()
-		}
-		set(value) {
-			client.cookieJar.saveFromResponse(
-					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "_uid=$value") !!)
-			)
+			return runBlocking {
+				client.cookies(baseUrl).first {
+					it.name == "_uid"
+				}
+			}
 		}
 
-	var clientId: String
+	val clientId: Cookie
 		get() {
-			return client.cookieJar.loadForRequest(LuoGuUtils.httpUrl).firstOrNull { it.name == "__client_id" }?.value.orEmpty()
-		}
-		set(value) {
-			client.cookieJar.saveFromResponse(
-					LuoGuUtils.httpUrl, listOf(Cookie.parse(LuoGuUtils.httpUrl, "__client_id=$value") !!)
-			)
+			return runBlocking {
+				client.cookies(baseUrl).first {
+					it.name == "__client_id"
+				}
+			}
 		}
 
 	override val url: String = LuoGuUtils.baseUrl
@@ -53,9 +65,8 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 */
 	val csrfToken: String
 		get() {
-			return executeGet { resp ->
-				resp.assert()
-				LuoGuUtils.csrfTokenFromPage(Jsoup.parse(resp.strData))
+			return runBlocking {
+				LuoGuUtils.csrfTokenFromPage(Jsoup.parse(client.get(url)))
 			}
 		}
 
@@ -80,11 +91,9 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * 获取验证码
 	 * @param out 输出流, 将会把验证码**图片**输出到这个流里
 	 */
-	fun verifyCode(out: OutputStream) {
-		executeGet("api/verify/captcha") { resp ->
-			resp.assert()
-			resp.dataStream.copyTo(out)
-		}
+	suspend fun verifyCode(out: OutputStream) {
+		val image: ByteArray = client.get("$baseUrl/api/verify/captcha")
+		out.write(image)
 	}
 
 	/**
@@ -92,12 +101,13 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * 两步验证和密码解锁通用
 	 * @see needUnlock
 	 */
-	fun unlock(code: String) {
-		val params = JsonObject().apply { addProperty("code", code) }.params()
+	suspend fun unlock(code: String): String {
+		val params = JsonObject().apply { addProperty("code", code) }
 
-		executePost("api/auth/unlock", params, referer("auth/unlock")) { resp ->
-			resp.assertJson()
-		}
+		return apiPost("$baseUrl/api/auth/unlock") {
+			referer("auth/unlock")
+			body = params.params
+		}.receive()
 	}
 
 	/**
@@ -112,21 +122,23 @@ open class LuoGu @JvmOverloads constructor(client: OkHttpClient = defaultClient)
 	 * @see LoggedUser
 	 * @see IllegalStatusCodeException
 	 */
-	fun login(account: String, password: String, verifyCode: String) {
-		val params = JsonObject().apply {
+	suspend fun login(account: String, password: String, verifyCode: String): JsonObject {
+		val json = JsonObject().apply {
 			addProperty("username", account)
 			addProperty("password", password)
 			addProperty("captcha", verifyCode)
-		}.params()
-
-		executePost("api/auth/userPassLogin", params, referer("auth/login")) { resp ->
-			resp.assertJson()
 		}
+
+		return apiPost("$baseUrl/api/auth/userPassLogin") {
+			referer("auth/login")
+			body = json.params
+		}.receive<String>().run(::json)
 	}
 
-	fun logout() {
-		executeGet("api/auth/logout?uid=$uid") { resp ->
-			resp.assert()
-		}
-	}
+//	fun logout() {
+//
+//		executeGet("api/auth/logout?uid=$uid") { resp ->
+//			resp.assert()
+//		}
+//	}
 }

@@ -1,8 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.paste.*
-import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.user.currentUser
 import org.junit.Before
@@ -41,8 +39,8 @@ open class LuoGuTest {
 	}
 
 	fun saveCookie() {
-		config.setProperty("__client_id", luogu.clientId)
-		config.setProperty("_uid", luogu.uid)
+		config.setProperty("__client_id", luogu.clientId.value)
+		config.setProperty("_uid", luogu.uid.value)
 		config.store(Files.newOutputStream(configPath), null)
 	}
 

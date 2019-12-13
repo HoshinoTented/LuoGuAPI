@@ -1,113 +1,80 @@
-@file:Suppress("unused")
-
 package org.hoshino9.luogu.utils
 
 import com.google.gson.JsonObject
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.hoshino9.luogu.IllegalStatusCodeException
+import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.call.call
+import io.ktor.client.features.cookies.AcceptAllCookiesStorage
+import io.ktor.client.features.cookies.HttpCookies
+import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
+import io.ktor.http.Cookie
+import io.ktor.http.Url
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.LuoGuUtils
-import org.hoshino9.okhttp.HoshinoCookieJar
-import java.io.InputStream
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 
-fun emptyParams(): RequestBody {
-	return FormBody.Builder().build()
-}
-
-// Params
-fun <K : Any, V : Any> Iterable<Pair<K, V>>.params(): RequestBody {
-	return FormBody.Builder().apply {
-		forEach { (k, v) ->
-			add(k.toString(), v.toString())
-		}
-	}.build()
-}
-
-fun JsonObject.params(): RequestBody {
-	return toString().toRequestBody("application/json".toMediaTypeOrNull())
-}
-
-// Headers
-fun referer(url: String = ""): Headers = Headers.Builder().add("referer", "${LuoGuUtils.baseUrl}/$url").build()
-
-val emptyHeaders: Headers
+val JsonObject.params: TextContent
 	get() {
-		return Headers.Builder().build()
+		return TextContent(toString(), ContentType.Application.Json)
 	}
 
-// Request
-fun HttpClient.postRequest(url: String, body: RequestBody, headers: Headers): Request = Request.Builder()
-		.url(url)
-		.post(body)
-		.headers(headers)
-		.build()
+fun HttpClientConfig<*>.emptyClientConfig() {
 
-@JvmOverloads
-fun getRequest(url: String = "", headers: Headers): Request = Request.Builder()
-		.url(url)
-		.headers(headers)
-		.addHeader("User-Agent", USER_AGENT)
-		.build()
-
-inline fun <T> LuoGu.executePost(url: String = "", body: RequestBody = emptyParams(), headers: Headers /* 一般是 referer */, action: (Response) -> T): T =
-		client.executePost("${LuoGuUtils.baseUrl}/$url", body, headers.newBuilder().add("x-csrf-token", csrfToken).build(), action)
-
-inline fun <T> HttpClient.executePost(url: String = "", body: RequestBody = emptyParams(), headers: Headers = emptyHeaders, action: (Response) -> T): T {
-	return newCall(postRequest(url, body, headers)).execute().use(action)
 }
 
-inline fun <T> LuoGu.executeGet(url: String = "", headers: Headers = emptyHeaders, action: (Response) -> T): T = client.executeGet("${LuoGuUtils.baseUrl}/$url", headers, action)
-inline fun <T> HttpClient.executeGet(url: String = "", headers: Headers = emptyHeaders, action: (Response) -> T): T {
-	return newCall(getRequest(url, headers)).execute().use { resp ->
-		resp.run(action)
+fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.() -> Unit) {
+	emptyClientConfig()
+
+	install(HttpCookies) {
+		cookiesConfig()
+	}
+
+	install(JsonFeature) {
+		serializer = GsonSerializer()
 	}
 }
 
-inline fun <T> HttpClient.contentOnlyGet(url: String, action: (Response) -> T): T {
-	return executeGet(url, Headers.headersOf("x-luogu-type", "content-only"), action)        //或者在 url 后添加 _contentOnly=1 但个人不推荐
-}
-
-fun HttpClient.apiGet(url: String): JsonObject {
-	return contentOnlyGet(url) {
-		it.assert()
-		json(it.strData)
+val emptyClient = HttpClient { emptyClientConfig() }
+val defaultClient
+	get() = HttpClient {
+		defaultClientConfig {
+			storage = AcceptAllCookiesStorage()
+		}
 	}
-}
 
-// Client
-val emptyClient: HttpClient /*get() */ = OkHttpClient()
-val defaultClient: HttpClient
-	get() = OkHttpClient.Builder()
-			.cookieJar(HoshinoCookieJar())
-			.build()
-
-// Response
-fun Response.assert() {
-	if (! isSuccessful) throw IllegalStatusCodeException(code.toString(), strData)
-}
-
-fun Response.assertJson() {
-	if (! isSuccessful) json(strData).delegate.let {
-		val status: Int? by it
-
-		if (status != null) {
-			val data: String by it
-
-			throw IllegalStatusCodeException(status, data)
+fun specifiedCookieClient(cookies: List<Pair<Url, Cookie>>): HttpClient {
+	return HttpClient {
+		defaultClientConfig {
+			storage = AcceptAllCookiesStorage().apply {
+				cookies.forEach { (url, cookie) ->
+					runBlocking {
+						addCookie(url, cookie)
+					}
+				}
+			}
 		}
 	}
 }
 
-val Response.strData: String
-	get() {
-		return this.body !!.string().apply {
-			// TODO LOG
-		}
+suspend fun HttpClient.apiGet(url: String): HttpClientCall {
+	return call(url) {
+		headers.append("x-luogu-type", "content-only")
 	}
+}
 
-val Response.dataStream: InputStream
-	get() {
-		return this.body !!.byteStream()
+suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit): HttpClientCall {
+	return client.call(url) {
+		headers.append("User-Agent", USER_AGENT)
+		headers.append("x-csrf-token", csrfToken)
+		block()
 	}
+}
+
+fun HttpRequestBuilder.referer(ref: String) {
+	headers.append("referer", "$baseUrl/ref")
+}

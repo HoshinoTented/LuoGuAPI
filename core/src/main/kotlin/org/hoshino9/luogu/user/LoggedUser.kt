@@ -1,10 +1,10 @@
 package org.hoshino9.luogu.user
 
 import com.google.gson.JsonObject
+import io.ktor.client.request.post
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.utils.assert
-import org.hoshino9.luogu.utils.executePost
-import org.hoshino9.luogu.utils.params
+import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.utils.referer
 
 interface IBaseLoggedUser : IBaseUser {
@@ -22,15 +22,16 @@ open class LoggedUser(source: JsonObject, val luogu: LuoGu) : User(source), ILog
 	/**
 	 * (un)?follow
 	 */
-	fun doFollow(user: IBaseUser, isFollow: Boolean = true): Boolean {
-		return JsonObject().apply {
+	fun doFollow(user: IBaseUser, isFollow: Boolean = true) {
+		JsonObject().apply {
 			addProperty("uid", user.uid)
 			addProperty("relationship", if (isFollow) 1 else 0)
-		}.params().let { param ->
-			luogu.executePost("fe/api/user/updateRelationShip", param, referer("user/$uid#following")) {
-				it.assert()
-
-				true
+		}.let { param ->
+			runBlocking {
+				luogu.client.post<String>("$baseUrl/fe/api/user/updateRelationShip") {
+					referer("user/$uid#following")
+					body = param
+				}
 			}
 		}
 	}

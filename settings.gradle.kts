@@ -10,7 +10,7 @@ val plugins = listOf(
 	":extensions:$it"
 }.toTypedArray()
 
-include(*plugins)
+//include(*plugins)
 
 pluginManagement {
 	repositories {

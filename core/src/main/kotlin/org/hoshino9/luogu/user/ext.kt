@@ -4,5 +4,5 @@ import org.hoshino9.luogu.LuoGu
 
 val LuoGu.currentUser: LoggedUserPage
 	get() {
-		return LoggedUserPage(uid.toInt(), this)
+		return LoggedUserPage(uid.value.toInt(), this)
 	}
