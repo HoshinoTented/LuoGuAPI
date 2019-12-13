@@ -4,10 +4,12 @@ package org.hoshino9.luogu
 
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
+import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.response.HttpResponse
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import io.ktor.http.contentType
@@ -122,17 +124,17 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 	 * @see LoggedUser
 	 * @see IllegalStatusCodeException
 	 */
-	suspend fun login(account: String, password: String, verifyCode: String): JsonObject {
+	suspend fun login(account: String, password: String, verifyCode: String) {
 		val json = JsonObject().apply {
 			addProperty("username", account)
 			addProperty("password", password)
 			addProperty("captcha", verifyCode)
 		}
 
-		return apiPost("$baseUrl/api/auth/userPassLogin") {
+		apiPost("$baseUrl/api/auth/userPassLogin") {
 			referer("auth/login")
 			body = json.params
-		}.receive<String>().run(::json)
+		}.receive<String>()
 	}
 
 //	fun logout() {

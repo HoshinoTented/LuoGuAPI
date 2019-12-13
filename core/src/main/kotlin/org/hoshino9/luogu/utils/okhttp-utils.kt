@@ -61,15 +61,14 @@ fun specifiedCookieClient(cookies: List<Pair<Url, Cookie>>): HttpClient {
 	}
 }
 
-suspend fun HttpClient.apiGet(url: String): HttpClientCall {
+suspend fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
 	return call(url) {
 		headers.append("x-luogu-type", "content-only")
 	}
 }
 
-suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit): HttpClientCall {
+suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
 	return client.call(url) {
-		headers.append("User-Agent", USER_AGENT)
 		headers.append("x-csrf-token", csrfToken)
 		block()
 	}
