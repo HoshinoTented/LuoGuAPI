@@ -1,16 +1,24 @@
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
+fun ktor(module: String, version: String): String = "io.ktor:ktor-$module:$version"
+fun kotlinx(module: String, version: String) = "org.jetbrains.kotlinx:kotlinx-$module:$version"
+
 val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(KotlinSourceSet::class).kotlin
 
+val ktorVersion: String by rootProject.extra
+val coroutinesVersion: String by rootProject.extra
+
 dependencies {
-	compile(kotlin("stdlib"))
-	compile(kotlin("reflect"))
-	compile(kotlin("script-runtime"))
-	compile("com.google.code.gson", "gson", "2.8.5")        // JSON parser
-	compile("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library
-	compile("org.jsoup", "jsoup", "1.11.3")                // HTML parser
-	testCompile(kotlin("test-junit"))
+	api(kotlin("stdlib"))
+	api(kotlin("reflect"))
+	api(kotlin("script-runtime"))
+	api(kotlinx("coroutines-core", coroutinesVersion))
+	api(ktor("client-core-jvm", ktorVersion))
+	api("com.google.code.gson", "gson", "2.8.5")        // JSON parser
+	api("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library
+	api("org.jsoup", "jsoup", "1.11.3")                // HTML parser
+	testApi(kotlin("test-junit"))
 
 	val plugins = listOf(
 			"paintboard",

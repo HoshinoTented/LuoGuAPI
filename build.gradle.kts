@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
 	maven
-	kotlin("jvm") version "1.3.40" apply false
+	kotlin("jvm") version "1.3.61" apply false
 	java
 	`maven-publish`
 	id("com.jfrog.bintray") version "1.7.3"
@@ -24,7 +24,7 @@ allprojects {
 	}
 
 	group = "org.hoshino9"
-	version = "0.0.2"
+	version = "0.0.3"
 
 	repositories {
 		if (isCI) jcenter() else maven("http://maven.aliyun.com/nexus/content/groups/public/")
