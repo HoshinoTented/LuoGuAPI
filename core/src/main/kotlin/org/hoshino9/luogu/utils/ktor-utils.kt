@@ -79,6 +79,7 @@ fun specifiedCookieClient(cookies: List<Pair<Url, Cookie>>): HttpClient {
 suspend fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
 	return call(url) {
 		headers.append("x-luogu-type", "content-only")
+		block()
 	}
 }
 
@@ -91,5 +92,5 @@ suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}
 }
 
 fun HttpRequestBuilder.referer(ref: String) {
-	headers.append("referer", "$baseUrl/ref")
+	headers.append("referer", "$baseUrl/$ref")
 }
