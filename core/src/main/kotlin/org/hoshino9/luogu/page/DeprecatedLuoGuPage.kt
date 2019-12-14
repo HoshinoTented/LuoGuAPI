@@ -3,6 +3,8 @@ package org.hoshino9.luogu.page
 import com.google.gson.JsonObject
 import io.ktor.client.call.call
 import io.ktor.client.call.receive
+import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.utils.*
@@ -19,7 +21,7 @@ abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : 
 	open val page: Document
 		get() {
 			return runBlocking {
-				Jsoup.parse(client.call(url).receive())
+				Jsoup.parse(client.request<HttpResponse>(url).receive())
 			}
 		}
 

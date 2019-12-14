@@ -9,6 +9,10 @@ val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(Kotlin
 val ktorVersion: String by rootProject.extra
 val coroutinesVersion: String by rootProject.extra
 
+repositories {
+	maven("https://dl.bintray.com/kotlin/ktor/")
+}
+
 dependencies {
 	api(kotlin("stdlib"))
 	api(kotlin("reflect"))

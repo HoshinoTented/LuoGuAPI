@@ -1,13 +1,13 @@
 package org.hoshino9.luogu.paste
 
 import com.google.gson.JsonObject
-import com.google.gson.annotations.SerializedName
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.user.IBaseUser
-import org.hoshino9.luogu.user.User
-import org.hoshino9.luogu.utils.*
+import org.hoshino9.luogu.utils.HttpClient
+import org.hoshino9.luogu.utils.delegate
+import org.hoshino9.luogu.utils.emptyClient
 
 interface IPaste {
 	val id: String

@@ -4,17 +4,11 @@ package org.hoshino9.luogu
 
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
-import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.response.HttpResponse
-import io.ktor.content.TextContent
-import io.ktor.http.ContentType
 import io.ktor.http.Cookie
 import io.ktor.http.Url
-import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage

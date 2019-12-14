@@ -5,6 +5,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
+import io.ktor.client.engine.ProxyBuilder
+import io.ktor.client.engine.http
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
@@ -13,6 +15,9 @@ import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.HttpResponseData
+import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import io.ktor.http.Cookie
@@ -40,7 +45,9 @@ val Iterable<Pair<String, String>>.params: TextContent
 	}
 
 fun HttpClientConfig<*>.emptyClientConfig() {
-
+	engine {
+		//		proxy = ProxyBuilder.http("http://127.0.0.1:8888")
+	}
 }
 
 fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.() -> Unit) {
@@ -57,16 +64,16 @@ fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.()
 	install(WebSockets)
 }
 
-val emptyClient = HttpClient(OkHttp) { emptyClientConfig() }
+val emptyClient = HttpClient { emptyClientConfig() }
 val defaultClient
-	get() = HttpClient(OkHttp) {
+	get() = HttpClient {
 		defaultClientConfig {
 			storage = AcceptAllCookiesStorage()
 		}
 	}
 
 fun specifiedCookieClient(cookies: List<Pair<Url, Cookie>>): HttpClient {
-	return HttpClient(OkHttp) {
+	return HttpClient {
 		defaultClientConfig {
 			storage = AcceptAllCookiesStorage().apply {
 				cookies.forEach { (url, cookie) ->
@@ -79,15 +86,15 @@ fun specifiedCookieClient(cookies: List<Pair<Url, Cookie>>): HttpClient {
 	}
 }
 
-suspend fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
-	return call(url) {
+suspend fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpResponse {
+	return request(url) {
 		headers.append("x-luogu-type", "content-only")
 		block()
 	}
 }
 
-suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpClientCall {
-	return client.call("$baseUrl/$url") {
+suspend fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpResponse {
+	return client.request("$baseUrl/$url") {
 		method = HttpMethod.Post
 		headers.append("x-csrf-token", csrfToken)
 		block()

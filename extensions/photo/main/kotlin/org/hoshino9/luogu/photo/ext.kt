@@ -5,8 +5,15 @@ package org.hoshino9.luogu.photo
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.ktor.client.call.receive
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.append
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.util.toByteArray
+import io.ktor.utils.io.core.writeFully
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.Request
@@ -27,7 +34,7 @@ suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String
 }
 
 /**
- * TODO: fix 400
+ * TODO: replace OkHttpClient with Ktor HttpClient
  * 上传图片
  *
  * @param watermark 水印
@@ -59,15 +66,15 @@ suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: St
 				.build()
 
 //		val body0 = MultiPartFormDataContent(formData {
-//			append("signature", signature)
-//			append("callback", callback)
-//			append("success_action_status", "200")
-//			append("OSSAccessKeyId", accessKeyID)
-//			append("policy", policy)
-//			append("key", "upload/image_hosting/__upload/\${filename}")
-//			append("name", photo.name)
+//			append("\"signature\"", signature)
+//			append("\"callback\"", callback)
+//			append("\"success_action_status\"", "200")
+//			append("\"OSSAccessKeyId\"", accessKeyID)
+//			append("\"policy\"", policy)
+//			append("\"key\"", "upload/image_hosting/__upload/\${filename}")
+//			append("\"name\"", photo.name)
 //
-//			append("file", photo.name, contentType) {
+//			append("\"file\"", "\"${photo.name}\"", contentType, photo.length()) {
 //				writeFully(photo.readBytes())
 //			}
 //		})
@@ -85,10 +92,13 @@ suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: St
 			}
 		}
 
-//		luogu.client.post<String>(host) {
+//		luogu.client.post<HttpResponse>(host) {
 //			referer("image")
-//			body = body0
+//			this.body = body0
 //		}.let {
+//			String(it.content.toByteArray()).run(::println)
+
+//			""
 //			json(it) {
 //				get("image").asJsonObject["id"].asString
 //			}
