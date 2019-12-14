@@ -4,24 +4,13 @@ package org.hoshino9.luogu.photo
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import io.ktor.client.call.call
 import io.ktor.client.call.receive
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.append
-import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.util.toByteArray
-import kotlinx.io.core.buildPacket
-import kotlinx.io.core.writeFully
 import okhttp3.MediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
@@ -57,57 +46,53 @@ suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: St
 		val policy: String by dlgt
 		val signature: String by dlgt
 
-//		val body = MultipartBody.Builder()
-//				.setType(MultipartBody.FORM)
-//				.addFormDataPart("signature", signature)
-//				.addFormDataPart("callback", callback)
-//				.addFormDataPart("success_action_status", "200")
-//				.addFormDataPart("OSSAccessKeyId", accessKeyID)
-//				.addFormDataPart("policy", policy)
-//				.addFormDataPart("key", "upload/image_hosting/__upload/\${filename}")
-//				.addFormDataPart("name", photo.name)
-//				.addFormDataPart("file", photo.name, photo.asRequestBody(contentType))
-//				.build()
+		val body = MultipartBody.Builder()
+				.setType(MultipartBody.FORM)
+				.addFormDataPart("signature", signature)
+				.addFormDataPart("callback", callback)
+				.addFormDataPart("success_action_status", "200")
+				.addFormDataPart("OSSAccessKeyId", accessKeyID)
+				.addFormDataPart("policy", policy)
+				.addFormDataPart("key", "upload/image_hosting/__upload/\${filename}")
+				.addFormDataPart("name", photo.name)
+				.addFormDataPart("file", photo.name, RequestBody.create(MediaType.get(contentType.contentType + "/" + contentType.contentSubtype), photo))
+				.build()
 
-		val body0 = MultiPartFormDataContent(formData {
-			append("signature", signature)
-			append("callback", callback)
-			append("success_action_status", "200")
-			append("OSSAccessKeyId", accessKeyID)
-			append("policy", policy)
-			append("key", "upload/image_hosting/__upload/\${filename}")
-			append("name", photo.name)
-
-			append("file", photo.name, contentType) {
-				writeFully(photo.readBytes())
-			}
-		})
-
-//		luogu.client.executePost(host, body, referer("$baseUrl/image")) {
-//			it.assert()
+//		val body0 = MultiPartFormDataContent(formData {
+//			append("signature", signature)
+//			append("callback", callback)
+//			append("success_action_status", "200")
+//			append("OSSAccessKeyId", accessKeyID)
+//			append("policy", policy)
+//			append("key", "upload/image_hosting/__upload/\${filename}")
+//			append("name", photo.name)
 //
-//			json(it.strData) {
-//				get("image").asJsonObject["id"].asString
+//			append("file", photo.name, contentType) {
+//				writeFully(photo.readBytes())
 //			}
-//		}
+//		})
 
-//		luogu.client.post<String>(host) {
-//			referer("$baseUrl/image")
-//			this.body = body0
-//		}.let { data ->
-//			json(data) {
-//				get("image").asJsonObject["id"].asString
-//			}
-//		}
+		luogu.client.toOkHttpClient().newCall(
+				Request.Builder()
+						.url(host)
+						.post(body)
+						.build()
+		).execute().let { resp ->
+			if (! resp.isSuccessful) throw IllegalStateException()
 
-		luogu.client.post<String>(host) {
-			referer("image")
-			body = body0
-		}.let {
-			json(it) {
+			json(resp.body() !!.string()) {
 				get("image").asJsonObject["id"].asString
 			}
 		}
+
+//		luogu.client.post<String>(host) {
+//			referer("image")
+//			body = body0
+//		}.let {
+//			json(it) {
+//				get("image").asJsonObject["id"].asString
+//			}
+//		}
 	}
 }
 

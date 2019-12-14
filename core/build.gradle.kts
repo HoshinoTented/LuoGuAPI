@@ -20,7 +20,7 @@ dependencies {
 	api(ktor("client-websockets", ktorVersion))
 	api(ktor("client-gson", ktorVersion))
 	api("com.google.code.gson", "gson", "2.8.5")        // JSON parser
-	api("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library
+//	api("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library
 	api("org.jsoup", "jsoup", "1.11.3")                // HTML parser
 	testApi(kotlin("test-junit"))
 

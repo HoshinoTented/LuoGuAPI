@@ -1,6 +1,5 @@
 import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
-import okhttp3.MediaType.Companion.toMediaType
 import org.hoshino9.luogu.photo.pushPhoto
 import org.hoshino9.luogu.test.BaseTest
 import org.junit.Test

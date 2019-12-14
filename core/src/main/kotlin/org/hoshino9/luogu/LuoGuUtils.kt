@@ -3,14 +3,12 @@
 package org.hoshino9.luogu
 
 import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
 	const val domain = "www.luogu.com.cn"
 	const val baseUrl = "https://$domain"
-	val httpUrl: HttpUrl get() = baseUrl.toHttpUrl()
 
 	fun lastValueFromUrl(url: String): String {
 		return url.substringAfterLast('=')
