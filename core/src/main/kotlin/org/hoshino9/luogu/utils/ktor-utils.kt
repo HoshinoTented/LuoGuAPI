@@ -3,11 +3,6 @@ package org.hoshino9.luogu.utils
 import com.google.gson.JsonObject
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
-import io.ktor.client.engine.ProxyBuilder
-import io.ktor.client.engine.http
-import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.features.feature
@@ -15,9 +10,8 @@ import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.HttpResponseData
 import io.ktor.client.request.request
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.response.HttpResponse
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import io.ktor.http.Cookie
@@ -45,9 +39,7 @@ val Iterable<Pair<String, String>>.params: TextContent
 	}
 
 fun HttpClientConfig<*>.emptyClientConfig() {
-	engine {
-		//		proxy = ProxyBuilder.http("http://127.0.0.1:8888")
-	}
+
 }
 
 fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.() -> Unit) {

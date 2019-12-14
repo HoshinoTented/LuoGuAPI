@@ -4,7 +4,8 @@ import com.google.gson.JsonObject
 import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.request
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.response.HttpResponse
+import io.ktor.http.takeFrom
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.utils.*
@@ -21,12 +22,21 @@ abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : 
 	open val page: Document
 		get() {
 			return runBlocking {
-				Jsoup.parse(client.request<HttpResponse>(url).receive())
+				Jsoup.parse(client.request<HttpResponse>(url) {}.receive())
 			}
 		}
 
+	private lateinit var feInjection_: JsonObject
 	override val feInjection: JsonObject
 		get() {
-			return json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
+			return synchronized(this) {
+				if (! ::feInjection_.isInitialized) refresh()
+
+				feInjection_
+			}
 		}
+
+	fun refresh() {
+		feInjection_ = json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
+	}
 }

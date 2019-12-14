@@ -5,15 +5,8 @@ package org.hoshino9.luogu.photo
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.ktor.client.call.receive
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.append
-import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
-import io.ktor.util.toByteArray
-import io.ktor.utils.io.core.writeFully
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.Request

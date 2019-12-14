@@ -131,6 +131,8 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 			referer("auth/login")
 			body = json.params
 		}.receive<String>()
+
+		refresh()
 	}
 
 //	fun logout() {
