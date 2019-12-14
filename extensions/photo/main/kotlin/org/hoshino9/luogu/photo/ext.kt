@@ -4,10 +4,21 @@ package org.hoshino9.luogu.photo
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.append
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.response.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.util.toByteArray
+import kotlinx.io.core.buildPacket
+import kotlinx.io.core.writeFully
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -27,6 +38,7 @@ suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String
 }
 
 /**
+ * TODO: fix 400
  * 上传图片
  *
  * @param watermark 水印
@@ -37,14 +49,14 @@ suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String
  *
  * @see [generateUploadLink]
  */
-//suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: MediaType): String {
-//	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { dlgt ->
-//		val accessKeyID: String by dlgt
-//		val callback: String by dlgt
-//		val host: String by dlgt
-//		val policy: String by dlgt
-//		val signature: String by dlgt
-//
+suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: ContentType): String {
+	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { dlgt ->
+		val accessKeyID: String by dlgt
+		val callback: String by dlgt
+		val host: String by dlgt
+		val policy: String by dlgt
+		val signature: String by dlgt
+
 //		val body = MultipartBody.Builder()
 //				.setType(MultipartBody.FORM)
 //				.addFormDataPart("signature", signature)
@@ -56,20 +68,21 @@ suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String
 //				.addFormDataPart("name", photo.name)
 //				.addFormDataPart("file", photo.name, photo.asRequestBody(contentType))
 //				.build()
-//
-//		val body0 = MultiPartFormDataContent(formData {
-//			append("signature", signature)
-//			append("callback", callback)
-//			append("success_action_status", "200")
-//			append("OSSAccessKeyId", accessKeyID)
-//			append("policy", policy)
-//			append("key", "upload/image_hosting/__upload/\${filename}")
-//			append("name", photo.name)
-//
-//			append()
-//			append("file", photo.name, photo.asRequestBody(contentType))
-//		})
-//
+
+		val body0 = MultiPartFormDataContent(formData {
+			append("signature", signature)
+			append("callback", callback)
+			append("success_action_status", "200")
+			append("OSSAccessKeyId", accessKeyID)
+			append("policy", policy)
+			append("key", "upload/image_hosting/__upload/\${filename}")
+			append("name", photo.name)
+
+			append("file", photo.name, contentType) {
+				writeFully(photo.readBytes())
+			}
+		})
+
 //		luogu.client.executePost(host, body, referer("$baseUrl/image")) {
 //			it.assert()
 //
@@ -77,8 +90,26 @@ suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String
 //				get("image").asJsonObject["id"].asString
 //			}
 //		}
-//	}
-//}
+
+//		luogu.client.post<String>(host) {
+//			referer("$baseUrl/image")
+//			this.body = body0
+//		}.let { data ->
+//			json(data) {
+//				get("image").asJsonObject["id"].asString
+//			}
+//		}
+
+		luogu.client.post<String>(host) {
+			referer("image")
+			body = body0
+		}.let {
+			json(it) {
+				get("image").asJsonObject["id"].asString
+			}
+		}
+	}
+}
 
 /**
  * 图床列表
