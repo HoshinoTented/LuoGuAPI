@@ -11,4 +11,4 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build
       run: |
-        ./gradlew build --info --warning-mode=all --stacktrace --no-daemon
+        ./gradlew assemble --info --warning-mode=all --stacktrace --no-daemon
