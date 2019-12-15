@@ -1,3 +1,5 @@
+@file:JvmName("ContestUtils")
+
 package org.hoshino9.luogu.contest
 
 import org.hoshino9.luogu.LuoGu

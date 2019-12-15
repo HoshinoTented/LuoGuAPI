@@ -9,7 +9,7 @@
 如果洛谷表明短时间内不会开放api，则此项目将继续添加新功能  
 
 # LuoGuAPI
-[**你谷**](https://www.luogu.org) 的api ~~\(然而大部分都是解析HTML\)~~  
+[**你谷**](https://www.luogu.org) 的api
 感谢您谷，终于美化 API 了  
 
 # CI
@@ -46,15 +46,13 @@ compile 'org.hoshino9:[submodule name]:0.0.2'
 
 在项目根目录下执行以下命令:
 ```bash
-./gradlew assemble
+./gradlew shadowJar
+./gradlew sourcesJar
 ```
 会在 `<module>/build/libs` 下生成三个 `.jar` 文件  
 其中:
-* `<module name>-<version number>.jar` 为本体  
-* `<module name>-<version number>-sources.jar` 为源码
-
-在 `core/build/libs` 下还会有  
-* `core-<version number>-dependencies.jar` 为运行时依赖  
+* `<module name>-<version number>-all.jar` 为本体（附带依赖）  
+* `<module name>-<version number>-sources.jar` 为源码  
 
 # Stable API
 洛谷已 **正式** 开放 API 的功能（未选中的代表 `LuoGuAPI` 还未支持）:  

@@ -2,15 +2,13 @@
 
 package org.hoshino9.luogu.paste
 
-import org.hoshino9.luogu.LuoGu
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import io.ktor.client.call.receive
-import org.hoshino9.luogu.IllegalStatusCodeException
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.user.LoggedUser
-import org.hoshino9.luogu.utils.*
-import org.jsoup.Jsoup
+import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.utils.apiPost
+import org.hoshino9.luogu.utils.asParams
+import org.hoshino9.luogu.utils.json
+import org.hoshino9.luogu.utils.referer
 
 
 /**
@@ -47,6 +45,7 @@ suspend fun LuoGu.editPaste(id: String, data: String, public: Boolean) {
 
 	apiPost("paste/edit/$id") {
 		referer("paste/$id")
+		body = json
 	}.receive<String>()
 }
 

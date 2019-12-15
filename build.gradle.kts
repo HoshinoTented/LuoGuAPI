@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
 	maven
 	kotlin("jvm") version "1.3.61" apply false
+	id("com.github.johnrengelman.shadow") version "5.2.0" apply false
 	java
 	`maven-publish`
 	id("com.jfrog.bintray") version "1.7.3"
@@ -21,6 +22,7 @@ allprojects {
 	apply {
 		plugin("maven")
 		plugin("kotlin")
+		plugin("com.github.johnrengelman.shadow")
 	}
 
 	group = "org.hoshino9"

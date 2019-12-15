@@ -14,39 +14,24 @@ repositories {
 }
 
 dependencies {
+	// kotlin
 	api(kotlin("stdlib"))
 	api(kotlin("reflect"))
 	api(kotlin("script-runtime"))
+
+	// kotlinx
 	api(kotlinx("coroutines-core", coroutinesVersion))
+
+	// ktor
 	api(ktor("client-core", ktorVersion))
 	api(ktor("client-core-jvm", ktorVersion))
 	api(ktor("client-okhttp", ktorVersion))
 	api(ktor("client-websockets", ktorVersion))
 	api(ktor("client-gson", ktorVersion))
-	api("com.google.code.gson", "gson", "2.8.5")        // JSON parser
-//	api("com.squareup.okhttp3", "okhttp", "4.1.0")        // http library
+
+	// others
 	api("org.jsoup", "jsoup", "1.11.3")                // HTML parser
+
+	// testing
 	testApi(kotlin("test-junit"))
-
-//	val plugins = listOf(
-//			"paintboard",
-//			"photo",
-//			"paste",
-//			"problem",
-//			"record").map {
-//		":extensions:$it"
-//	}.toTypedArray()
-//
-//	plugins.forEach {
-//		testCompile(project(it))
-//	}
-}
-
-val dependenciesJar = task<Jar>("dependenciesJar") {
-	from(configurations.getByName("compile").map { if (it.isDirectory) it else zipTree(it) })
-	archiveClassifier.set("dependencies")
-}
-
-artifacts {
-	add("archives", dependenciesJar)
 }
