@@ -1,6 +1,7 @@
 package org.hoshino9.luogu.test
 
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.user.ILoggedUser
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.user.currentUser
@@ -16,7 +17,7 @@ abstract class BaseTest {
 	}
 
 	val luogu: LuoGu
-	val user: LoggedUser
+	val user: ILoggedUser
 
 	init {
 		val id: String? = config.getProperty("__client_id")

@@ -4,8 +4,8 @@ package org.hoshino9.luogu.record
 
 import com.google.gson.JsonObject
 import io.ktor.client.call.receive
-import io.ktor.content.TextContent
 import org.hoshino9.luogu.IllegalStatusCodeException
+import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 
@@ -18,15 +18,15 @@ import org.hoshino9.luogu.utils.*
  * @see Record
  */
 @JvmOverloads
-suspend fun LoggedUser.postSolution(solution: Solution, verifyCode: String = ""): Record {
+suspend fun LuoGu.postSolution(solution: Solution, verifyCode: String = ""): Record {
 	val params = listOf(
 			"code" to solution.code,
 			"lang" to Solution.Language.values().indexOf(solution.language).toString(),
 			"enableO2" to if (solution.enableO2) "1" else "0",
 			"verify" to verifyCode
-	).params
+	).asParams
 
-	return luogu.apiPost("api/problem/submit/${solution.pid}") {
+	return apiPost("api/problem/submit/${solution.pid}") {
 		referer("problem/${solution.pid}")
 		body = params
 	}.receive<String>().let {

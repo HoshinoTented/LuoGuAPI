@@ -11,6 +11,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.Request
 import okhttp3.RequestBody
+import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
@@ -22,8 +23,8 @@ import java.io.File
  * @param verifyCode 验证码
  * @return 返回一个 Json 对象
  */
-suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
-	return luogu.client.get<String>("$baseUrl/api/image/generateUploadLink?watermarkType=$watermark&captcha=$verifyCode").run(::json)
+suspend fun LuoGu.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
+	return client.get<String>("$baseUrl/api/image/generateUploadLink?watermarkType=$watermark&captcha=$verifyCode").run(::json)
 }
 
 /**
@@ -38,7 +39,7 @@ suspend fun LoggedUser.generateUploadLink(watermark: Int = 1, verifyCode: String
  *
  * @see [generateUploadLink]
  */
-suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: ContentType): String {
+suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: ContentType): String {
 	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { dlgt ->
 		val accessKeyID: String by dlgt
 		val callback: String by dlgt
@@ -72,7 +73,7 @@ suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: St
 //			}
 //		})
 
-		luogu.client.toOkHttpClient().newCall(
+		client.toOkHttpClient().newCall(
 				Request.Builder()
 						.url(host)
 						.post(body)
@@ -105,23 +106,23 @@ suspend fun LoggedUser.pushPhoto(watermark: Int = 1, photo: File, verifyCode: St
  *
  * @see IPhoto
  */
-fun LoggedUser.photoList(page: Int): List<IPhoto> {
-	return PhotoListPage(page, luogu.client).list
+fun LuoGu.photoList(page: Int): List<IPhoto> {
+	return PhotoListPage(page, client).list
 }
 
 /**
  * 删除图片
  * @param photo 需要删除的图片
  */
-suspend fun LoggedUser.deletePhoto(photo: List<String>) {
+suspend fun LuoGu.deletePhoto(photo: List<String>) {
 	photo.run {
 		val json = JsonObject().apply {
 			add("images", JsonArray().apply {
 				photo.forEach(::add)
 			})
-		}.params
+		}.asParams
 
-		luogu.apiPost("api/image/delete") {
+		apiPost("api/image/delete") {
 			referer("image")
 			body = json
 		}.receive<String>()

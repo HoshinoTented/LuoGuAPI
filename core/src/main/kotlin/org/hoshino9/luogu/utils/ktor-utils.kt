@@ -28,12 +28,12 @@ private fun String.encode(): String {
 	return URLEncoder.encode(this, "UTF-8")
 }
 
-val JsonObject.params: TextContent
+val JsonObject.asParams: TextContent
 	get() {
 		return TextContent(toString(), ContentType.Application.Json)
 	}
 
-val Iterable<Pair<String, String>>.params: TextContent
+val Iterable<Pair<String, String>>.asParams: TextContent
 	get() {
 		return TextContent(joinToString(separator = "&") { "${it.first.encode()}=${it.second.encode()}" }, ContentType.Application.FormUrlEncoded)
 	}

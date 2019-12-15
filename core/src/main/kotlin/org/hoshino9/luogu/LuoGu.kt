@@ -104,7 +104,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 
 		return apiPost("api/auth/unlock") {
 			referer("auth/unlock")
-			body = params.params
+			body = params.asParams
 		}.receive()
 	}
 
@@ -129,7 +129,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 
 		apiPost("api/auth/userPassLogin") {
 			referer("auth/login")
-			body = json.params
+			body = json.asParams
 		}.receive<String>()
 
 		refresh()

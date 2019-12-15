@@ -10,14 +10,14 @@ class PasteTest : BaseTest() {
 	@Test
 	fun postPaste() {
 		runBlocking {
-			user.newPaste("qwq")
+			luogu.newPaste("qwq")
 		}
 	}
 
 	@Test
 	fun pasteList() {
 		runBlocking {
-			user.pasteList().list.forEach {
+			luogu.pasteList().list.forEach {
 				it.printAllMember()
 			}
 		}
@@ -27,11 +27,11 @@ class PasteTest : BaseTest() {
 	fun deleteAll() {
 		runBlocking {
 			while (true) {
-				val list = user.pasteList().list
+				val list = luogu.pasteList().list
 
 				if (list.isEmpty()) break else {
 					list.forEach {
-						user.deletePaste(it.id)
+						luogu.deletePaste(it.id)
 						println("Deleted: ${it.id}")
 					}
 				}

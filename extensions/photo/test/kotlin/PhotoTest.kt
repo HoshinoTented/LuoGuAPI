@@ -20,7 +20,7 @@ class PhotoTest : BaseTest() {
 
 					val code = readLine() !!
 
-					user.pushPhoto(
+					luogu.pushPhoto(
 							photo = PhotoTest::class.java.getResource("nya.png").toURI().run(::File),
 							verifyCode = code,
 							contentType = ContentType.Image.PNG

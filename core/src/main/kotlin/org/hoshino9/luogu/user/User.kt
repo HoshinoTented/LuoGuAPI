@@ -2,10 +2,7 @@
 
 package org.hoshino9.luogu.user
 
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
@@ -16,6 +13,7 @@ import java.lang.reflect.Type
 typealias ProblemID = String
 typealias UID = Int
 
+@JsonAdapter(BaseUser.Serializer::class)
 interface IBaseUser {
 	val uid: Int
 	val name: String
@@ -27,17 +25,27 @@ interface IBaseUser {
 	val isBanned: Boolean
 }
 
-open class BaseUser(val source: JsonObject) : IBaseUser {
-	protected val delegate = source.delegate
+open class BaseUser(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : IBaseUser {
+	companion object Serializer : JsonDeserializer<IBaseUser> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IBaseUser {
+			return json.asJsonObject.delegate.let { delegate ->
+				val uid: Int by delegate
+				val name: String by delegate
+				val color: String by delegate
+				val badge: String? by delegate
+				val slogan: String by delegate
+				val ccfLevel: Int by delegate
+				val isAdmin: Boolean by delegate
+				val isBanned: Boolean by delegate
 
-	override val uid: Int by delegate
-	override val name: String by delegate
-	override val color: String by delegate
-	override val badge: String? by delegate
-	override val slogan: String by delegate
-	override val ccfLevel: Int by delegate
-	override val isAdmin: Boolean by delegate
-	override val isBanned: Boolean by delegate
+				BaseUser(uid, name, color, badge, slogan, ccfLevel, isAdmin, isBanned)
+			}
+		}
+
+		operator fun invoke(json: JsonElement): IBaseUser {
+			return gson.fromJson(json, IBaseUser::class.java)
+		}
+	}
 
 	override fun equals(other: Any?): Boolean {
 		return (other as? BaseUser)?.uid == uid
@@ -52,32 +60,39 @@ open class BaseUser(val source: JsonObject) : IBaseUser {
 	}
 }
 
+@JsonAdapter(User.Serializer::class)
 interface IUser : IBaseUser {
 	val ranking: Int
 	val introduction: String
 }
 
-open class User(source: JsonObject) : BaseUser(source), IUser {
-	override val uid: Int by delegate
-	override val badge: String? by delegate
-	override val ccfLevel: Int by delegate
-	override val isBanned: Boolean by delegate
-	override val slogan: String by delegate
-	override val introduction: String by delegate
-	override val isAdmin: Boolean by delegate
-	override val name: String by delegate
-	override val ranking: Int by delegate
-	override val color: String by delegate
+open class User(override val ranking: Int, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
+	companion object Serializer : JsonDeserializer<IUser> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
+			return json.asJsonObject.delegate.let { delegate ->
+				val ranking: Int by delegate
+				val introduction: String by delegate
+				val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
+
+				User(ranking, introduction, baseUser)
+			}
+		}
+
+		operator fun invoke(json: JsonElement): IUser {
+			return gson.fromJson(json, IUser::class.java)
+		}
+	}
 }
 
 open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
 	override val url: String get() = "$baseUrl/user/$uid"
 
 	protected val data = currentData
+	protected val userObj = data["user"].asJsonObject
 
-	open val user: User
+	open val user: IUser
 		get() {
-			return User(data["user"].asJsonObject)
+			return User(userObj)
 		}
 
 	private fun problemList(attr: String): List<ProblemID> {

@@ -7,7 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.utils.*
 
-class FollowList(val user: User, val page: Int, val type: Type) {
+class FollowList(val user: IUser, val page: Int, val type: Type) {
 	enum class Type {
 		Followings,
 		Followers
@@ -22,7 +22,7 @@ class FollowList(val user: User, val page: Int, val type: Type) {
 	val list: List<IBaseUser>
 		get() {
 			return result.map {
-				BaseUser(it.asJsonObject)
+				gson.fromJson(it, IBaseUser::class.java)
 			}
 		}
 }

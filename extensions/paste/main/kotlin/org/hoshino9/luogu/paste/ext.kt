@@ -2,6 +2,7 @@
 
 package org.hoshino9.luogu.paste
 
+import org.hoshino9.luogu.LuoGu
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.client.call.receive
@@ -19,36 +20,36 @@ import org.jsoup.Jsoup
  * @return 返回剪切板的代码
  */
 @JvmOverloads
-suspend fun LoggedUser.newPaste(code: String, public: Boolean = true): String {
+suspend fun LuoGu.newPaste(code: String, public: Boolean = true): String {
 	val json = JsonObject().apply {
 		addProperty("data", code)
 		addProperty("public", public)
-	}.params
+	}.asParams
 
-	return luogu.apiPost("paste/new") {
+	return apiPost("paste/new") {
 		referer("paste")
 		body = json
 	}.receive<String>().run(::json)["id"].asString
 }
 
-suspend fun LoggedUser.deletePaste(id: String) {
-	luogu.apiPost("paste/delete/$id") {
+suspend fun LuoGu.deletePaste(id: String) {
+	apiPost("paste/delete/$id") {
 		referer("paste/$id")
 	}.receive<String>()
 }
 
-suspend fun LoggedUser.editPaste(id: String, data: String, public: Boolean) {
+suspend fun LuoGu.editPaste(id: String, data: String, public: Boolean) {
 	val json = JsonObject().apply {
 		addProperty("data", data)
 		addProperty("id", id)
 		addProperty("public", public)
-	}.params
+	}.asParams
 
-	luogu.apiPost("paste/edit/$id") {
+	apiPost("paste/edit/$id") {
 		referer("paste/$id")
 	}.receive<String>()
 }
 
-fun LoggedUser.pasteList(page: Int = 1): PasteList {
-	return PasteList(page, luogu.client)
+fun LuoGu.pasteList(page: Int = 1): PasteList {
+	return PasteList(page, client)
 }
