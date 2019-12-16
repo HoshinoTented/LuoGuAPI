@@ -12,8 +12,6 @@ class PhotoTest : BaseTest() {
 		fun main(args: Array<String>) {
 			runBlocking {
 				PhotoTest().run {
-					val clz = PhotoTest::class.java
-
 					luogu.verifyCode(File("./test/resources/verify.png").outputStream())
 
 					print("Please input verify code: ")

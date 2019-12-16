@@ -10,7 +10,7 @@ class RecordTest : BaseTest() {
 	fun record() {
 		runBlocking {
 			val job = launch {
-				user.postSolution(Solution("P1001", Solution.Language.Haskell, "main = putStrLn \"Hello world!\"")).listen(luogu) { socket, msg ->
+				luogu.postSolution(Solution("P1001", Solution.Language.Haskell, "main = putStrLn \"Hello world!\"")).listen(luogu) { socket, msg ->
 					println(msg)
 				}
 			}

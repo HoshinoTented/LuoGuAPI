@@ -1,6 +1,8 @@
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.contest.ContestListPage
 import org.hoshino9.luogu.contest.contestListPage
 import org.hoshino9.luogu.contest.contestPage
+import org.hoshino9.luogu.contest.joinContest
 import org.hoshino9.luogu.test.BaseTest
 import org.hoshino9.luogu.test.printAllMember
 import org.junit.Test
@@ -20,6 +22,13 @@ class ContestTest : BaseTest() {
 			luogu.contestPage(it).run {
 				printAllMember()
 			}
+		}
+	}
+
+	@Test
+	fun contestJoin() {
+		runBlocking {
+			luogu.joinContest(24103)
 		}
 	}
 }
