@@ -25,7 +25,7 @@ interface ILoggedUser : IBaseLoggedUser, IUser {
 /**
  * **你谷**用户类
  */
-open class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
+data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
 	companion object Serializer : JsonDeserializer<ILoggedUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedUser {
 			val user = context.deserialize<IUser>(json, IUser::class.java)

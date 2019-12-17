@@ -25,7 +25,7 @@ interface IBaseUser {
 	val isBanned: Boolean
 }
 
-open class BaseUser(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : IBaseUser {
+data class BaseUser(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : IBaseUser {
 	companion object Serializer : Deserializable<IBaseUser>(IBaseUser::class), JsonDeserializer<IBaseUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IBaseUser {
 			return json.asJsonObject.delegate.let { delegate ->
@@ -62,7 +62,7 @@ interface IUser : IBaseUser {
 	val introduction: String
 }
 
-open class User(override val ranking: Int, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
+data class User(override val ranking: Int, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
 	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
 			return json.asJsonObject.delegate.let { delegate ->
