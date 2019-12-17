@@ -4,17 +4,8 @@ package org.hoshino9.luogu.contest
 
 import io.ktor.client.call.receive
 import io.ktor.client.features.ClientRequestException
-import io.ktor.client.response.HttpResponse
-import io.ktor.util.toByteArray
-import javafx.application.Application.launch
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.apiPost
-import org.hoshino9.luogu.utils.json
 import org.hoshino9.luogu.utils.referer
 
 /**

@@ -4,7 +4,7 @@ import com.google.gson.*
 import kotlin.reflect.KProperty
 
 // Json
-class JsonDelegate(val original: JsonObject) {
+class JsonDelegate(val original: JsonObject, val context: JsonDeserializationContext? = null) {
 	@Suppress("IMPLICIT_CAST_TO_ANY")
 	inline operator fun <reified T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		val obj: JsonElement? = original[property.name]?.takeIf { it != JsonNull.INSTANCE }
@@ -25,15 +25,13 @@ class JsonDelegate(val original: JsonObject) {
 			Float::class -> obj.asFloat
 			Double::class -> obj.asDouble
 
-			else -> throw IllegalArgumentException("Not in bounds: ${T::class}")
+			else -> context?.deserialize(obj, T::class.java) ?: throw IllegalArgumentException("Can not cast ${property.name} to ${T::class}")
 		}) as T
 	}
 }
 
-val JsonObject.delegate: JsonDelegate
-	get() {
-		return JsonDelegate(this)
-	}
+val JsonObject.delegate: JsonDelegate get() = delegateWith(null)
+fun JsonObject.delegateWith(context: JsonDeserializationContext?) = JsonDelegate(this, context)
 
 inline fun <reified T> json(content: String, init: JsonObject.() -> T): T {
 	return json(content).run(init)
