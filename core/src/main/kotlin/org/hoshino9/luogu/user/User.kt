@@ -26,7 +26,7 @@ interface IBaseUser {
 }
 
 open class BaseUser(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : IBaseUser {
-	companion object Serializer : JsonDeserializer<IBaseUser> {
+	companion object Serializer : Deserializable<IBaseUser>(IBaseUser::class), JsonDeserializer<IBaseUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IBaseUser {
 			return json.asJsonObject.delegate.let { delegate ->
 				val uid: Int by delegate
@@ -40,10 +40,6 @@ open class BaseUser(override val uid: Int, override val name: String, override v
 
 				BaseUser(uid, name, color, badge, slogan, ccfLevel, isAdmin, isBanned)
 			}
-		}
-
-		operator fun invoke(json: JsonElement): IBaseUser {
-			return gson.fromJson(json, IBaseUser::class.java)
 		}
 	}
 
@@ -67,7 +63,7 @@ interface IUser : IBaseUser {
 }
 
 open class User(override val ranking: Int, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
-	companion object Serializer : JsonDeserializer<IUser> {
+	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
 			return json.asJsonObject.delegate.let { delegate ->
 				val ranking: Int by delegate
@@ -76,10 +72,6 @@ open class User(override val ranking: Int, override val introduction: String, va
 
 				User(ranking, introduction, baseUser)
 			}
-		}
-
-		operator fun invoke(json: JsonElement): IUser {
-			return gson.fromJson(json, IUser::class.java)
 		}
 	}
 }

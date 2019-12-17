@@ -31,14 +31,16 @@ suspend fun main() {
 
 suspend fun LuoGuTest.login() {
 	luogu = LuoGu()
-	luogu.verifyCode(Files.newOutputStream(verifyPath.also { path ->
+
+	Files.newOutputStream(verifyPath.also { path ->
 		path.toFile().let {
 			if (it.exists().not()) {
 				it.parentFile.mkdirs()
 				it.createNewFile()
 			}
 		}
-	}))
+	}).write(luogu.verifyCode())
+
 	println("Please input verify code")
 	val verifyCode: String = Scanner(System.`in`).next()
 	luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)

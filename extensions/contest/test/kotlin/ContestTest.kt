@@ -25,10 +25,10 @@ class ContestTest : BaseTest() {
 		}
 	}
 
-	@Test
-	fun contestJoin() {
-		runBlocking {
-			luogu.joinContest(24103)
-		}
-	}
+//	@Test
+//	fun contestJoin() {
+//		runBlocking {
+//			luogu.joinContest(24103)
+//		}
+//	}
 }

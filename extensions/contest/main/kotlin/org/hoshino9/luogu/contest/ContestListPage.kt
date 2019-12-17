@@ -18,7 +18,7 @@ class ContestListPage(val page: Int = 1, client: HttpClient = emptyClient) : Abs
 	val contests: List<IBaseContest>
 		get() {
 			return data["result"].asJsonArray.map {
-				BaseContest(it.asJsonObject)
+				BaseContest(it)
 			}
 		}
 }

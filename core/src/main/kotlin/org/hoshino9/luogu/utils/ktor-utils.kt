@@ -17,6 +17,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.Cookie
 import io.ktor.http.HttpMethod
 import io.ktor.http.Url
+import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -110,3 +111,7 @@ suspend fun HttpClient.toOkHttpClient(): OkHttpClient {
 		}
 	}
 }
+
+val HttpResponse.byteData: ByteArray get() = runBlocking { content.toByteArray() }
+
+val HttpResponse.strData: String get() = String(byteData)

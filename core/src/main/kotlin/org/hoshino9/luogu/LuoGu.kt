@@ -5,17 +5,19 @@ package org.hoshino9.luogu
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import io.ktor.client.call.receive
+import io.ktor.client.features.ClientRequestException
 import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
 import io.ktor.http.Cookie
 import io.ktor.http.Url
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 import java.io.OutputStream
+import kotlin.coroutines.coroutineContext
 
 /**
  * # LuoGU
@@ -87,11 +89,9 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 
 	/**
 	 * 获取验证码
-	 * @param out 输出流, 将会把验证码**图片**输出到这个流里
 	 */
-	suspend fun verifyCode(out: OutputStream) {
-		val image: ByteArray = client.get("$baseUrl/api/verify/captcha")
-		out.write(image)
+	suspend fun verifyCode(): ByteArray {
+		return client.get("$baseUrl/api/verify/captcha")
 	}
 
 	/**
@@ -110,15 +110,15 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 
 	/**
 	 * 登录**你谷**
+	 *
 	 * @param account 账号
 	 * @param password 密码
 	 * @param verifyCode 验证码, 通过 [LuoGu.verifyCode] 获得
-	 * @throws IllegalStatusCodeException 当登录失败时抛出
-	 * @throws IllegalStatusCodeException 当请求码错误时抛出
+	 *
+	 * @throws ClientRequestException
 	 *
 	 * @see LuoGu.verifyCode
 	 * @see LoggedUser
-	 * @see IllegalStatusCodeException
 	 */
 	suspend fun login(account: String, password: String, verifyCode: String) {
 		val json = JsonObject().apply {
