@@ -1,14 +1,13 @@
 package org.hoshino9.luogu.page
 
 import com.google.gson.JsonObject
-import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.request
 import io.ktor.client.response.HttpResponse
-import io.ktor.http.takeFrom
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
-import org.hoshino9.luogu.utils.*
+import org.hoshino9.luogu.utils.HttpClient
+import org.hoshino9.luogu.utils.emptyClient
+import org.hoshino9.luogu.utils.json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URLDecoder
@@ -26,17 +25,17 @@ abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : 
 			}
 		}
 
-	private lateinit var feInjection_: JsonObject
+	private lateinit var _feInjection: JsonObject
 	override val feInjection: JsonObject
 		get() {
 			return synchronized(this) {
-				if (! ::feInjection_.isInitialized) refresh()
+				if (! ::_feInjection.isInitialized) refresh()
 
-				feInjection_
+				_feInjection
 			}
 		}
 
 	fun refresh() {
-		feInjection_ = json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
+		_feInjection = json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
 	}
 }

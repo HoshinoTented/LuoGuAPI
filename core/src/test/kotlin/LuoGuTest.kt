@@ -33,7 +33,7 @@ open class LuoGuTest {
 		val uid: String? = config.getProperty("_uid")
 
 		if (id != null && uid != null) {
-			luogu = LuoGu(id, uid)
+			luogu = LuoGu(id, uid.toInt())
 		} else throw IllegalStateException("No logged in")
 
 	}

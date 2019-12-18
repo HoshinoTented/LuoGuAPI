@@ -3,7 +3,7 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.user.currentUser
 import org.hoshino9.luogu.user.doFollow
 
-val luogu = LuoGu("your client id", "your uid")
+val luogu = LuoGu("your client id", "your uid".toInt())
 val currentUser = luogu.currentUser
 
 tailrec suspend fun refollow(page: Int) {
@@ -11,8 +11,10 @@ tailrec suspend fun refollow(page: Int) {
 	if (list.isEmpty()) return
 
 	list.forEach {
-		println("Followed ${it.uid}")
-		luogu.doFollow(it.uid)
+		if (it.userRelationship == 1) println("Followed ${it.uid}") else {
+			println("Following ${it.uid}")
+			luogu.doFollow(it.uid)
+		}
 	}
 
 	refollow(page + 1)

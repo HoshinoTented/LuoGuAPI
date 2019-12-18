@@ -25,13 +25,13 @@ import org.jsoup.Jsoup
 open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	companion object {
 		@JvmName("newInstance")
-		operator fun invoke(clientId: String, uid: String): LuoGu {
+		operator fun invoke(clientId: String, uid: Int): LuoGu {
 			val url = Url(baseUrl)
 
 			return LuoGu(
 					specifiedCookieClient(
 							listOf(
-									url to Cookie("_uid", uid),
+									url to Cookie("_uid", uid.toString()),
 									url to Cookie("__client_id", clientId))
 					)
 			)

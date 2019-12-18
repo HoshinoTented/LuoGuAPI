@@ -29,7 +29,7 @@ abstract class BaseTest {
 		val uid: String? = config.getProperty("_uid")
 
 		if (id != null && uid != null) {
-			luogu = LuoGu(id, uid)
+			luogu = LuoGu(id, uid.toInt())
 			user = luogu.currentUser.user
 		} else throw IllegalStateException("No logged in")
 	}

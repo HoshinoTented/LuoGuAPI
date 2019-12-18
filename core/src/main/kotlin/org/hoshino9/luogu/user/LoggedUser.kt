@@ -5,12 +5,12 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
+import io.ktor.client.call.receive
 import io.ktor.client.request.post
+import io.ktor.client.response.HttpResponse
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.utils.asParams
-import org.hoshino9.luogu.utils.gson
-import org.hoshino9.luogu.utils.referer
+import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
 interface IBaseLoggedUser : IBaseUser {
@@ -63,9 +63,9 @@ suspend fun LuoGu.doFollow(userId: Int, isFollow: Boolean = true) {
 		addProperty("uid", userId)
 		addProperty("relationship", if (isFollow) 1 else 0)
 	}.let { param ->
-		client.post<String>("$baseUrl/fe/api/user/updateRelationShip") {
+		apiPost("fe/api/user/updateRelationShip") {
 			referer("user/$uid#following")
 			body = param.asParams
-		}
+		}.receive<String>()
 	}
 }

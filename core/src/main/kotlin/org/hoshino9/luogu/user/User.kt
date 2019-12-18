@@ -43,15 +43,15 @@ data class BaseUser(override val uid: Int, override val name: String, override v
 
 @JsonAdapter(User.Serializer::class)
 interface IUser : IBaseUser {
-	val ranking: Int
+	val ranking: Int?
 	val introduction: String
 }
 
-data class User(override val ranking: Int, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
+data class User(override val ranking: Int?, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
 	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
 			return json.asJsonObject.delegate.let { delegate ->
-				val ranking: Int by delegate
+				val ranking: Int? by delegate
 				val introduction: String by delegate
 				val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
 
@@ -91,6 +91,6 @@ open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLu
 	val passedProblems: List<ProblemID> get() = problemList("passedProblems")
 	val submittedProblems: List<ProblemID> get() = problemList("submittedProblems")
 
-	fun followers(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followers)
-	fun followings(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followings)
+	fun followers(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followers, client)
+	fun followings(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followings, client)
 }
