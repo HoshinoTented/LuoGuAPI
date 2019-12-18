@@ -43,10 +43,6 @@ data class Paste(override val id: String, override val user: IBaseUser, override
 	override fun hashCode(): Int {
 		return id.hashCode()
 	}
-
-	override fun toString(): String {
-		return id
-	}
 }
 
 open class PastePage(id: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {

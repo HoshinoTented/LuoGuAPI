@@ -95,6 +95,14 @@ data class BaseContest(override val id: Int, override val name: String, override
 			return context.deserialize(json, BaseContest::class.java)
 		}
 	}
+
+	override fun equals(other: Any?): Boolean {
+		return (other as? IBaseContest)?.id == this.id
+	}
+
+	override fun hashCode(): Int {
+		return id.hashCode()
+	}
 }
 
 @JsonAdapter(Contest.Serializer::class)
@@ -122,7 +130,13 @@ data class Contest(override val description: String, override val totalParticipa
 
 			return Contest(description, totalParticipants, baseContest)
 		}
+	}
 
+	override fun equals(other: Any?): Boolean {
+		return baseContest == other
+	}
 
+	override fun hashCode(): Int {
+		return baseContest.hashCode()
 	}
 }

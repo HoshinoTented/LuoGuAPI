@@ -37,6 +37,14 @@ data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
 			return gson.fromJson(json, ILoggedUser::class.java)
 		}
 	}
+
+	override fun equals(other: Any?): Boolean {
+		return user == other
+	}
+
+	override fun hashCode(): Int {
+		return user.hashCode()
+	}
 }
 
 open class LoggedUserPage(uid: Int, val luogu: LuoGu) : UserPage(uid, luogu.client) {

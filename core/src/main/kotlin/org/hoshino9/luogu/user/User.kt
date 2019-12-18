@@ -39,10 +39,6 @@ data class BaseUser(override val uid: Int, override val name: String, override v
 	override fun hashCode(): Int {
 		return uid.hashCode()
 	}
-
-	override fun toString(): String {
-		return uid.toString()
-	}
 }
 
 @JsonAdapter(User.Serializer::class)
@@ -63,13 +59,21 @@ data class User(override val ranking: Int, override val introduction: String, va
 			}
 		}
 	}
+
+	override fun equals(other: Any?): Boolean {
+		return baseUser == other
+	}
+
+	override fun hashCode(): Int {
+		return baseUser.hashCode()
+	}
 }
 
 open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
 	override val url: String get() = "$baseUrl/user/$uid"
 
 	protected val data = currentData
-	protected val userObj = data["user"].asJsonObject
+	protected val userObj: JsonObject = data["user"].asJsonObject
 
 	open val user: IUser
 		get() {
