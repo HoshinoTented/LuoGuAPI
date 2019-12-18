@@ -10,14 +10,12 @@ import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
 import io.ktor.http.Cookie
 import io.ktor.http.Url
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
-import java.io.OutputStream
-import kotlin.coroutines.coroutineContext
 
 /**
  * # LuoGU

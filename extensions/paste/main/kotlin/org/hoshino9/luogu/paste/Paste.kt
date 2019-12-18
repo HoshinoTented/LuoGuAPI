@@ -1,14 +1,21 @@
 package org.hoshino9.luogu.paste
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.user.IBaseUser
+import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.delegate
 import org.hoshino9.luogu.utils.emptyClient
+import java.lang.reflect.Type
 
+@JsonAdapter(Paste.Serializer::class)
 interface IPaste {
 	val id: String
 	val user: IBaseUser
@@ -17,15 +24,12 @@ interface IPaste {
 	val public: Boolean
 }
 
-open class Paste(val source: JsonObject) : IPaste {
-	protected val delegate = source.delegate
-
-	override val id: String by delegate
-	override val time: Long by delegate
-	override val data: String by delegate
-	override val public: Boolean by delegate
-	override val user: IBaseUser
-		get() = BaseUser(source["user"].asJsonObject)
+data class Paste(override val id: String, override val user: IBaseUser, override val time: Long, override val data: String, override val public: Boolean) : IPaste {
+	companion object Serializer : Deserializable<IPaste>(IPaste::class), JsonDeserializer<IPaste> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IPaste {
+			return context.deserialize(json, Paste::class.java)
+		}
+	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
@@ -50,7 +54,5 @@ open class PastePage(id: String, client: HttpClient = emptyClient) : AbstractLuo
 
 	private val data get() = feInjection["currentData"].asJsonObject["paste"].asJsonObject
 
-	fun newInstance(): IPaste {
-		return Paste(data)
-	}
+	val paste: IPaste get() = Paste(data)
 }

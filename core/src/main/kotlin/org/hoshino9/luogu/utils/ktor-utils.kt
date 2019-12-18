@@ -40,7 +40,7 @@ val Iterable<Pair<String, String>>.asParams: TextContent
 	}
 
 fun HttpClientConfig<*>.emptyClientConfig() {
-
+	install(WebSockets)
 }
 
 fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.() -> Unit) {
@@ -53,8 +53,6 @@ fun HttpClientConfig<*>.defaultClientConfig(cookiesConfig: HttpCookies.Config.()
 	install(JsonFeature) {
 		serializer = GsonSerializer()
 	}
-
-	install(WebSockets)
 }
 
 val emptyClient = HttpClient { emptyClientConfig() }

@@ -11,6 +11,9 @@ import java.util.Properties
 
 abstract class BaseTest {
 	companion object {
+		/**
+		 * 请将测试的工作目录设置为项目的根目录
+		 */
 		internal val config by lazy {
 			Properties().apply {
 				load(File("core/src/main/resources/user.properties").inputStream())

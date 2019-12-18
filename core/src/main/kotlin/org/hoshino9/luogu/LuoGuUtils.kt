@@ -2,17 +2,11 @@
 
 package org.hoshino9.luogu
 
-import okhttp3.HttpUrl
-import org.hoshino9.luogu.user.User
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
 	const val domain = "www.luogu.com.cn"
 	const val baseUrl = "https://$domain"
-
-	fun lastValueFromUrl(url: String): String {
-		return url.substringAfterLast('=')
-	}
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个

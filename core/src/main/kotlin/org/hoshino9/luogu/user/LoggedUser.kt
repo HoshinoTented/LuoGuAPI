@@ -37,11 +37,6 @@ data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
 			return gson.fromJson(json, ILoggedUser::class.java)
 		}
 	}
-
-	/**
-	 * (un)?follow
-	 */
-
 }
 
 open class LoggedUserPage(uid: Int, val luogu: LuoGu) : UserPage(uid, luogu.client) {
@@ -49,9 +44,15 @@ open class LoggedUserPage(uid: Int, val luogu: LuoGu) : UserPage(uid, luogu.clie
 		get() = LoggedUser(userObj)
 }
 
-suspend fun LuoGu.doFollow(user: IBaseUser, isFollow: Boolean = true) {
+/**
+ * 关注用户
+ *
+ * @param userId 目标用户 ID
+ * @param isFollow true 为关注，false 为取关
+ */
+suspend fun LuoGu.doFollow(userId: Int, isFollow: Boolean = true) {
 	JsonObject().apply {
-		addProperty("uid", user.uid)
+		addProperty("uid", userId)
 		addProperty("relationship", if (isFollow) 1 else 0)
 	}.let { param ->
 		client.post<String>("$baseUrl/fe/api/user/updateRelationShip") {

@@ -28,18 +28,7 @@ interface IBaseUser {
 data class BaseUser(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : IBaseUser {
 	companion object Serializer : Deserializable<IBaseUser>(IBaseUser::class), JsonDeserializer<IBaseUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IBaseUser {
-			return json.asJsonObject.delegate.let { delegate ->
-				val uid: Int by delegate
-				val name: String by delegate
-				val color: String by delegate
-				val badge: String? by delegate
-				val slogan: String by delegate
-				val ccfLevel: Int by delegate
-				val isAdmin: Boolean by delegate
-				val isBanned: Boolean by delegate
-
-				BaseUser(uid, name, color, badge, slogan, ccfLevel, isAdmin, isBanned)
-			}
+			return context.deserialize(json, BaseUser::class.java)
 		}
 	}
 

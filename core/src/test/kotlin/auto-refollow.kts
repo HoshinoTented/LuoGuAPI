@@ -11,7 +11,8 @@ tailrec suspend fun refollow(page: Int) {
 	if (list.isEmpty()) return
 
 	list.forEach {
-		luogu.doFollow(it)
+		println("Followed ${it.uid}")
+		luogu.doFollow(it.uid)
 	}
 
 	refollow(page + 1)
