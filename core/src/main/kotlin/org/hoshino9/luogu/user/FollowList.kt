@@ -24,15 +24,16 @@ data class FollowListUser(override val blogAddress: String?, override val follow
 	companion object Serializer : Deserializable<IFollowListUser>(IFollowListUser::class), JsonDeserializer<IFollowListUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IFollowListUser {
 			val source = json.asJsonObject
+			val provider = source.provider
 
-			val blogAddress: String? = source["blogAddress"].ifNull()?.asString
-			val followingCount: Int = source["followingCount"].asInt
-			val followerCount: Int = source["followerCount"].asInt
-			val ranking: Int? = source["ranking"].ifNull()?.asInt
-			val userRelationship: Int = source["userRelationship"].asInt
-			val reverseUserRelationship: Int = source["reverseUserRelationship"].asInt
-			val passedProblemCount: Int = source["passedProblemCount"].asInt
-			val submittedProblemCount: Int = source["submittedProblemCount"].asInt
+			val blogAddress: String? by provider.provide()
+			val followingCount: Int by provider.provide()
+			val followerCount: Int by provider.provide()
+			val ranking: Int? by provider.provide()
+			val userRelationship: Int by provider.provide()
+			val reverseUserRelationship: Int by provider.provide()
+			val passedProblemCount: Int by provider.provide()
+			val submittedProblemCount: Int by provider.provide()
 			val baseUser: IBaseUser = context.deserialize(json, IBaseUser::class.java)
 
 			return FollowListUser(blogAddress, followingCount, followerCount, ranking, userRelationship, reverseUserRelationship, passedProblemCount, submittedProblemCount, baseUser)
@@ -48,10 +49,12 @@ class FollowList(val user: IUser, val page: Int, val type: Type, val client: Htt
 
 	private val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=${user.uid}&page=$page"
 	private val data: JsonObject = runBlocking { json(client.get(url)) }
-	private val users = data["users"].asJsonObject
-	private val result: JsonArray = users["result"].asJsonArray
+	private val provider = data.provider
+	private val users: JsonObject by provider.provide()
+	private val usersProvider = users.provider
+	private val result: JsonArray by usersProvider.provide()
 
-	val count: Int get() = users["count"].asInt
+	val count: Int by usersProvider.provide()
 	val list: List<IFollowListUser>
 		get() {
 			return result.map {

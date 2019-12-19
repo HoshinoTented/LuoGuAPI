@@ -2,14 +2,12 @@ package org.hoshino9.luogu.problem
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
-import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.user.IBaseUser
-import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
 
 @JsonAdapter(BaseProblem.Serializer::class)
@@ -69,11 +67,11 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			}
 
 			val source = json.asJsonObject
-			val delegate = source.delegate
+			val provider = source.provider
 
-			val pid: String = source["pid"].asString
+			val pid: String by provider.provide()
 			val difficulty: Difficulty = Difficulty.values()[source["difficulty"].asInt]
-			val title: String = source["title"].asString
+			val title: String by provider.provide()
 			val tags: List<LuoGuTag> = source["tags"].asJsonArray.map {
 				IdLuoGuTag(it.asInt)
 			}
@@ -81,7 +79,7 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			val type: Type = Type.values().first { it.id == source["type"].asString }
 			val totalAccepted: Long = source["totalAccepted"].run(::parseTotal)
 			val totalSubmit: Long = source["totalSubmit"].run(::parseTotal)
-			val wantsTranslation: Boolean = source["wantsTranslation"].asBoolean
+			val wantsTranslation: Boolean by provider.provide()
 
 			return BaseProblem(difficulty, pid, tags, title, totalAccepted, totalSubmit, type, wantsTranslation)
 		}
@@ -153,13 +151,14 @@ data class Problem(override val background: String, override val canEdit: Boolea
 	companion object Serializer : Deserializable<IProblem>(IProblem::class), JsonDeserializer<IProblem> {
 		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): IProblem {
 			val source = json.asJsonObject
+			val jsonProvider = source.provider
 
-			val background: String = source["background"].asString
-			val canEdit: Boolean = source["canEdit"].asBoolean
-			val description: String = source["description"].asString
-			val hint: String = source["hint"].asString
-			val inputFormat: String = source["inputFormat"].asString
-			val outputFormat: String = source["outputFormat"].asString
+			val background: String by jsonProvider.provide()
+			val canEdit: Boolean by jsonProvider.provide()
+			val description: String by jsonProvider.provide()
+			val hint: String by jsonProvider.provide()
+			val inputFormat: String by jsonProvider.provide()
+			val outputFormat: String by jsonProvider.provide()
 
 			val limits: List<IProblem.Limit> = run {
 				val json = source["limits"].asJsonObject

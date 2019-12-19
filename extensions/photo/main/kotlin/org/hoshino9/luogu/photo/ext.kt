@@ -40,12 +40,12 @@ suspend fun LuoGu.generateUploadLink(watermark: Int = 1, verifyCode: String): Js
  * @see [generateUploadLink]
  */
 suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: ContentType): String {
-	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { dlgt ->
-		val accessKeyID: String by dlgt
-		val callback: String by dlgt
-		val host: String by dlgt
-		val policy: String by dlgt
-		val signature: String by dlgt
+	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.provider.let { provider ->
+		val accessKeyID: String by provider.provide()
+		val callback: String by provider.provide()
+		val host: String by provider.provide()
+		val policy: String by provider.provide()
+		val signature: String by provider.provide()
 
 		val body = MultipartBody.Builder()
 				.setType(MultipartBody.FORM)

@@ -4,7 +4,6 @@ package org.hoshino9.luogu.user
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
-import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.*
@@ -82,9 +81,10 @@ data class User(override val ranking: Int?, override val introduction: String, v
 	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
 			val source = json.asJsonObject
+			val provider = source.provider
 
-			val ranking: Int? = source["ranking"].ifNull()?.asInt
-			val introduction: String = source["introduction"].asString
+			val ranking: Int? by provider.provide()
+			val introduction: String by provider.provide()
 			val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
 
 			return User(ranking, introduction, baseUser)

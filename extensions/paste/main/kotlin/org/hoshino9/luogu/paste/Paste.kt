@@ -11,7 +11,6 @@ import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.user.IBaseUser
 import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.HttpClient
-import org.hoshino9.luogu.utils.delegate
 import org.hoshino9.luogu.utils.emptyClient
 import java.lang.reflect.Type
 

@@ -12,7 +12,7 @@ class PhotoTest : BaseTest() {
 		fun main(args: Array<String>) {
 			runBlocking {
 				PhotoTest().run {
-					luogu.verifyCode(File("./test/resources/verify.png").outputStream())
+					File("./test/resources/verify.png").outputStream().write(luogu.verifyCode())
 
 					print("Please input verify code: ")
 

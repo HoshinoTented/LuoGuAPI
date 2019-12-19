@@ -1,19 +1,29 @@
 package org.hoshino9.luogu.utils
 
 import com.google.gson.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-// Json
-class JsonDelegate(val original: JsonObject, val context: JsonDeserializationContext? = null) {
+class JsonDelegateProvider(val original: JsonObject, val context: JsonDeserializationContext?) {
+	inline fun <reified T> provide(): JsonDelegate<T> {
+		return provideDelegate(null, null)
+	}
+
+	inline operator fun <reified T> provideDelegate(thisRef: Any?, property: KProperty<*>?): JsonDelegate<T> {
+		return JsonDelegate(original, T::class, context)
+	}
+}
+
+class JsonDelegate<T>(val original: JsonObject, val type: KClass<*>, val context: JsonDeserializationContext? = null) {
 	/**
 	 * @throws NoSuchElementException will throw a exception when the element is not exists
 	 */
 	@Suppress("IMPLICIT_CAST_TO_ANY")
-	inline operator fun <reified T> getValue(thisRef: Any?, property: KProperty<*>): T {
+	operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
 		val obj: JsonElement = original[property.name] ?: throw NoSuchElementException(property.name)
 
 		try {
-			return (if (obj is JsonNull) null else when (T::class) {
+			return (if (obj is JsonNull) null else when (type) {
 				JsonObject::class -> obj.asJsonObject
 				JsonArray::class -> obj.asJsonArray
 				JsonPrimitive::class -> obj.asJsonPrimitive
@@ -29,16 +39,16 @@ class JsonDelegate(val original: JsonObject, val context: JsonDeserializationCon
 				Float::class -> obj.asFloat
 				Double::class -> obj.asDouble
 
-				else -> context?.deserialize(obj, T::class.java) ?: throw IllegalArgumentException("Can not cast ${property.name} to ${T::class}")
+				else -> context?.deserialize(obj, type.java) ?: throw IllegalArgumentException("Can not cast ${property.name} to $type")
 			}) as T
 		} catch (e: TypeCastException) {
-			throw TypeCastException("${property.name}(null) cannot be cast to non-null type ${T::class}")
+			throw TypeCastException("${property.name}(null) cannot be cast to non-null type $type")
 		}
 	}
 }
 
-val JsonObject.delegate: JsonDelegate get() = delegateWith(null)
-fun JsonObject.delegateWith(context: JsonDeserializationContext?) = JsonDelegate(this, context)
+val JsonObject.provider: JsonDelegateProvider get() = providerWith(null)
+fun JsonObject.providerWith(context: JsonDeserializationContext?) = JsonDelegateProvider(this, context)
 
 fun JsonElement.ifNull(): JsonElement? {
 	return takeIf { it !is JsonNull }

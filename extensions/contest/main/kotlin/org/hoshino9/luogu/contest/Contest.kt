@@ -3,13 +3,10 @@ package org.hoshino9.luogu.contest
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.user.IBaseUser
-import org.hoshino9.luogu.user.IUser
-import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.Deserializable
-import org.hoshino9.luogu.utils.delegate
+import org.hoshino9.luogu.utils.provider
 import java.lang.reflect.Type
 
 @JsonAdapter(Host.Serializer::class)
@@ -122,10 +119,10 @@ data class Contest(override val description: String, override val totalParticipa
 	companion object Serializer : Deserializable<IContest>(IContest::class), JsonDeserializer<IContest> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IContest {
 			val source = json.asJsonObject
-			val delegate = source.delegate
+			val provider = source.provider
 
-			val description: String by delegate
-			val totalParticipants: Int by delegate
+			val description: String by provider.provide()
+			val totalParticipants: Int by provider.provide()
 			val baseContest: IBaseContest = context.deserialize(json, IBaseContest::class.java)
 
 			return Contest(description, totalParticipants, baseContest)
