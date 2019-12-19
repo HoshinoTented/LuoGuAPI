@@ -1,9 +1,7 @@
 package org.hoshino9.luogu.problem
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.google.gson.*
+import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
@@ -14,6 +12,7 @@ import org.hoshino9.luogu.user.IBaseUser
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.*
 
+@JsonAdapter(BaseProblem.Serializer::class)
 interface IBaseProblem {
 	/**
 	 * 难度
@@ -56,58 +55,39 @@ interface IBaseProblem {
 	val wantsTranslation: Boolean
 }
 
-open class BaseProblem(protected val source: JsonObject) : IBaseProblem {
-	protected val delegate = source.delegate
+data class BaseProblem(override val difficulty: Difficulty, override val pid: String, override val tags: List<LuoGuTag>, override val title: String, override val totalAccepted: Long, override val totalSubmit: Long, override val type: Type, override val wantsTranslation: Boolean) : IBaseProblem {
+	companion object Serializer : Deserializable<IBaseProblem>(IBaseProblem::class), JsonDeserializer<IBaseProblem> {
+		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): IBaseProblem {
+			fun parseTotal(elem: JsonElement): Long {
+				elem as JsonPrimitive
 
-	override val pid: String by delegate
+				return when {
+					elem.isString -> elem.asString.toLong()
+					elem.isNumber -> elem.asLong
+					else -> throw IllegalArgumentException(elem.toString())
+				}
+			}
 
-	override val difficulty: Difficulty
-		get() = source["difficulty"].asInt.let {
-			Difficulty.values()[it]
-		}
+			val source = json.asJsonObject
 
-	override val title: String by delegate
-
-	override val tags: List<LuoGuTag>
-		get() {
-			return source["tags"].asJsonArray.map {
+			val pid: String = source["pid"].asString
+			val difficulty: Difficulty = Difficulty.values()[source["difficulty"].asInt]
+			val title: String = source["title"].asString
+			val tags: List<LuoGuTag> = source["tags"].asJsonArray.map {
 				IdLuoGuTag(it.asInt)
 			}
+
+			val type: Type = Type.values().first { it.id == source["type"].asString }
+			val totalAccepted: Long = source["totalAccepted"].run(::parseTotal)
+			val totalSubmit: Long = source["totalSubmit"].run(::parseTotal)
+			val wantsTranslation: Boolean = source["wantsTranslation"].asBoolean
+
+			return BaseProblem(difficulty, pid, tags, title, totalAccepted, totalSubmit, type, wantsTranslation)
 		}
-
-	override val type: Type
-		get() {
-			return Type.values().first { it.id == source["type"].asString }
-		}
-
-	override val totalAccepted: Long
-		get() {
-			return source["totalAccepted"].run(::parseTotal)
-		}
-
-	override val totalSubmit: Long
-		get() {
-			return source["totalSubmit"].run(::parseTotal)
-		}
-
-	override val wantsTranslation: Boolean by delegate
-
-	private fun parseTotal(elem: JsonElement): Long {
-		elem as JsonPrimitive
-
-		return when {
-			elem.isString -> elem.asString.toLong()
-			elem.isNumber -> elem.asLong
-			else -> throw IllegalArgumentException(elem.toString())
-		}
-	}
-
-	override fun toString(): String {
-		return source.toString()
 	}
 }
 
-
+@JsonAdapter(Problem.Serializer::class)
 interface IProblem : IBaseProblem {
 	/**
 	 * 测试点限制
@@ -168,38 +148,30 @@ interface IProblem : IBaseProblem {
 	val samples: List<Sample>
 }
 
-open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
-	override val background: String by delegate
+data class Problem(override val background: String, override val canEdit: Boolean, override val description: String, override val hint: String, override val limits: List<IProblem.Limit>, override val inputFormat: String, override val outputFormat: String, override val provider: IBaseUser, override val samples: List<IProblem.Sample>, private val baseProblem: IBaseProblem) : IBaseProblem by baseProblem, IProblem {
+	companion object Serializer : Deserializable<IProblem>(IProblem::class), JsonDeserializer<IProblem> {
+		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): IProblem {
+			val source = json.asJsonObject
 
-	override val canEdit: Boolean by delegate
+			val background: String = source["background"].asString
+			val canEdit: Boolean = source["canEdit"].asBoolean
+			val description: String = source["description"].asString
+			val hint: String = source["hint"].asString
+			val inputFormat: String = source["inputFormat"].asString
+			val outputFormat: String = source["outputFormat"].asString
 
-	override val description: String by delegate
+			val limits: List<IProblem.Limit> = run {
+				val json = source["limits"].asJsonObject
+				val memory = json["memory"].asJsonArray
+				val time = json["time"].asJsonArray
 
-	override val hint: String by delegate
-
-	override val inputFormat: String by delegate
-
-	override val outputFormat: String by delegate
-
-	override val limits: List<IProblem.Limit>
-		get() {
-			val json = source["limits"].asJsonObject
-			val memory = json["memory"].asJsonArray
-			val time = json["time"].asJsonArray
-
-			return (0 until memory.size()).map {
-				IProblem.Limit(memory[it].asInt, time[it].asInt)
+				(0 until memory.size()).map {
+					IProblem.Limit(memory[it].asInt, time[it].asInt)
+				}
 			}
-		}
 
-	override val provider: IBaseUser
-		get() {
-			return BaseUser(source["provider"].asJsonObject)
-		}
-
-	override val samples: List<IProblem.Sample>
-		get() {
-			return source["samples"].asJsonArray.map {
+			val provider: IBaseUser = BaseUser(source["provider"].asJsonObject)
+			val samples: List<IProblem.Sample> = source["samples"].asJsonArray.map {
 				it as JsonArray
 
 				val `in` = it[0].asString
@@ -207,7 +179,12 @@ open class Problem(source: JsonObject) : BaseProblem(source), IProblem {
 
 				IProblem.Sample(`in`, out)
 			}
+
+			val baseProblem: IBaseProblem = context.deserialize(json, IBaseProblem::class.java)
+
+			return Problem(background, canEdit, description, hint, limits, inputFormat, outputFormat, provider, samples, baseProblem)
 		}
+	}
 }
 
 open class ProblemPage(val pid: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {

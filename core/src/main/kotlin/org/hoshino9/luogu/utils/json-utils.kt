@@ -5,12 +5,15 @@ import kotlin.reflect.KProperty
 
 // Json
 class JsonDelegate(val original: JsonObject, val context: JsonDeserializationContext? = null) {
+	/**
+	 * @throws NoSuchElementException will throw a exception when the element is not exists
+	 */
 	@Suppress("IMPLICIT_CAST_TO_ANY")
 	inline operator fun <reified T> getValue(thisRef: Any?, property: KProperty<*>): T {
-		val obj: JsonElement? = original[property.name]?.takeIf { it != JsonNull.INSTANCE }
+		val obj: JsonElement = original[property.name] ?: throw NoSuchElementException(property.name)
 
 		try {
-			return (if (obj == null) null else when (T::class) {
+			return (if (obj is JsonNull) null else when (T::class) {
 				JsonObject::class -> obj.asJsonObject
 				JsonArray::class -> obj.asJsonArray
 				JsonPrimitive::class -> obj.asJsonPrimitive
@@ -36,6 +39,10 @@ class JsonDelegate(val original: JsonObject, val context: JsonDeserializationCon
 
 val JsonObject.delegate: JsonDelegate get() = delegateWith(null)
 fun JsonObject.delegateWith(context: JsonDeserializationContext?) = JsonDelegate(this, context)
+
+fun JsonElement.ifNull(): JsonElement? {
+	return takeIf { it !is JsonNull }
+}
 
 inline fun <reified T> json(content: String, init: JsonObject.() -> T): T {
 	return json(content).run(init)
