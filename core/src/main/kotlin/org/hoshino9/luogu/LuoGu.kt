@@ -73,7 +73,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 	 */
 	val isLogged: Boolean
 		get() {
-			return feInjection.get("currentUser") != JsonNull.INSTANCE
+			return feInjection.get("currentUser") !is JsonNull
 		}
 
 	/**

@@ -69,6 +69,7 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			}
 
 			val source = json.asJsonObject
+			val delegate = source.delegate
 
 			val pid: String = source["pid"].asString
 			val difficulty: Difficulty = Difficulty.values()[source["difficulty"].asInt]
@@ -172,12 +173,12 @@ data class Problem(override val background: String, override val canEdit: Boolea
 
 			val provider: IBaseUser = BaseUser(source["provider"].asJsonObject)
 			val samples: List<IProblem.Sample> = source["samples"].asJsonArray.map {
-				it as JsonArray
+				it.asJsonArray.let {
+					val `in` = it[0].asString
+					val out = it[1].asString
 
-				val `in` = it[0].asString
-				val out = it[1].asString
-
-				IProblem.Sample(`in`, out)
+					IProblem.Sample(`in`, out)
+				}
 			}
 
 			val baseProblem: IBaseProblem = context.deserialize(json, IBaseProblem::class.java)

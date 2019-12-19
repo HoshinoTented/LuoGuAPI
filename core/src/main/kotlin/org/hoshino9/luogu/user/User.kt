@@ -15,13 +15,44 @@ typealias UID = Int
 
 @JsonAdapter(BaseUser.Serializer::class)
 interface IBaseUser {
+	/**
+	 * 用户 id
+	 */
 	val uid: Int
+
+	/**
+	 * 用户名称
+	 */
 	val name: String
+
+	/**
+	 * 用户等级（颜色）
+	 */
 	val color: String
+
+	/**
+	 * 用户头衔
+	 */
 	val badge: String?
+
+	/**
+	 * 用户签名
+	 */
 	val slogan: String
+
+	/**
+	 * 用户 ccf 等级
+	 */
 	val ccfLevel: Int
+
+	/**
+	 * 是否管理员
+	 */
 	val isAdmin: Boolean
+
+	/**
+	 * 是否被封禁
+	 */
 	val isBanned: Boolean
 }
 
@@ -50,13 +81,13 @@ interface IUser : IBaseUser {
 data class User(override val ranking: Int?, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
 	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
-			return json.asJsonObject.delegate.let { delegate ->
-				val ranking: Int? by delegate
-				val introduction: String by delegate
-				val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
+			val source = json.asJsonObject
 
-				User(ranking, introduction, baseUser)
-			}
+			val ranking: Int? = source["ranking"].ifNull()?.asInt
+			val introduction: String = source["introduction"].asString
+			val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
+
+			return User(ranking, introduction, baseUser)
 		}
 	}
 

@@ -24,16 +24,15 @@ data class FollowListUser(override val blogAddress: String?, override val follow
 	companion object Serializer : Deserializable<IFollowListUser>(IFollowListUser::class), JsonDeserializer<IFollowListUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IFollowListUser {
 			val source = json.asJsonObject
-			val delegate = source.delegate
 
-			val blogAddress: String? by delegate
-			val followingCount: Int by delegate
-			val followerCount: Int by delegate
-			val ranking: Int? by delegate
-			val userRelationship: Int by delegate
-			val reverseUserRelationship: Int by delegate
-			val passedProblemCount: Int by delegate
-			val submittedProblemCount: Int by delegate
+			val blogAddress: String? = source["blogAddress"].ifNull()?.asString
+			val followingCount: Int = source["followingCount"].asInt
+			val followerCount: Int = source["followerCount"].asInt
+			val ranking: Int? = source["ranking"].ifNull()?.asInt
+			val userRelationship: Int = source["userRelationship"].asInt
+			val reverseUserRelationship: Int = source["reverseUserRelationship"].asInt
+			val passedProblemCount: Int = source["passedProblemCount"].asInt
+			val submittedProblemCount: Int = source["submittedProblemCount"].asInt
 			val baseUser: IBaseUser = context.deserialize(json, IBaseUser::class.java)
 
 			return FollowListUser(blogAddress, followingCount, followerCount, ranking, userRelationship, reverseUserRelationship, passedProblemCount, submittedProblemCount, baseUser)
