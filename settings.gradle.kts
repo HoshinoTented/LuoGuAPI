@@ -1,3 +1,5 @@
+rootProject.name = "luoguapi"
+
 include(":extensions", ":core")
 
 val plugins = listOf(
