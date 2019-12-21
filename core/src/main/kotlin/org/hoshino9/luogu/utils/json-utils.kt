@@ -39,7 +39,8 @@ class JsonDelegate<T>(val original: JsonObject, val type: KClass<*>, val context
 				Float::class -> obj.asFloat
 				Double::class -> obj.asDouble
 
-				else -> context?.deserialize(obj, type.java) ?: throw IllegalArgumentException("Can not cast ${property.name} to $type")
+				else -> (context ?: throw IllegalArgumentException("Can not cast ${property.name} to $type"))
+						.deserialize(obj, type.java)
 			}) as T
 		} catch (e: TypeCastException) {
 			throw TypeCastException("${property.name}(null) cannot be cast to non-null type $type")
@@ -52,10 +53,6 @@ fun JsonObject.providerWith(context: JsonDeserializationContext?) = JsonDelegate
 
 fun JsonElement.ifNull(): JsonElement? {
 	return takeIf { it !is JsonNull }
-}
-
-inline fun <reified T> json(content: String, init: JsonObject.() -> T): T {
-	return json(content).run(init)
 }
 
 fun json(content: String): JsonObject {

@@ -73,7 +73,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 	 */
 	val isLogged: Boolean
 		get() {
-			return feInjection.get("currentUser") !is JsonNull
+			return feInjection["currentUser"] !is JsonNull
 		}
 
 	/**
@@ -103,7 +103,9 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 		return apiPost("api/auth/unlock") {
 			referer("auth/unlock")
 			body = params.asParams
-		}.receive()
+		}.receive<String>().also {
+			refresh()
+		}
 	}
 
 	/**
@@ -133,10 +135,14 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 		refresh()
 	}
 
-//	fun logout() {
-//
-//		executeGet("api/auth/logout?uid=$uid") { resp ->
-//			resp.assert()
-//		}
-//	}
+	/**
+	 * 登出
+	 *
+	 * @throws ClientRequestException
+	 */
+	suspend fun logout() {
+		client.get<String>("$baseUrl/api/auth/logout?uid=$uid") {
+			referer("")
+		}
+	}
 }

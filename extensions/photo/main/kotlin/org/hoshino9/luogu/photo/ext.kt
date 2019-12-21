@@ -81,7 +81,7 @@ suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String,
 		).execute().let { resp ->
 			if (! resp.isSuccessful) throw IllegalStateException()
 
-			json(resp.body() !!.string()) {
+			json(resp.body() !!.string()).run {
 				get("image").asJsonObject["id"].asString
 			}
 		}
@@ -106,8 +106,8 @@ suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String,
  *
  * @see IPhoto
  */
-fun LuoGu.photoList(page: Int): List<IPhoto> {
-	return PhotoListPage(page, client).list
+fun LuoGu.photoList(page: Int = 1): PhotoListPage {
+	return PhotoListPage(page, client)
 }
 
 /**

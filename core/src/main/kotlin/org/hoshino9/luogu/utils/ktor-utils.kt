@@ -13,14 +13,12 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.response.HttpResponse
 import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.http.Cookie
-import io.ktor.http.HttpMethod
-import io.ktor.http.Url
+import io.ktor.http.*
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import java.net.URLEncoder
@@ -111,5 +109,14 @@ suspend fun HttpClient.toOkHttpClient(): OkHttpClient {
 }
 
 val HttpResponse.byteData: ByteArray get() = runBlocking { content.toByteArray() }
-
 val HttpResponse.strData: String get() = String(byteData)
+
+/**
+ * 断言 Response 是否成功
+ *
+ * @throws IllegalStatusCodeException 断言失败时抛出
+ */
+fun HttpResponse.assertJson() {
+	if (this.status.isSuccess().not())
+		throw IllegalStatusCodeException(this.status.value, json(strData))
+}

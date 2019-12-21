@@ -26,15 +26,11 @@ interface ILoggedUser : IBaseLoggedUser, IUser {
  * **你谷**用户类
  */
 data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
-	companion object Serializer : JsonDeserializer<ILoggedUser> {
+	companion object Serializer : Deserializable<ILoggedUser>(ILoggedUser::class), JsonDeserializer<ILoggedUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedUser {
 			val user = context.deserialize<IUser>(json, IUser::class.java)
 
 			return LoggedUser(user)
-		}
-
-		operator fun invoke(json: JsonElement): ILoggedUser {
-			return gson.fromJson(json, ILoggedUser::class.java)
 		}
 	}
 

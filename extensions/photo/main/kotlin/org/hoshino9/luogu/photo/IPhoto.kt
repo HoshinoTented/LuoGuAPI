@@ -1,28 +1,36 @@
 package org.hoshino9.luogu.photo
 
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import org.hoshino9.luogu.user.IBaseUser
 import org.hoshino9.luogu.user.User
+import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.gson
+import java.lang.reflect.Type
 
+@JsonAdapter(Photo.Serializer::class)
 interface IPhoto {
 	val id: String
 	val size: Int
 	val date: String
-	val user: User
+	val user: IBaseUser
 	val url: String
 }
 
-open class Photo(
+data class Photo(
 		override val id: String,
 		override val size: Int,
 		@SerializedName("uploadTime") override val date: String,
-		@SerializedName("provider") override val user: User,
+		@SerializedName("provider") override val user: IBaseUser,
 		override val url: String
 ) : IPhoto {
-	companion object {
-		operator fun invoke(obj: JsonObject): IPhoto {
-			return gson.fromJson(obj, Photo::class.java)
+	companion object Serializer : Deserializable<IPhoto>(IPhoto::class), JsonDeserializer<IPhoto> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IPhoto {
+			return context.deserialize(json, Photo::class.java)
 		}
 	}
 

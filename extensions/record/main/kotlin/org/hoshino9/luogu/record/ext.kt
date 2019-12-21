@@ -30,13 +30,12 @@ suspend fun LuoGu.postSolution(solution: Solution, verifyCode: String = ""): Rec
 		referer("problem/${solution.pid}")
 		body = params
 	}.receive<String>().let {
-		json(it) {
+		json(it).run {
 			val status = this["status"]?.asInt //optInt("status")
 			val data = this["data"]
 
 			if (status == 200) {
-				data as JsonObject
-				Record(data["rid"].toString())
+				Record(data.asJsonObject["rid"].toString())
 			} else throw IllegalStatusCodeException(status, data)
 		}
 	}

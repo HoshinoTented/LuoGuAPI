@@ -1,7 +1,9 @@
 import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
+import org.hoshino9.luogu.photo.photoList
 import org.hoshino9.luogu.photo.pushPhoto
 import org.hoshino9.luogu.test.BaseTest
+import org.hoshino9.luogu.test.printAllMember
 import org.junit.Test
 import java.io.File
 import java.nio.file.Paths
@@ -26,5 +28,10 @@ class PhotoTest : BaseTest() {
 				}
 			}
 		}
+	}
+
+	@Test
+	fun photoList() {
+		luogu.photoList(1).printAllMember()
 	}
 }
