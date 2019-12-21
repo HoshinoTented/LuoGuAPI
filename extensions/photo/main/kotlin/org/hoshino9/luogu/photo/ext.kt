@@ -69,7 +69,7 @@ suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String,
 //			append("\"name\"", photo.name)
 //
 //			append("\"file\"", "\"${photo.name}\"", contentType, photo.length()) {
-//				writeFully(photo.readBytes())
+//				photo.readBytes().forEach { writeByte(it) }
 //			}
 //		})
 

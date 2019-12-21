@@ -14,14 +14,14 @@ class PhotoTest : BaseTest() {
 		fun main(args: Array<String>) {
 			runBlocking {
 				PhotoTest().run {
-					File("./test/resources/verify.png").outputStream().write(luogu.verifyCode())
+					File("extensions/photo/test/resources/verify.png").outputStream().write(luogu.verifyCode())
 
 					print("Please input verify code: ")
 
 					val code = readLine() !!
 
 					luogu.pushPhoto(
-							photo = PhotoTest::class.java.getResource("nya.png").toURI().run(::File),
+							photo = PhotoTest::class.java.getResource("photo.png").toURI().run(::File),
 							verifyCode = code,
 							contentType = ContentType.Image.PNG
 					).run(::println)
