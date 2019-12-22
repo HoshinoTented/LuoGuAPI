@@ -6,10 +6,10 @@ import org.hoshino9.luogu.record.listener.OnMessageType
 
 interface Record {
 	companion object {
-		internal fun message(rid : String) = """{"type":"join_channel","channel":"record.track","channel_param":"$rid"}"""
+		fun message(rid: String) = """{"type":"join_channel","channel":"record.track","channel_param":"$rid"}"""
 
 		@JvmName("newInstance")
-		operator fun invoke(rid : String) : Record {
+		operator fun invoke(rid: String): Record {
 			return DefaultRecord(rid)
 		}
 	}

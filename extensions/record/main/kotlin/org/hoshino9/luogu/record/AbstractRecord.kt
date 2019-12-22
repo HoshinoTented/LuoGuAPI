@@ -15,9 +15,9 @@ abstract class AbstractRecord : Record {
 	override fun listen(client : LuoGu, listener : OnMessageType) : WebSocket {
 		return OkHttpClient().newWebSocket(
 				Request.Builder()
-						.url("wss://ws.luogu.org/ws")
+						.url("wss://ws.luogu.com.cn/ws")
 						.addHeader("User-Agent", USER_AGENT)
-						.addHeader("Cookie", "__client_id=${client.clientId}; _uid=${client.uid}")
+						.addHeader("Cookie", "__client_id=${client.clientId.value}; _uid=${client.uid.value}")
 						.build(),
 				RecordListener.Builder().onOpen { socket, _ ->
 					socket.send(Record.message(rid))

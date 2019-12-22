@@ -29,12 +29,11 @@ import java.io.File
  * @param verifyCode 验证码
  * @return 返回一个 Json 对象
  */
-suspend fun LuoGu.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
+private suspend fun LuoGu.generateUploadLink(watermark: Int = 1, verifyCode: String): JsonObject {
 	return client.get<String>("$baseUrl/api/image/generateUploadLink?watermarkType=$watermark&captcha=$verifyCode").run(::json)
 }
 
 /**
- * TODO: replace OkHttpClient with Ktor HttpClient
  * 上传图片
  *
  * @param watermark 水印
@@ -117,18 +116,16 @@ fun LuoGu.photoList(page: Int = 1): PhotoListPage {
  * @param photo 需要删除的图片
  */
 suspend fun LuoGu.deletePhoto(photo: List<String>) {
-	photo.run {
-		val json = JsonObject().apply {
-			add("images", JsonArray().apply {
-				photo.forEach(::add)
-			})
-		}.asParams
+	val json = JsonObject().apply {
+		add("images", JsonArray().apply {
+			photo.forEach(::add)
+		})
+	}.asParams
 
-		apiPost("api/image/delete") {
-			referer("image")
-			body = json
-		}.receive<String>()
-	}
+	apiPost("api/image/delete") {
+		referer("image")
+		body = json
+	}.receive<String>()
 }
 
 ///**
