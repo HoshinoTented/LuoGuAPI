@@ -9,6 +9,7 @@ import io.ktor.client.features.ClientRequestException
 import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
 import io.ktor.http.Cookie
+import io.ktor.http.URLBuilder
 import io.ktor.http.Url
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
@@ -31,8 +32,9 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 			return LuoGu(
 					specifiedCookieClient(
 							listOf(
-									url to Cookie("_uid", uid.toString()),
-									url to Cookie("__client_id", clientId))
+									url to Cookie("_uid", uid.toString(), domain = ".luogu.com.cn"),
+									url to Cookie("__client_id", clientId, domain = ".luogu.com.cn")
+							)
 					)
 			)
 		}

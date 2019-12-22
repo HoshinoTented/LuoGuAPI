@@ -1,5 +1,6 @@
 import LuoGuTest.Companion.config
 import LuoGuTest.Companion.verifyPath
+import io.ktor.client.features.cookies.cookies
 import org.hoshino9.luogu.LuoGu
 import java.nio.file.Files
 import java.util.Scanner
@@ -26,6 +27,7 @@ suspend fun main() {
 
 		saveCookie()
 		println("save cookie")
+		println(luogu.client.cookies("https://www.luogu.com.cn"))
 	}
 }
 

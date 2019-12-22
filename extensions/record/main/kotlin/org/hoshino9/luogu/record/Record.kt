@@ -1,8 +1,8 @@
 package org.hoshino9.luogu.record
 
+import io.ktor.http.cio.websocket.WebSocketSession
 import okhttp3.WebSocket
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.record.listener.OnMessageType
 
 interface Record {
 	companion object {
@@ -14,6 +14,6 @@ interface Record {
 		}
 	}
 
-	val rid : String
-	fun listen(client : LuoGu, listener : OnMessageType) : WebSocket
+	val rid: String
+	suspend fun listen(client: LuoGu, listener: suspend WebSocketSession.() -> Unit)
 }
