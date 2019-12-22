@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 fun ktor(module: String, version: String): String = "io.ktor:ktor-$module:$version"
 fun kotlinx(module: String, version: String) = "org.jetbrains.kotlinx:kotlinx-$module:$version"
 
-val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin(KotlinSourceSet::class).kotlin
-
 val ktorVersion: String by rootProject.extra
 val coroutinesVersion: String by rootProject.extra
 

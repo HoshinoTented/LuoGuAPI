@@ -6,20 +6,12 @@ import io.ktor.client.features.ClientRequestException
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.utils.*
 
-abstract class AbstractLuoGuPage(open val client: HttpClient = emptyClient) : LuoGuPage {
+abstract class AbstractLuoGuPage(open val client: HttpClient = emptyClient) : BaseLuoGuPage() {
+	val currentData: JsonObject get() = feInjection["currentData"].asJsonObject
 
-	/**
-	 * 获取页面数据
-	 *
-	 * **注意，这个是 Lazy 的**
-	 *
-	 * @throws ClientRequestException
-	 */
-	override val feInjection: JsonObject by lazy {
-		runBlocking {
+	override fun refresh() {
+		_feInjection = runBlocking {
 			json(client.apiGet(url).receive())
 		}
 	}
-
-	val currentData: JsonObject get() = feInjection["currentData"].asJsonObject
 }

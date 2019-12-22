@@ -13,7 +13,7 @@ import org.jsoup.nodes.Document
 import java.net.URLDecoder
 
 @Deprecated("Deprecated", ReplaceWith("AbstractLuoGuPage"))
-abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : LuoGuPage {
+abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : BaseLuoGuPage() {
 	companion object {
 		private val regex = Regex("""window\._feInjection = JSON\.parse\(decodeURIComponent\("(.+?)"\)\);""")
 	}
@@ -25,17 +25,7 @@ abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : 
 			}
 		}
 
-	private lateinit var _feInjection: JsonObject
-	override val feInjection: JsonObject
-		get() {
-			return synchronized(this) {
-				if (! ::_feInjection.isInitialized) refresh()
-
-				_feInjection
-			}
-		}
-
-	fun refresh() {
+	override fun refresh() {
 		_feInjection = json(URLDecoder.decode(regex.find(page.toString()) !!.groupValues[1], "UTF-8"))
 	}
 }

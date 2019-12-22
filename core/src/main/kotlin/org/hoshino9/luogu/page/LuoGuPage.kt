@@ -5,4 +5,6 @@ import com.google.gson.JsonObject
 interface LuoGuPage {
 	val url: String
 	val feInjection: JsonObject
+
+	fun refresh()
 }

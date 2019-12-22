@@ -1,14 +1,17 @@
-import LuoGuTest.Companion.config
-import LuoGuTest.Companion.verifyPath
 import io.ktor.client.features.cookies.cookies
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.test.BaseTest
+import org.hoshino9.luogu.test.BaseTest.Companion.config
+import org.hoshino9.luogu.test.BaseTest.Companion.verifyPath
 import java.nio.file.Files
 import java.util.Scanner
 
+object LuoGuTest : BaseTest()
+
 suspend fun main() {
-	LuoGuTest().run {
+	LuoGuTest.run {
 		login()
-		println("logged in: $user")
+		println("logged in: ${user.uid}")
 
 		val unlockType = luogu.needUnlock
 
@@ -27,7 +30,6 @@ suspend fun main() {
 
 		saveCookie()
 		println("save cookie")
-		println(luogu.client.cookies("https://www.luogu.com.cn"))
 	}
 }
 

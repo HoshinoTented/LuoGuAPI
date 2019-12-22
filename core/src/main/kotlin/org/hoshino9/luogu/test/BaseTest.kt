@@ -2,29 +2,35 @@ package org.hoshino9.luogu.test
 
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.user.ILoggedUser
-import org.hoshino9.luogu.user.LoggedUser
-import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.user.currentUser
-import java.io.File
+import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Properties
 
 abstract class BaseTest {
 	companion object {
+		val resRoot = Paths.get("core", "src", "main", "resources")
+		val verifyPath by lazy { resRoot.resolve("verify.png") }
+		val configPath by lazy { resRoot.resolve("user.properties") }
+
 		/**
 		 * 请将测试的工作目录设置为项目的根目录
 		 */
-		internal val config by lazy {
+		val config by lazy {
 			Properties().apply {
-				load(File("core/src/main/resources/user.properties").inputStream())
+				load(configPath.toFile().inputStream())
 			}
 		}
 	}
 
-	val luogu: LuoGu
-	val user: ILoggedUser
+	lateinit var luogu: LuoGu
+	lateinit var user: ILoggedUser
 
 	init {
+		loadCookie()
+	}
+
+	fun loadCookie() {
 		val id: String? = config.getProperty("__client_id")
 		val uid: String? = config.getProperty("_uid")
 
@@ -32,5 +38,11 @@ abstract class BaseTest {
 			luogu = LuoGu(id, uid.toInt())
 			user = luogu.currentUser.user
 		} else throw IllegalStateException("No logged in")
+	}
+
+	fun saveCookie() {
+		config.setProperty("__client_id", luogu.clientId.value)
+		config.setProperty("_uid", luogu.uid.value)
+		config.store(Files.newOutputStream(configPath), null)
 	}
 }
