@@ -25,7 +25,7 @@ class RecordTest : BaseTest() {
 		runBlocking {
 			val job = launch {
 				try {
-					luogu.postSolution(Solution("P1001", Solution.Language.Haskell, "main = putStrLn \"Hello world!\"")).listen(luogu) {
+					luogu.postSolution(Solution("P1001", Solution.Language.Haskell.ordinal, "main = putStrLn \"Hello world!\"")).listen(luogu) {
 						while (true) {
 							val frame = incoming.receive()
 

@@ -19,24 +19,21 @@ import org.hoshino9.luogu.utils.*
  */
 @JvmOverloads
 suspend fun LuoGu.postSolution(solution: Solution, verifyCode: String = ""): Record {
-	val params = listOf(
-			"code" to solution.code,
-			"lang" to Solution.Language.values().indexOf(solution.language).toString(),
-			"enableO2" to if (solution.enableO2) "1" else "0",
-			"verify" to verifyCode
-	).asParams
+	val json = JsonObject().apply {
+		addProperty("verify", verifyCode)
+		addProperty("enableO2", if (solution.enableO2) 1 else 0)
+		addProperty("lang", solution.language.toString())
+		addProperty("code", solution.code)
+	}.asParams
 
-	return apiPost("api/problem/submit/${solution.pid}") {
+	return apiPost("fe/api/problem/submit/${solution.pid}") {
 		referer("problem/${solution.pid}")
-		body = params
+		body = json
 	}.receive<String>().let {
 		json(it).run {
-			val status = this["status"]?.asInt //optInt("status")
-			val data = this["data"]
+			val rid: String by provider.provide()
 
-			if (status == 200) {
-				Record(data.asJsonObject["rid"].toString())
-			} else throw IllegalStatusCodeException(status, data)
+			Record(rid)
 		}
 	}
 }
