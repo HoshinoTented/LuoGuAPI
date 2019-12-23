@@ -28,5 +28,6 @@ data class Solution(val pid : String, val language : Language, val code : String
 		Perl("Perl"),
 		PyPy2("PyPy 2"),
 		PyPy3("PyPy 3"),
+		WenYan("WenYan")
 	}
 }
