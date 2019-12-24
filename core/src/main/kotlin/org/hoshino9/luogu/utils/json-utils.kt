@@ -4,23 +4,14 @@ import com.google.gson.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class JsonDelegateProvider(val original: JsonObject, val context: JsonDeserializationContext?) {
-//	inline fun <reified T> provide(): JsonDelegate<T> {
-//		return provideDelegate(null, null)
-//	}
-
-	operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): JsonDelegate {
-		return JsonDelegate(original, property.returnType.classifier as KClass<*>, context)
-	}
-}
-
-class JsonDelegate(val original: JsonObject, val type: KClass<*>, val context: JsonDeserializationContext? = null) {
+class JsonDelegate(val original: JsonObject, val context: JsonDeserializationContext? = null) {
 	/**
 	 * @throws NoSuchElementException will throw a exception when the element is not exists
 	 */
 	@Suppress("IMPLICIT_CAST_TO_ANY")
 	operator fun <T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		val obj: JsonElement = original[property.name] ?: throw NoSuchElementException(property.name)
+		val type = property.returnType.classifier as KClass<*>
 
 		try {
 			return (if (obj is JsonNull) null else when (type) {
@@ -59,8 +50,8 @@ abstract class Deserializable<T : Any>(private val `class`: KClass<T>) {
 	}
 }
 
-val JsonObject.provider: JsonDelegateProvider get() = providerWith(null)
-fun JsonObject.providerWith(context: JsonDeserializationContext?) = JsonDelegateProvider(this, context)
+val JsonObject.delegate: JsonDelegate get() = delegateWith(null)
+fun JsonObject.delegateWith(context: JsonDeserializationContext?) = JsonDelegate(this, context)
 
 fun JsonElement.ifNull(): JsonElement? {
 	return takeIf { it !is JsonNull }

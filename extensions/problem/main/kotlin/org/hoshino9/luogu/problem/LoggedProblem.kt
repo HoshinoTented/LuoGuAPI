@@ -3,10 +3,9 @@ package org.hoshino9.luogu.problem
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.utils.Deserializable
-import org.hoshino9.luogu.utils.provider
+import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
 
 interface IBaseLoggedBaseProblem : IBaseProblem {
@@ -22,10 +21,10 @@ data class LoggedBaseProblem(override val accepted: Boolean, override val submit
 	companion object Serializer : Deserializable<ILoggedBaseProblem>(ILoggedBaseProblem::class), JsonDeserializer<ILoggedBaseProblem> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedBaseProblem {
 			val source = json.asJsonObject
-			val provider = source.provider
+			val delegate = source.delegate
 
-			val accepted: Boolean by provider
-			val submitted: Boolean by provider
+			val accepted: Boolean by delegate
+			val submitted: Boolean by delegate
 			val baseProblem: IBaseProblem = context.deserialize(json, IBaseProblem::class.java)
 
 			return LoggedBaseProblem(accepted, submitted, baseProblem)
@@ -43,11 +42,11 @@ data class LoggedProblem(override val accepted: Boolean, override val score: Int
 	companion object Serializer : Deserializable<ILoggedProblem>(ILoggedProblem::class), JsonDeserializer<ILoggedProblem> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedProblem {
 			val source = json.asJsonObject
-			val provider = source.provider
+			val delegate = source.delegate
 
-			val accepted: Boolean by provider
-			val score: Int by provider
-			val showScore: Boolean by provider
+			val accepted: Boolean by delegate
+			val score: Int by delegate
+			val showScore: Boolean by delegate
 			val problem: IProblem = context.deserialize(json, IProblem::class.java)
 
 			return LoggedProblem(accepted, score, showScore, problem)

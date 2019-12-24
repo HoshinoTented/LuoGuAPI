@@ -5,21 +5,12 @@ package org.hoshino9.luogu.photo
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.ktor.client.call.receive
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.append
-import io.ktor.client.request.forms.formData
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
-import io.ktor.util.toByteArray
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.Request
-import okhttp3.RequestBody
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 import java.io.File
 
@@ -45,12 +36,12 @@ private suspend fun LuoGu.generateUploadLink(watermark: Int = 1, verifyCode: Str
  * @see [generateUploadLink]
  */
 suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: ContentType): String {
-	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.provider.let { provider ->
-		val accessKeyID: String by provider
-		val callback: String by provider
-		val host: String by provider
-		val policy: String by provider
-		val signature: String by provider
+	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.delegate.let { delegate ->
+		val accessKeyID: String by delegate
+		val callback: String by delegate
+		val host: String by delegate
+		val policy: String by delegate
+		val signature: String by delegate
 
 //		val body = MultipartBody.Builder()
 //				.setType(MultipartBody.FORM)

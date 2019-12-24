@@ -28,7 +28,7 @@ suspend fun LuoGu.postSolution(solution: Solution, verifyCode: String = ""): Rec
 		body = json
 	}.receive<String>().let {
 		json(it).run {
-			val rid: String by provider
+			val rid: String by delegate
 
 			Record(rid)
 		}

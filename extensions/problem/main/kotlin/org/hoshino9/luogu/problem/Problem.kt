@@ -67,11 +67,11 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			}
 
 			val source = json.asJsonObject
-			val provider = source.provider
+			val delegate = source.delegate
 
-			val pid: String by provider
+			val pid: String by delegate
 			val difficulty: Difficulty = Difficulty.values()[source["difficulty"].asInt]
-			val title: String by provider
+			val title: String by delegate
 			val tags: List<LuoGuTag> = source["tags"].asJsonArray.map {
 				IdLuoGuTag(it.asInt)
 			}
@@ -79,7 +79,7 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			val type: Type = Type.values().first { it.id == source["type"].asString }
 			val totalAccepted: Long = source["totalAccepted"].run(::parseTotal)
 			val totalSubmit: Long = source["totalSubmit"].run(::parseTotal)
-			val wantsTranslation: Boolean by provider
+			val wantsTranslation: Boolean by delegate
 
 			return BaseProblem(difficulty, pid, tags, title, totalAccepted, totalSubmit, type, wantsTranslation)
 		}
@@ -151,14 +151,14 @@ data class Problem(override val background: String, override val canEdit: Boolea
 	companion object Serializer : Deserializable<IProblem>(IProblem::class), JsonDeserializer<IProblem> {
 		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): IProblem {
 			val source = json.asJsonObject
-			val jsonProvider = source.provider
+			val jsonDelegate = source.delegate
 
-			val background: String by jsonProvider
-			val canEdit: Boolean by jsonProvider
-			val description: String by jsonProvider
-			val hint: String by jsonProvider
-			val inputFormat: String by jsonProvider
-			val outputFormat: String by jsonProvider
+			val background: String by jsonDelegate
+			val canEdit: Boolean by jsonDelegate
+			val description: String by jsonDelegate
+			val hint: String by jsonDelegate
+			val inputFormat: String by jsonDelegate
+			val outputFormat: String by jsonDelegate
 
 			val limits: List<IProblem.Limit> = run {
 				val json = source["limits"].asJsonObject
@@ -170,7 +170,7 @@ data class Problem(override val background: String, override val canEdit: Boolea
 				}
 			}
 
-			val provider: IBaseUser = BaseUser(source["provider"].asJsonObject)
+			val delegate: IBaseUser = BaseUser(source["provider"].asJsonObject)
 			val samples: List<IProblem.Sample> = source["samples"].asJsonArray.map {
 				it.asJsonArray.let {
 					val `in` = it[0].asString
@@ -182,7 +182,7 @@ data class Problem(override val background: String, override val canEdit: Boolea
 
 			val baseProblem: IBaseProblem = context.deserialize(json, IBaseProblem::class.java)
 
-			return Problem(background, canEdit, description, hint, limits, inputFormat, outputFormat, provider, samples, baseProblem)
+			return Problem(background, canEdit, description, hint, limits, inputFormat, outputFormat, delegate, samples, baseProblem)
 		}
 	}
 }

@@ -22,7 +22,7 @@ data class Photo(
 		override val id: String,
 		override val size: Int,
 		@SerializedName("uploadTime") override val date: String,
-		@SerializedName("provider") override val user: IBaseUser,
+		@SerializedName("delegate") override val user: IBaseUser,
 		override val url: String
 ) : IPhoto {
 	companion object Serializer : Deserializable<IPhoto>(IPhoto::class), JsonDeserializer<IPhoto> {

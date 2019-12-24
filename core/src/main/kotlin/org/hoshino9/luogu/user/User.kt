@@ -81,10 +81,10 @@ data class User(override val ranking: Int?, override val introduction: String, v
 	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
 			val source = json.asJsonObject
-			val provider = source.provider
+			val delegate = source.delegate
 
-			val ranking: Int? by provider
-			val introduction: String by provider
+			val ranking: Int? by delegate
+			val introduction: String by delegate
 			val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
 
 			return User(ranking, introduction, baseUser)
