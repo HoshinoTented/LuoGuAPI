@@ -7,6 +7,14 @@ fun kotlinx(module: String, version: String) = "org.jetbrains.kotlinx:kotlinx-$m
 val ktorVersion: String by rootProject.extra
 val coroutinesVersion: String by rootProject.extra
 
+sourceSets {
+	main.configure {
+		withConvention(KotlinSourceSet::class) {
+			kotlin.srcDirs("src/main/gen")
+		}
+	}
+}
+
 repositories {
 	maven("https://dl.bintray.com/kotlin/ktor/")
 }
@@ -33,3 +41,15 @@ dependencies {
 	// testing
 	testApi(kotlin("test-junit"))
 }
+
+val genRootPath = task("genRootPath") {
+	file("src/main/gen/TestConfig.kt")
+			.apply {
+				if (exists().not()) {
+					parentFile.mkdirs()
+					createNewFile()
+				}
+			}.writeText("val rootPath = \"${project.rootProject.rootDir.absolutePath.replace("\\", "\\\\")}\"")
+}
+
+tasks["compileKotlin"].dependsOn(genRootPath)

@@ -5,21 +5,21 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 class JsonDelegateProvider(val original: JsonObject, val context: JsonDeserializationContext?) {
-	inline fun <reified T> provide(): JsonDelegate<T> {
-		return provideDelegate(null, null)
-	}
+//	inline fun <reified T> provide(): JsonDelegate<T> {
+//		return provideDelegate(null, null)
+//	}
 
-	inline operator fun <reified T> provideDelegate(thisRef: Any?, property: KProperty<*>?): JsonDelegate<T> {
-		return JsonDelegate(original, T::class, context)
+	operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): JsonDelegate {
+		return JsonDelegate(original, property.returnType.classifier as KClass<*>, context)
 	}
 }
 
-class JsonDelegate<T>(val original: JsonObject, val type: KClass<*>, val context: JsonDeserializationContext? = null) {
+class JsonDelegate(val original: JsonObject, val type: KClass<*>, val context: JsonDeserializationContext? = null) {
 	/**
 	 * @throws NoSuchElementException will throw a exception when the element is not exists
 	 */
 	@Suppress("IMPLICIT_CAST_TO_ANY")
-	operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+	operator fun <T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		val obj: JsonElement = original[property.name] ?: throw NoSuchElementException(property.name)
 
 		try {
@@ -48,6 +48,17 @@ class JsonDelegate<T>(val original: JsonObject, val type: KClass<*>, val context
 	}
 }
 
+abstract class Deserializable<T : Any>(private val `class`: KClass<T>) {
+	companion object {
+		val gson = Gson()
+	}
+
+	@JvmName("fromJson")
+	operator fun invoke(source: JsonElement): T {
+		return gson.fromJson(source, `class`.java)
+	}
+}
+
 val JsonObject.provider: JsonDelegateProvider get() = providerWith(null)
 fun JsonObject.providerWith(context: JsonDeserializationContext?) = JsonDelegateProvider(this, context)
 
@@ -56,8 +67,9 @@ fun JsonElement.ifNull(): JsonElement? {
 }
 
 fun json(content: String): JsonObject {
-	return JsonParser().parse(content).asJsonObject
+	return content.parseJson().asJsonObject
 }
 
-// Gson
-val gson = Gson()
+fun String.parseJson(): JsonElement {
+	return JsonParser().parse(this)
+}

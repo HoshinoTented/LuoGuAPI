@@ -1,5 +1,13 @@
 package org.hoshino9.luogu.record
 
+/**
+ * 题解类
+ *
+ * @param pid 题目 ID
+ * @param language 语言代码，可通过 [Solution.Language.ordinal] 获得
+ * @param code 代码主体
+ * @param enableO2 是否开启 O2
+ */
 data class Solution(val pid: String, val language: Int, val code: String, val enableO2: Boolean = false) {
 	enum class Language(val fullName: String) {
 		Auto("Auto Select"),

@@ -69,9 +69,9 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			val source = json.asJsonObject
 			val provider = source.provider
 
-			val pid: String by provider.provide()
+			val pid: String by provider
 			val difficulty: Difficulty = Difficulty.values()[source["difficulty"].asInt]
-			val title: String by provider.provide()
+			val title: String by provider
 			val tags: List<LuoGuTag> = source["tags"].asJsonArray.map {
 				IdLuoGuTag(it.asInt)
 			}
@@ -79,7 +79,7 @@ data class BaseProblem(override val difficulty: Difficulty, override val pid: St
 			val type: Type = Type.values().first { it.id == source["type"].asString }
 			val totalAccepted: Long = source["totalAccepted"].run(::parseTotal)
 			val totalSubmit: Long = source["totalSubmit"].run(::parseTotal)
-			val wantsTranslation: Boolean by provider.provide()
+			val wantsTranslation: Boolean by provider
 
 			return BaseProblem(difficulty, pid, tags, title, totalAccepted, totalSubmit, type, wantsTranslation)
 		}
@@ -153,12 +153,12 @@ data class Problem(override val background: String, override val canEdit: Boolea
 			val source = json.asJsonObject
 			val jsonProvider = source.provider
 
-			val background: String by jsonProvider.provide()
-			val canEdit: Boolean by jsonProvider.provide()
-			val description: String by jsonProvider.provide()
-			val hint: String by jsonProvider.provide()
-			val inputFormat: String by jsonProvider.provide()
-			val outputFormat: String by jsonProvider.provide()
+			val background: String by jsonProvider
+			val canEdit: Boolean by jsonProvider
+			val description: String by jsonProvider
+			val hint: String by jsonProvider
+			val inputFormat: String by jsonProvider
+			val outputFormat: String by jsonProvider
 
 			val limits: List<IProblem.Limit> = run {
 				val json = source["limits"].asJsonObject

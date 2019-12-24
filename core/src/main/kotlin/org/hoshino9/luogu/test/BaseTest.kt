@@ -3,13 +3,14 @@ package org.hoshino9.luogu.test
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.user.ILoggedUser
 import org.hoshino9.luogu.user.currentUser
+import rootPath
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Properties
 
 abstract class BaseTest {
 	companion object {
-		val resRoot = Paths.get("core", "src", "main", "resources")
+		val resRoot = Paths.get(rootPath, "core", "src", "main", "resources")
 		val verifyPath by lazy { resRoot.resolve("verify.png") }
 		val configPath by lazy { resRoot.resolve("user.properties") }
 

@@ -46,11 +46,11 @@ private suspend fun LuoGu.generateUploadLink(watermark: Int = 1, verifyCode: Str
  */
 suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String, contentType: ContentType): String {
 	return generateUploadLink(watermark, verifyCode)["uploadLink"].asJsonObject.provider.let { provider ->
-		val accessKeyID: String by provider.provide()
-		val callback: String by provider.provide()
-		val host: String by provider.provide()
-		val policy: String by provider.provide()
-		val signature: String by provider.provide()
+		val accessKeyID: String by provider
+		val callback: String by provider
+		val host: String by provider
+		val policy: String by provider
+		val signature: String by provider
 
 //		val body = MultipartBody.Builder()
 //				.setType(MultipartBody.FORM)

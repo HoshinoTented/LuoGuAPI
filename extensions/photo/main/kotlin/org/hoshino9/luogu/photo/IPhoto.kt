@@ -3,13 +3,10 @@ package org.hoshino9.luogu.photo
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import org.hoshino9.luogu.user.IBaseUser
-import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.utils.Deserializable
-import org.hoshino9.luogu.utils.gson
 import java.lang.reflect.Type
 
 @JsonAdapter(Photo.Serializer::class)

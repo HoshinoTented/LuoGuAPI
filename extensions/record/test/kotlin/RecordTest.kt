@@ -30,7 +30,11 @@ class RecordTest : BaseTest() {
 							val frame = incoming.receive()
 
 							if (frame is Frame.Text) {
-								println(frame.readText())
+								val text = frame.readText()
+
+								if ("heartbeat" in text) break
+
+								println(text)
 							}
 						}
 					}

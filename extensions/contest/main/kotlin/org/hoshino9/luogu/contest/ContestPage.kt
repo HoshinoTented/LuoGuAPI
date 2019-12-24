@@ -20,8 +20,8 @@ class ContestPage(val id: Int, client: HttpClient = emptyClient) : AbstractLuoGu
 			return Contest(data["contest"].asJsonObject)
 		}
 
-	val accessLevel: Int by provider.provide()
-	val joined: Boolean by provider.provide()
+	val accessLevel: Int by provider
+	val joined: Boolean by provider
 
 	val contestProblems: List<Problem>?
 		get() {
@@ -29,8 +29,8 @@ class ContestPage(val id: Int, client: HttpClient = emptyClient) : AbstractLuoGu
 				if (problems.isJsonNull) null else {
 					problems.asJsonArray.map { problem ->
 						problem.asJsonObject.provider.let {
-							val score: Int by it.provide()
-							val submitted: Boolean by it.provide()
+							val score: Int by it
+							val submitted: Boolean by it
 
 							Problem(problem.asJsonObject["problem"].asJsonObject["pid"].asString, score, submitted)
 						}

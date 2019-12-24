@@ -24,8 +24,8 @@ data class LoggedBaseProblem(override val accepted: Boolean, override val submit
 			val source = json.asJsonObject
 			val provider = source.provider
 
-			val accepted: Boolean by provider.provide()
-			val submitted: Boolean by provider.provide()
+			val accepted: Boolean by provider
+			val submitted: Boolean by provider
 			val baseProblem: IBaseProblem = context.deserialize(json, IBaseProblem::class.java)
 
 			return LoggedBaseProblem(accepted, submitted, baseProblem)
@@ -45,9 +45,9 @@ data class LoggedProblem(override val accepted: Boolean, override val score: Int
 			val source = json.asJsonObject
 			val provider = source.provider
 
-			val accepted: Boolean by provider.provide()
-			val score: Int by provider.provide()
-			val showScore: Boolean by provider.provide()
+			val accepted: Boolean by provider
+			val score: Int by provider
+			val showScore: Boolean by provider
 			val problem: IProblem = context.deserialize(json, IProblem::class.java)
 
 			return LoggedProblem(accepted, score, showScore, problem)

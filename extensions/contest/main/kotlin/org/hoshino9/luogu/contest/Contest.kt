@@ -121,8 +121,8 @@ data class Contest(override val description: String, override val totalParticipa
 			val source = json.asJsonObject
 			val provider = source.provider
 
-			val description: String by provider.provide()
-			val totalParticipants: Int by provider.provide()
+			val description: String by provider
+			val totalParticipants: Int by provider
 			val baseContest: IBaseContest = context.deserialize(json, IBaseContest::class.java)
 
 			return Contest(description, totalParticipants, baseContest)

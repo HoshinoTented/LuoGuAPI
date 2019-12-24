@@ -83,8 +83,8 @@ data class User(override val ranking: Int?, override val introduction: String, v
 			val source = json.asJsonObject
 			val provider = source.provider
 
-			val ranking: Int? by provider.provide()
-			val introduction: String by provider.provide()
+			val ranking: Int? by provider
+			val introduction: String by provider
 			val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
 
 			return User(ranking, introduction, baseUser)

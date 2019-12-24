@@ -1,12 +1,10 @@
-@file:JvmName("RecordKt")
+@file:JvmName("RecordUtils")
 
 package org.hoshino9.luogu.record
 
 import com.google.gson.JsonObject
 import io.ktor.client.call.receive
-import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.utils.*
 
 /**
@@ -17,12 +15,11 @@ import org.hoshino9.luogu.utils.*
  * @see Solution
  * @see Record
  */
-@JvmOverloads
 suspend fun LuoGu.postSolution(solution: Solution, verifyCode: String = ""): Record {
 	val json = JsonObject().apply {
 		addProperty("verify", verifyCode)
 		addProperty("enableO2", if (solution.enableO2) 1 else 0)
-		addProperty("lang", solution.language.toString())
+		addProperty("lang", solution.language)
 		addProperty("code", solution.code)
 	}.asParams
 
@@ -31,7 +28,7 @@ suspend fun LuoGu.postSolution(solution: Solution, verifyCode: String = ""): Rec
 		body = json
 	}.receive<String>().let {
 		json(it).run {
-			val rid: String by provider.provide()
+			val rid: String by provider
 
 			Record(rid)
 		}

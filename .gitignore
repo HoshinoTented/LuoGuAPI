@@ -9,10 +9,12 @@ build/
 out/
 
 # test resources
-/testResources/
 verify.png
 user.properties
 luogu-*
 
 # wiki
 wiki
+
+# generate
+gen/

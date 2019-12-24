@@ -94,20 +94,6 @@ fun HttpRequestBuilder.referer(ref: String) {
 	headers.append("referer", "$baseUrl/$ref")
 }
 
-suspend fun HttpClient.toOkHttpClient(): OkHttpClient {
-	return OkHttpClient.Builder().cookieJar(HoshinoCookieJar()).build().apply {
-		feature(HttpCookies)?.get(Url(baseUrl))?.map {
-			okhttp3.Cookie.Builder()
-					.name(it.name)
-					.value(it.value)
-					.domain(it.domain?.let { if (it.startsWith(".")) it.drop(1) else it } ?: "luogu.com.cn")
-					.build()
-		}?.let { cookies ->
-			cookieJar().saveFromResponse(HttpUrl.get(baseUrl), cookies)
-		}
-	}
-}
-
 val HttpResponse.byteData: ByteArray get() = runBlocking { content.toByteArray() }
 val HttpResponse.strData: String get() = String(byteData)
 

@@ -26,14 +26,14 @@ data class FollowListUser(override val blogAddress: String?, override val follow
 			val source = json.asJsonObject
 			val provider = source.provider
 
-			val blogAddress: String? by provider.provide()
-			val followingCount: Int by provider.provide()
-			val followerCount: Int by provider.provide()
-			val ranking: Int? by provider.provide()
-			val userRelationship: Int by provider.provide()
-			val reverseUserRelationship: Int by provider.provide()
-			val passedProblemCount: Int by provider.provide()
-			val submittedProblemCount: Int by provider.provide()
+			val blogAddress: String? by provider
+			val followingCount: Int by provider
+			val followerCount: Int by provider
+			val ranking: Int? by provider
+			val userRelationship: Int by provider
+			val reverseUserRelationship: Int by provider
+			val passedProblemCount: Int by provider
+			val submittedProblemCount: Int by provider
 			val baseUser: IBaseUser = context.deserialize(json, IBaseUser::class.java)
 
 			return FollowListUser(blogAddress, followingCount, followerCount, ranking, userRelationship, reverseUserRelationship, passedProblemCount, submittedProblemCount, baseUser)
@@ -50,11 +50,11 @@ class FollowList(val user: IUser, val page: Int, val type: Type, val client: Htt
 	private val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=${user.uid}&page=$page"
 	private val data: JsonObject = runBlocking { json(client.get(url)) }
 	private val provider = data.provider
-	private val users: JsonObject by provider.provide()
+	private val users: JsonObject by provider
 	private val usersProvider = users.provider
-	private val result: JsonArray by usersProvider.provide()
+	private val result: JsonArray by usersProvider
 
-	val count: Int by usersProvider.provide()
+	val count: Int by usersProvider
 	val list: List<IFollowListUser>
 		get() {
 			return result.map {

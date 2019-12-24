@@ -14,9 +14,9 @@ class PhotoListPage(val page: Int, client: HttpClient) : AbstractLuoGuPage(clien
 	private val dataProvider = data.provider
 	private val imagesProvider = images.provider
 
-	val spaceUsage: Int by dataProvider.provide()
-	val spaceLimit: Int by dataProvider.provide()
-	val count: Int by imagesProvider.provide()
+	val spaceUsage: Int by dataProvider
+	val spaceLimit: Int by dataProvider
+	val count: Int by imagesProvider
 
 	val list: List<IPhoto>
 		get() {
