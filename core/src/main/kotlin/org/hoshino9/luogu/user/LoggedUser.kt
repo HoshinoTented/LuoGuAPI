@@ -35,7 +35,7 @@ data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return user == other
+		return (other as? LoggedUser)?.user == user
 	}
 
 	override fun hashCode(): Int {
@@ -44,8 +44,9 @@ data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
 }
 
 open class LoggedUserPage(uid: Int, val luogu: LuoGu) : UserPage(uid, luogu.client) {
-	override val user: ILoggedUser
-		get() = LoggedUser(userObj)
+	override val user: ILoggedUser by lazy {
+		LoggedUser(userObj)
+	}
 }
 
 /**

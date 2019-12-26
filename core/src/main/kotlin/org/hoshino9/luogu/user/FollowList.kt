@@ -5,6 +5,7 @@ import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
@@ -41,13 +42,13 @@ data class FollowListUser(override val blogAddress: String?, override val follow
 	}
 }
 
-class FollowList(val user: IUser, val page: Int, val type: Type, val client: HttpClient = emptyClient) {
+class FollowList(val uid: Int, val page: Int, val type: Type, val client: HttpClient = emptyClient) {
 	enum class Type {
 		Followings,
 		Followers
 	}
 
-	private val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=${user.uid}&page=$page"
+	private val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=$uid&page=$page"
 	private val data: JsonObject = runBlocking { json(client.get(url)) }
 	private val delegate = data.delegate
 	private val users: JsonObject by delegate

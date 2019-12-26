@@ -94,15 +94,21 @@ fun HttpRequestBuilder.referer(ref: String) {
 	headers.append("referer", "$baseUrl/$ref")
 }
 
-val HttpResponse.byteData: ByteArray get() = runBlocking { content.toByteArray() }
-val HttpResponse.strData: String get() = String(byteData)
+suspend fun HttpResponse.byteData(): ByteArray {
+	return content.toByteArray()
+}
+
+suspend fun HttpResponse.strData(): String {
+	return String(byteData())
+}
+
 
 /**
  * 断言 Response 是否成功
  *
  * @throws IllegalStatusCodeException 断言失败时抛出
  */
-fun HttpResponse.assertJson() {
+suspend fun HttpResponse.assertJson() {
 	if (this.status.isSuccess().not())
-		throw IllegalStatusCodeException(this.status.value, json(strData))
+		throw IllegalStatusCodeException(this.status.value, json(strData()))
 }

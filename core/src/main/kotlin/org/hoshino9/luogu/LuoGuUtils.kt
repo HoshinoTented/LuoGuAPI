@@ -5,8 +5,8 @@ package org.hoshino9.luogu
 import org.jsoup.nodes.Document
 
 object LuoGuUtils {
-	const val domain = "www.luogu.com.cn"
-	const val baseUrl = "https://$domain"
+	const val domain = ".luogu.com.cn"
+	const val baseUrl = "https://www$domain"
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个

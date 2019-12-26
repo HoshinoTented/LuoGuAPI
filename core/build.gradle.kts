@@ -1,4 +1,3 @@
-import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 fun ktor(module: String, version: String): String = "io.ktor:ktor-$module:$version"
@@ -42,14 +41,14 @@ dependencies {
 	testApi(kotlin("test-junit"))
 }
 
-val genRootPath = task("genRootPath") {
+val genTestConfig = task("genTestConfig") {
 	file("src/main/gen/TestConfig.kt")
 			.apply {
 				if (exists().not()) {
 					parentFile.mkdirs()
 					createNewFile()
 				}
-			}.writeText("val rootPath = \"${project.rootProject.rootDir.absolutePath.replace("\\", "\\\\")}\"")
+			}.writeText("const val rootPath = \"${project.rootDir.absolutePath.replace("\\", "\\\\")}\"")
 }
 
-tasks["compileKotlin"].dependsOn(genRootPath)
+tasks["compileKotlin"].dependsOn(genTestConfig)

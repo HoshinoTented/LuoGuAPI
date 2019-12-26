@@ -6,7 +6,9 @@ import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.team.BaseTeam
 import org.hoshino9.luogu.utils.*
+import org.hoshino9.luogu.utils.Deserializable.Companion.gson
 import java.lang.reflect.Type
 
 typealias ProblemID = String
@@ -101,27 +103,32 @@ data class User(override val ranking: Int?, override val introduction: String, v
 }
 
 open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
+	data class Team(val team: BaseTeam, val permission: Int)
+
 	override val url: String get() = "$baseUrl/user/$uid"
 
 	protected val data = currentData
 	protected val userObj: JsonObject = data["user"].asJsonObject
 
-	open val user: IUser
-		get() {
-			return User(userObj)
+	open val user: IUser by lazy {
+		User(userObj)
+	}
+
+	val teams: List<Team> by lazy {
+		data["teams"].asJsonArray.map {
+			gson.fromJson(it, Team::class.java)
 		}
+	}
 
 	private fun problemList(attr: String): List<ProblemID> {
 		return data[attr].asJsonArray.map {
-			it.asJsonObject.let {
-				it["pid"].asString
-			}
+			it.asJsonObject["pid"].asString
 		}
 	}
 
 	val passedProblems: List<ProblemID> get() = problemList("passedProblems")
 	val submittedProblems: List<ProblemID> get() = problemList("submittedProblems")
 
-	fun followers(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followers, client)
-	fun followings(page: Int = 1): FollowList = FollowList(user, page, FollowList.Type.Followings, client)
+	fun followers(page: Int = 1): FollowList = FollowList(uid, page, FollowList.Type.Followers, client)
+	fun followings(page: Int = 1): FollowList = FollowList(uid, page, FollowList.Type.Followings, client)
 }

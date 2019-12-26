@@ -1,6 +1,9 @@
 package org.hoshino9.luogu.utils
 
 import com.google.gson.*
+import org.hoshino9.luogu.page.AbstractLuoGuPage
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -29,6 +32,9 @@ class JsonDelegate(val original: JsonObject, val context: JsonDeserializationCon
 				Long::class -> obj.asLong
 				Float::class -> obj.asFloat
 				Double::class -> obj.asDouble
+
+				BigInteger::class -> obj.asBigInteger
+				BigDecimal::class -> obj.asBigDecimal
 
 				else -> (context ?: throw IllegalArgumentException("Can not cast ${property.name} to $type"))
 						.deserialize(obj, type.java)

@@ -5,11 +5,13 @@
 
 # Note
 [#52](https://github.com/HoshinoTented/LuoGuAPI/issues/52)  
-本项目不再添加新功能，仅维护现有功能，直到洛谷开放api，就 archive 此项目  
-如果洛谷表明短时间内不会开放api，则此项目将继续添加新功能  
+本项目不再添加新功能，仅维护现有功能，直到洛谷开放api，就 archive 此项目
+
+如果洛谷表明短时间内不会开放api，则此项目将继续添加新功能
 
 # LuoGuAPI
 [**你谷**](https://www.luogu.org) 的api
+
 感谢您谷，终于美化 API 了  
 
 # CI
@@ -49,13 +51,15 @@ compile 'org.hoshino9:[submodule name]:0.0.2'
 ./gradlew shadowJar
 ./gradlew sourcesJar
 ```
-会在 `<module>/build/libs` 下生成三个 `.jar` 文件  
+会在 `<module>/build/libs` 下生成三个 `.jar` 文件
+
 其中:
 * `<module name>-<version number>-all.jar` 为本体（附带依赖）  
 * `<module name>-<version number>-sources.jar` 为源码  
 
 # Stable API
 洛谷已 **正式** 开放 API 的功能（未选中的代表 `LuoGuAPI` 还未支持）:  
+
 - [x] 登录
 - [ ] 注册
 - [x] 两步验证
@@ -74,8 +78,10 @@ compile 'org.hoshino9:[submodule name]:0.0.2'
 - [x] 编辑剪切板
 
 洛谷还 **未正式** 开放但已经在开发中的 API（未选中同上）:  
+
 - [ ] 博客的系列操作（不确定，可能已经正式开放）
 
 无法在 API 列表中寻找到的功能:
+
 - [ ] 讨论版
 - [ ] ~~试炼场~~
