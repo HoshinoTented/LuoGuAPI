@@ -85,7 +85,7 @@ suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String,
 			referer("image")
 			this.body = body
 		}.let {
-			json(it.strData).run {
+			json(it.strData()).run {
 				get("image").asJsonObject["id"].asString
 			}
 		}
@@ -96,7 +96,7 @@ suspend fun LuoGu.pushPhoto(watermark: Int = 1, photo: File, verifyCode: String,
  * 图床列表
  * @return 返回一个图片的列表
  *
- * @see IPhoto
+ * @see Photo
  */
 fun LuoGu.photoList(page: Int = 1): PhotoListPage {
 	return PhotoListPage(page, client)

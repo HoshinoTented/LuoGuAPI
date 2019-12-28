@@ -14,8 +14,8 @@ import java.lang.reflect.Type
 typealias ProblemID = String
 typealias UID = Int
 
-@JsonAdapter(BaseUser.Serializer::class)
-interface IBaseUser {
+@JsonAdapter(BaseUserImpl.Serializer::class)
+interface BaseUser {
 	/**
 	 * 用户 id
 	 */
@@ -57,15 +57,15 @@ interface IBaseUser {
 	val isBanned: Boolean
 }
 
-data class BaseUser(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : IBaseUser {
-	companion object Serializer : Deserializable<IBaseUser>(IBaseUser::class), JsonDeserializer<IBaseUser> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IBaseUser {
-			return context.deserialize(json, BaseUser::class.java)
+data class BaseUserImpl(override val uid: Int, override val name: String, override val color: String, override val badge: String?, override val slogan: String, override val ccfLevel: Int, override val isAdmin: Boolean, override val isBanned: Boolean) : BaseUser {
+	companion object Serializer : Deserializable<BaseUser>(BaseUser::class), JsonDeserializer<BaseUser> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): BaseUser {
+			return context.deserialize(json, BaseUserImpl::class.java)
 		}
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return (other as? BaseUser)?.uid == uid
+		return (other as? BaseUserImpl)?.uid == uid
 	}
 
 	override fun hashCode(): Int {
@@ -73,23 +73,23 @@ data class BaseUser(override val uid: Int, override val name: String, override v
 	}
 }
 
-@JsonAdapter(User.Serializer::class)
-interface IUser : IBaseUser {
+@JsonAdapter(UserImpl.Serializer::class)
+interface User : BaseUser {
 	val ranking: Int?
 	val introduction: String
 }
 
-data class User(override val ranking: Int?, override val introduction: String, val baseUser: IBaseUser) : IBaseUser by baseUser, IUser {
-	companion object Serializer : Deserializable<IUser>(IUser::class), JsonDeserializer<IUser> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IUser {
+data class UserImpl(override val ranking: Int?, override val introduction: String, val baseUser: BaseUser) : BaseUser by baseUser, User {
+	companion object Serializer : Deserializable<User>(User::class), JsonDeserializer<User> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): User {
 			val source = json.asJsonObject
 			val delegate = source.delegate
 
 			val ranking: Int? by delegate
 			val introduction: String by delegate
-			val baseUser = context.deserialize<IBaseUser>(json, IBaseUser::class.java)
+			val baseUser = context.deserialize<BaseUser>(json, BaseUser::class.java)
 
-			return User(ranking, introduction, baseUser)
+			return UserImpl(ranking, introduction, baseUser)
 		}
 	}
 
@@ -110,8 +110,8 @@ open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLu
 	protected val data = currentData
 	protected val userObj: JsonObject = data["user"].asJsonObject
 
-	open val user: IUser by lazy {
-		User(userObj)
+	open val user: User by lazy {
+		UserImpl(userObj)
 	}
 
 	val teams: List<Team> by lazy {

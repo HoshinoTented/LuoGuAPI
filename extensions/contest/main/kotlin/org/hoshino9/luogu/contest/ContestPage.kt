@@ -14,9 +14,9 @@ class ContestPage(val id: Int, client: HttpClient = emptyClient) : AbstractLuoGu
 	private val data = feInjection["currentData"].asJsonObject
 	private val delegate = data.delegate
 
-	val contest: IContest
+	val contest: Contest
 		get() {
-			return Contest(data["contest"].asJsonObject)
+			return ContestImpl(data["contest"].asJsonObject)
 		}
 
 	val accessLevel: Int by delegate

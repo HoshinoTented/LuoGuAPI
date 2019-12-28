@@ -8,48 +8,48 @@ import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
 
-interface IBaseLoggedBaseProblem : IBaseProblem {
+interface IBaseLoggedBaseProblem : BaseProblem {
 	val accepted: Boolean
 }
 
-@JsonAdapter(LoggedBaseProblem.Serializer::class)
-interface ILoggedBaseProblem : IBaseLoggedBaseProblem {
+@JsonAdapter(LoggedBaseProblemImpl.Serializer::class)
+interface LoggedBaseProblem : IBaseLoggedBaseProblem {
 	val submitted: Boolean
 }
 
-data class LoggedBaseProblem(override val accepted: Boolean, override val submitted: Boolean, private val baseProblem: IBaseProblem) : IBaseProblem by baseProblem, ILoggedBaseProblem {
-	companion object Serializer : Deserializable<ILoggedBaseProblem>(ILoggedBaseProblem::class), JsonDeserializer<ILoggedBaseProblem> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedBaseProblem {
+data class LoggedBaseProblemImpl(override val accepted: Boolean, override val submitted: Boolean, private val baseProblem: BaseProblem) : BaseProblem by baseProblem, LoggedBaseProblem {
+	companion object Serializer : Deserializable<LoggedBaseProblem>(LoggedBaseProblem::class), JsonDeserializer<LoggedBaseProblem> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LoggedBaseProblem {
 			val source = json.asJsonObject
 			val delegate = source.delegate
 
 			val accepted: Boolean by delegate
 			val submitted: Boolean by delegate
-			val baseProblem: IBaseProblem = context.deserialize(json, IBaseProblem::class.java)
+			val baseProblem: BaseProblem = context.deserialize(json, BaseProblem::class.java)
 
-			return LoggedBaseProblem(accepted, submitted, baseProblem)
+			return LoggedBaseProblemImpl(accepted, submitted, baseProblem)
 		}
 	}
 }
 
-@JsonAdapter(LoggedProblem.Serializer::class)
-interface ILoggedProblem : IBaseLoggedBaseProblem, IProblem {
+@JsonAdapter(LoggedProblemImpl.Serializer::class)
+interface LoggedProblem : IBaseLoggedBaseProblem, Problem {
 	val score: Int
 	val showScore: Boolean
 }
 
-data class LoggedProblem(override val accepted: Boolean, override val score: Int, override val showScore: Boolean, private val problem: IProblem) : IProblem by problem, ILoggedProblem {
-	companion object Serializer : Deserializable<ILoggedProblem>(ILoggedProblem::class), JsonDeserializer<ILoggedProblem> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedProblem {
+data class LoggedProblemImpl(override val accepted: Boolean, override val score: Int, override val showScore: Boolean, private val problem: Problem) : Problem by problem, LoggedProblem {
+	companion object Serializer : Deserializable<LoggedProblem>(LoggedProblem::class), JsonDeserializer<LoggedProblem> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LoggedProblem {
 			val source = json.asJsonObject
 			val delegate = source.delegate
 
 			val accepted: Boolean by delegate
 			val score: Int by delegate
 			val showScore: Boolean by delegate
-			val problem: IProblem = context.deserialize(json, IProblem::class.java)
+			val problem: Problem = context.deserialize(json, Problem::class.java)
 
-			return LoggedProblem(accepted, score, showScore, problem)
+			return LoggedProblemImpl(accepted, score, showScore, problem)
 		}
 	}
 }

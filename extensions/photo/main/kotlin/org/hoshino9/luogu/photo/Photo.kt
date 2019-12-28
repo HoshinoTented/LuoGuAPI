@@ -5,35 +5,35 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
-import org.hoshino9.luogu.user.IBaseUser
+import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.utils.Deserializable
 import java.lang.reflect.Type
 
-@JsonAdapter(Photo.Serializer::class)
-interface IPhoto {
+@JsonAdapter(PhotoImpl.Serializer::class)
+interface Photo {
 	val id: String
 	val size: Int
 	val date: String
-	val user: IBaseUser
+	val user: BaseUser
 	val url: String
 }
 
-data class Photo(
+data class PhotoImpl(
 		override val id: String,
 		override val size: Int,
 		@SerializedName("uploadTime") override val date: String,
-		@SerializedName("delegate") override val user: IBaseUser,
+		@SerializedName("delegate") override val user: BaseUser,
 		override val url: String
-) : IPhoto {
-	companion object Serializer : Deserializable<IPhoto>(IPhoto::class), JsonDeserializer<IPhoto> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IPhoto {
-			return context.deserialize(json, Photo::class.java)
+) : Photo {
+	companion object Serializer : Deserializable<Photo>(Photo::class), JsonDeserializer<Photo> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Photo {
+			return context.deserialize(json, PhotoImpl::class.java)
 		}
 	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is IPhoto) return false
+		if (other !is Photo) return false
 
 		if (id != other.id) return false
 

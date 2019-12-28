@@ -18,8 +18,8 @@ class PhotoListPage(val page: Int, client: HttpClient) : AbstractLuoGuPage(clien
 	val spaceLimit: Int by dataDelegate
 	val count: Int by imagesDelegate
 
-	val list: List<IPhoto>
+	val list: List<Photo>
 		get() {
-			return images["result"].asJsonArray.map { Photo(it.asJsonObject) }
+			return images["result"].asJsonArray.map { PhotoImpl(it.asJsonObject) }
 		}
 }

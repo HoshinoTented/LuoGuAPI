@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
-import org.hoshino9.luogu.user.IBaseUser
+import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
@@ -16,7 +16,7 @@ sealed class Host {
 			val source = json.asJsonObject
 			val host: Host = source.let { host ->
 				if (host.has("id")) Organization(host["id"].asInt, host["name"].asString) else {
-					User(context.deserialize(host, IBaseUser::class.java))
+					User(context.deserialize(host, BaseUser::class.java))
 				}
 			}
 
@@ -27,7 +27,7 @@ sealed class Host {
 	abstract val id: Int
 	abstract val name: String
 
-	data class User(val user: IBaseUser) : Host() {
+	data class User(val user: BaseUser) : Host() {
 		override val id: Int
 			get() = user.uid
 
@@ -38,8 +38,8 @@ sealed class Host {
 	data class Organization(override val id: Int, override val name: String) : Host()
 }
 
-@JsonAdapter(BaseContest.Serializer::class)
-interface IBaseContest {
+@JsonAdapter(BaseContestImpl.Serializer::class)
+interface BaseContest {
 	/**
 	 * 比赛 ID
 	 */
@@ -86,15 +86,15 @@ interface IBaseContest {
 	val endTime: Long
 }
 
-data class BaseContest(override val id: Int, override val name: String, override val host: Host, override val problemCount: Int, override val rated: Boolean, override val ruleType: RuleType, override val visibilityType: VisibilityType, override val startTime: Long, override val endTime: Long) : IBaseContest {
-	companion object Serializer : Deserializable<IBaseContest>(IBaseContest::class), JsonDeserializer<IBaseContest> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IBaseContest {
-			return context.deserialize(json, BaseContest::class.java)
+data class BaseContestImpl(override val id: Int, override val name: String, override val host: Host, override val problemCount: Int, override val rated: Boolean, override val ruleType: RuleType, override val visibilityType: VisibilityType, override val startTime: Long, override val endTime: Long) : BaseContest {
+	companion object Serializer : Deserializable<BaseContest>(BaseContest::class), JsonDeserializer<BaseContest> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): BaseContest {
+			return context.deserialize(json, BaseContestImpl::class.java)
 		}
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return (other as? IBaseContest)?.id == this.id
+		return (other as? BaseContest)?.id == this.id
 	}
 
 	override fun hashCode(): Int {
@@ -102,8 +102,8 @@ data class BaseContest(override val id: Int, override val name: String, override
 	}
 }
 
-@JsonAdapter(Contest.Serializer::class)
-interface IContest : IBaseContest {
+@JsonAdapter(ContestImpl.Serializer::class)
+interface Contest : BaseContest {
 	/**
 	 * 比赛介绍
 	 */
@@ -115,17 +115,17 @@ interface IContest : IBaseContest {
 	val totalParticipants: Int
 }
 
-data class Contest(override val description: String, override val totalParticipants: Int, val baseContest: IBaseContest) : IBaseContest by baseContest, IContest {
-	companion object Serializer : Deserializable<IContest>(IContest::class), JsonDeserializer<IContest> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IContest {
+data class ContestImpl(override val description: String, override val totalParticipants: Int, val baseContest: BaseContest) : BaseContest by baseContest, Contest {
+	companion object Serializer : Deserializable<Contest>(Contest::class), JsonDeserializer<Contest> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Contest {
 			val source = json.asJsonObject
 			val delegate = source.delegate
 
 			val description: String by delegate
 			val totalParticipants: Int by delegate
-			val baseContest: IBaseContest = context.deserialize(json, IBaseContest::class.java)
+			val baseContest: BaseContest = context.deserialize(json, BaseContest::class.java)
 
-			return Contest(description, totalParticipants, baseContest)
+			return ContestImpl(description, totalParticipants, baseContest)
 		}
 	}
 

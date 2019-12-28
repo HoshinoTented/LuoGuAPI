@@ -9,10 +9,10 @@ class PasteList(val page: Int, client: HttpClient) : AbstractLuoGuPage(client) {
 
 	private val data get() = feInjection["currentData"].asJsonObject["pastes"].asJsonObject
 
-	val list: List<IPaste>
+	val list: List<Paste>
 		get() {
 			return data["result"].asJsonArray.map {
-				Paste(it.asJsonObject)
+				PasteImpl(it.asJsonObject)
 			}
 		}
 

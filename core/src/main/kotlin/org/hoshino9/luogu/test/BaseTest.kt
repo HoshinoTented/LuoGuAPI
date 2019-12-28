@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.test
 
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.user.ILoggedUser
+import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.user.currentUser
 import rootPath
 import java.nio.file.Files
@@ -25,7 +25,7 @@ abstract class BaseTest {
 	}
 
 	lateinit var luogu: LuoGu
-	lateinit var user: ILoggedUser
+	lateinit var user: LoggedUser
 
 	init {
 		loadCookie()

@@ -1,7 +1,6 @@
 package org.hoshino9.luogu.problem
 
 import com.google.gson.JsonObject
-import okhttp3.OkHttpClient
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.HttpClient
@@ -15,11 +14,11 @@ open class ProblemList(val page: Int, val filter: ProblemSearchConfig, client: H
 				.asJsonObject["problems"]
 				.asJsonObject
 
-	val result: List<IBaseProblem>
+	val result: List<BaseProblem>
 		get() {
 			return data["result"]
 					.asJsonArray.map {
-				BaseProblem(it.asJsonObject)
+				BaseProblemImpl(it.asJsonObject)
 			}
 		}
 

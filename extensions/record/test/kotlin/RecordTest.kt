@@ -39,7 +39,7 @@ class RecordTest : BaseTest() {
 						}
 					}
 				} catch (e: ClientRequestException) {
-					System.err.println(e.response.strData)
+					System.err.println(e.response.strData())
 				}
 			}
 

@@ -6,36 +6,33 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.call.receive
-import io.ktor.client.request.post
-import io.ktor.client.response.HttpResponse
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
-interface IBaseLoggedUser : IBaseUser {
+interface BaseLoggedUser : BaseUser {
 
 }
 
-@JsonAdapter(LoggedUser.Serializer::class)
-interface ILoggedUser : IBaseLoggedUser, IUser {
+@JsonAdapter(LoggedUserImpl.Serializer::class)
+interface LoggedUser : BaseLoggedUser, User {
 
 }
 
 /**
  * **你谷**用户类
  */
-data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
-	companion object Serializer : Deserializable<ILoggedUser>(ILoggedUser::class), JsonDeserializer<ILoggedUser> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ILoggedUser {
-			val user = context.deserialize<IUser>(json, IUser::class.java)
+data class LoggedUserImpl(val user: User) : User by user, LoggedUser {
+	companion object Serializer : Deserializable<LoggedUser>(LoggedUser::class), JsonDeserializer<LoggedUser> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LoggedUser {
+			val user = context.deserialize<User>(json, User::class.java)
 
-			return LoggedUser(user)
+			return LoggedUserImpl(user)
 		}
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return (other as? LoggedUser)?.user == user
+		return (other as? LoggedUserImpl)?.user == user
 	}
 
 	override fun hashCode(): Int {
@@ -44,8 +41,8 @@ data class LoggedUser(val user: IUser) : IUser by user, ILoggedUser {
 }
 
 open class LoggedUserPage(uid: Int, val luogu: LuoGu) : UserPage(uid, luogu.client) {
-	override val user: ILoggedUser by lazy {
-		LoggedUser(userObj)
+	override val user: LoggedUser by lazy {
+		LoggedUserImpl(userObj)
 	}
 }
 

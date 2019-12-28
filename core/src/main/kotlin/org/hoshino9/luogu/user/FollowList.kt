@@ -5,12 +5,11 @@ import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
-@JsonAdapter(FollowListUser.Serializer::class)
-interface IFollowListUser : IBaseUser {
+@JsonAdapter(FollowListUserImpl.Serializer::class)
+interface FollowListUser : BaseUser {
 	val blogAddress: String?
 	val followingCount: Int
 	val followerCount: Int
@@ -21,9 +20,9 @@ interface IFollowListUser : IBaseUser {
 	val submittedProblemCount: Int
 }
 
-data class FollowListUser(override val blogAddress: String?, override val followingCount: Int, override val followerCount: Int, override val ranking: Int?, override val userRelationship: Int, override val reverseUserRelationship: Int, override val passedProblemCount: Int, override val submittedProblemCount: Int, val baseUser: IBaseUser) : IBaseUser by baseUser, IFollowListUser {
-	companion object Serializer : Deserializable<IFollowListUser>(IFollowListUser::class), JsonDeserializer<IFollowListUser> {
-		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): IFollowListUser {
+data class FollowListUserImpl(override val blogAddress: String?, override val followingCount: Int, override val followerCount: Int, override val ranking: Int?, override val userRelationship: Int, override val reverseUserRelationship: Int, override val passedProblemCount: Int, override val submittedProblemCount: Int, val baseUser: BaseUser) : BaseUser by baseUser, FollowListUser {
+	companion object Serializer : Deserializable<FollowListUser>(FollowListUser::class), JsonDeserializer<FollowListUser> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): FollowListUser {
 			val source = json.asJsonObject
 			val delegate = source.delegate
 
@@ -35,9 +34,9 @@ data class FollowListUser(override val blogAddress: String?, override val follow
 			val reverseUserRelationship: Int by delegate
 			val passedProblemCount: Int by delegate
 			val submittedProblemCount: Int by delegate
-			val baseUser: IBaseUser = context.deserialize(json, IBaseUser::class.java)
+			val baseUser: BaseUser = context.deserialize(json, BaseUser::class.java)
 
-			return FollowListUser(blogAddress, followingCount, followerCount, ranking, userRelationship, reverseUserRelationship, passedProblemCount, submittedProblemCount, baseUser)
+			return FollowListUserImpl(blogAddress, followingCount, followerCount, ranking, userRelationship, reverseUserRelationship, passedProblemCount, submittedProblemCount, baseUser)
 		}
 	}
 }
@@ -56,10 +55,10 @@ class FollowList(val uid: Int, val page: Int, val type: Type, val client: HttpCl
 	private val result: JsonArray by usersDelegate
 
 	val count: Int by usersDelegate
-	val list: List<IFollowListUser>
+	val list: List<FollowListUser>
 		get() {
 			return result.map {
-				FollowListUser(it)
+				FollowListUserImpl(it)
 			}
 		}
 }

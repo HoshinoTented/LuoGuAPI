@@ -9,13 +9,12 @@ import io.ktor.client.features.ClientRequestException
 import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
 import io.ktor.http.Cookie
-import io.ktor.http.URLBuilder
 import io.ktor.http.Url
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.LuoGuUtils.domain
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
-import org.hoshino9.luogu.user.LoggedUser
+import org.hoshino9.luogu.user.LoggedUserImpl
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 
@@ -121,7 +120,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 	 * @throws ClientRequestException
 	 *
 	 * @see LuoGu.verifyCode
-	 * @see LoggedUser
+	 * @see LoggedUserImpl
 	 */
 	suspend fun login(account: String, password: String, verifyCode: String) {
 		val json = JsonObject().apply {

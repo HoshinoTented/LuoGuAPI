@@ -1,5 +1,3 @@
-import org.hoshino9.luogu.problem.BaseProblem
-import org.hoshino9.luogu.problem.Problem
 import org.hoshino9.luogu.problem.ProblemPage
 import org.hoshino9.luogu.problem.problemList
 import org.hoshino9.luogu.test.BaseTest

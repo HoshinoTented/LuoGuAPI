@@ -1,7 +1,6 @@
 package org.hoshino9.luogu.utils
 
 import com.google.gson.*
-import org.hoshino9.luogu.page.AbstractLuoGuPage
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
@@ -11,7 +10,6 @@ class JsonDelegate(val original: JsonObject, val context: JsonDeserializationCon
 	/**
 	 * @throws NoSuchElementException will throw a exception when the element is not exists
 	 */
-	@Suppress("IMPLICIT_CAST_TO_ANY")
 	operator fun <T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		val obj: JsonElement = original[property.name] ?: throw NoSuchElementException(property.name)
 		val type = property.returnType.classifier as KClass<*>
