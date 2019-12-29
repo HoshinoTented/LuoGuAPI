@@ -8,10 +8,12 @@ import org.junit.Test
 class UserTest : BaseTest() {
 	@Test
 	fun user() {
-		luogu.currentUser.run {
-			printAllMember()
-			followers().printAllMember()
-			followings().printAllMember()
+		if (luogu.isLogged) {
+			luogu.currentUser.run {
+				printAllMember()
+				followers().printAllMember()
+				followings().printAllMember()
+			}
 		}
 	}
 }
