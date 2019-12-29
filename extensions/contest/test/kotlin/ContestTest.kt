@@ -34,7 +34,7 @@ class ContestTest : BaseTest() {
 //			try {
 //				luogu.joinContest(24975, "123")
 //			} catch(e: ClientRequestException) {
-//				e.response.strData.run(::println)
+//				e.response.strData().run(::println)
 //			}
 //		}
 //	}
