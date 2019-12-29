@@ -20,25 +20,25 @@ repositories {
 
 dependencies {
 	// kotlin
-	api(kotlin("stdlib"))
-	api(kotlin("reflect"))
-	api(kotlin("script-runtime"))
+	compile(kotlin("stdlib"))
+	compile(kotlin("reflect"))
+	compile(kotlin("script-runtime"))
 
 	// kotlinx
-	api(kotlinx("coroutines-core", coroutinesVersion))
+	compile(kotlinx("coroutines-core", coroutinesVersion))
 
 	// ktor
-	api(ktor("client-core", ktorVersion))
-	api(ktor("client-core-jvm", ktorVersion))
-	api(ktor("client-okhttp", ktorVersion))
-	api(ktor("client-websockets", ktorVersion))
-	api(ktor("client-gson", ktorVersion))
+	compile(ktor("client-core", ktorVersion))
+	compile(ktor("client-core-jvm", ktorVersion))
+	compile(ktor("client-okhttp", ktorVersion))
+	compile(ktor("client-websockets", ktorVersion))
+	compile(ktor("client-gson", ktorVersion))
 
 	// others
-	api("org.jsoup", "jsoup", "1.11.3")                // HTML parser
+	compile("org.jsoup", "jsoup", "1.11.3")                // HTML parser
 
 	// testing
-	testApi(kotlin("test-junit"))
+	testCompile(kotlin("test-junit"))
 }
 
 val genTestConfig = task("genTestConfig") {
