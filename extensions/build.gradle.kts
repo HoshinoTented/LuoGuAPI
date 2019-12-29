@@ -22,3 +22,11 @@ allprojects {
 		testCompile(kotlin("test-junit"))
 	}
 }
+
+val createExt = task("createExt") {
+	doLast {
+		val name = project.properties["extName"] ?: throw Exception("Please give an extension name")
+
+		file("$name/main/kotlin/org/hoshino9/luogu/$name").mkdirs()
+	}
+}

@@ -41,14 +41,15 @@ dependencies {
 	testCompile(kotlin("test-junit"))
 }
 
-val genTestConfig = task("genTestConfig") {
-	file("src/main/gen/TestConfig.kt")
-			.apply {
-				if (exists().not()) {
-					parentFile.mkdirs()
-					createNewFile()
-				}
-			}.writeText("const val rootPath = \"${project.rootDir.absolutePath.replace("\\", "\\\\")}\"")
+val createTestConfig = task("createTestConfig") {
+	doLast {
+		file("src/main/gen/TestConfig.kt").apply {
+			if (exists().not()) {
+				parentFile.mkdirs()
+				createNewFile()
+			}
+		}.writeText("const val rootPath = \"${project.rootDir.absolutePath.replace("\\", "\\\\")}\"")
+	}
 }
 
-tasks["compileKotlin"].dependsOn(genTestConfig)
+tasks["compileKotlin"].dependsOn(createTestConfig)
