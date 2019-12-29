@@ -143,7 +143,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 	 * @throws ClientRequestException
 	 */
 	suspend fun logout() {
-		client.get<String>("$baseUrl/api/auth/logout?uid=$uid") {
+		client.get<String>("$baseUrl/api/auth/logout?uid=${uid.value}") {
 			referer("")
 		}
 	}
