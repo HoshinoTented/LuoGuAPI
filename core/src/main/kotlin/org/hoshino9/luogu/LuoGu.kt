@@ -146,5 +146,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 		client.get<String>("$baseUrl/api/auth/logout?uid=${uid.value}") {
 			referer("")
 		}
+
+		refresh()
 	}
 }
