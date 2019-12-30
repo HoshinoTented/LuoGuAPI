@@ -8,9 +8,9 @@ import javax.imageio.ImageIO
 
 const val paintDelay = 10010L
 
-fun repl(manager: PainterManager, job: Job) {
+fun repl(manager: PainterManager) {
 	while (true) {
-		val command = readLine()?.split(' ') ?: continue
+		val command = readLine()?.takeIf { it.isNotBlank() }?.split(' ') ?: continue
 
 		command.firstOrNull()?.let { cmd ->
 			when (cmd) {
@@ -42,9 +42,22 @@ fun repl(manager: PainterManager, job: Job) {
 				}
 
 				"stop" -> {
-					job.cancel()
+					manager.job?.cancel()
 
 					println("Stopping...")
+					return
+				}
+
+				"timer" -> {
+					manager.timers.joinToString(prefix = "[", postfix = "]") {
+						it.painter.uid.toString()
+					}.run(::println)
+				}
+
+				"queue" -> {
+					manager.requestQueue.joinToString(prefix = "[", postfix = "]") {
+						it.painter.uid.toString()
+					}.run(::println)
 				}
 
 				else -> println("Unknown command: $cmd")
@@ -76,7 +89,7 @@ fun main() {
 		manager.add(painter, paintDelay)
 	}
 
-	val job = manager.paint()
+	manager.paint()
 
-	repl(manager, job)
+	repl(manager)
 }

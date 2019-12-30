@@ -18,6 +18,8 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val scope: Corou
 			delay(this@Timer.delay)
 
 			queue.add(this@Timer)
+
+			println("${painter.uid} is ready.")
 		}
 	}
 
@@ -28,14 +30,21 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val scope: Corou
 
 class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: suspend () -> Board) : CoroutineScope {
 	private val internalTimers: MutableList<Timer> = LinkedList()
-	private val requestQueue: Queue<Timer> = LinkedList()
+	private val internalRequestQueue: Queue<Timer> = LinkedList()
+	private var internalJob: Job? = null
 
+	val job: Job? get() = internalJob
 	val timers: List<Timer> get() = internalTimers
+	val requestQueue: Collection<Timer> get() = internalRequestQueue
 
-	fun paint(): Job {
-		return launch {
+	fun paint() {
+		val job = internalJob
+
+		if (job != null && job.isActive) throw IllegalStateException("Job is working.")
+
+		internalJob = launch {
 			while (isActive) {
-				if (requestQueue.isNotEmpty()) {
+				if (internalRequestQueue.isNotEmpty()) {
 					val (pos, color) = photoProvider.current()
 					val currentPos = Pos(begin.x + pos.x, begin.y + pos.y)
 
@@ -51,7 +60,7 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 						continue
 					}
 
-					val current = requestQueue.remove()
+					val current = internalRequestQueue.remove()
 
 					try {
 						println("${current.painter.uid} is painting: $currentPos(offset: $pos) with color: $color")
@@ -79,6 +88,6 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 	}
 
 	fun add(painter: Painter, delay: Long) {
-		internalTimers.add(Timer(painter, requestQueue, this, delay))
+		internalTimers.add(Timer(painter, internalRequestQueue, this, delay))
 	}
 }
