@@ -6,7 +6,7 @@ import java.util.Queue
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-data class Timer(val painter: Painter, val queue: Queue<Timer>, val delay: Long) {
+data class Timer(val painter: Painter, val queue: Queue<Timer>, val scope: CoroutineScope = GlobalScope, val delay: Long) {
 	private lateinit var timer: Job
 
 	init {
@@ -14,7 +14,7 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val delay: Long)
 	}
 
 	fun resetTimer() {
-		timer = GlobalScope.launch {
+		timer = scope.launch {
 			delay(this@Timer.delay)
 
 			queue.add(this@Timer)
@@ -26,9 +26,11 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val delay: Long)
 	}
 }
 
-class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: suspend () -> PaintBoard) : CoroutineScope {
+class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: suspend () -> Board) : CoroutineScope {
 	private val internalTimers: MutableList<Timer> = LinkedList()
 	private val requestQueue: Queue<Timer> = LinkedList()
+
+	val timers: List<Timer> get() = internalTimers
 
 	fun paint(): Job {
 		return launch {
@@ -36,38 +38,47 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 				if (requestQueue.isNotEmpty()) {
 					val (pos, color) = photoProvider.current()
 					val currentPos = Pos(begin.x + pos.x, begin.y + pos.y)
-					val cur = color
 
-					if (cur == null) {
+					if (color == null) {
 						println("Skip empty color: $currentPos(offset: $pos)")
 						photoProvider.next()
 						continue
 					}
 
-					if (boardProvider().board[pos] == cur) {
+					if (boardProvider()[pos] == color) {
 						println("Skip same color: $currentPos(offset: $pos)")
 						photoProvider.next()
 						continue
 					}
 
-					val front = requestQueue.remove()
+					val current = requestQueue.remove()
 
 					try {
-						println("${front.painter.uid} is painting: $currentPos(offset: $pos) with color: $cur")
-						val result = front.painter.paint(pos, cur)
+						println("${current.painter.uid} is painting: $currentPos(offset: $pos) with color: $color")
+
+						val result = current.painter.paint(pos, color)
+
 						photoProvider.next()
-						println("${front.painter.uid} is painted: $result")
+
+						println("${current.painter.uid} is painted: $result")
 					} catch (e: Exception) {
-						println("${front.painter.uid} paint failed: ${e.message}")
+						println("${current.painter.uid} paint failed: ${e.message}")
+
+						if (e.message == "没有登录") {
+							println("removed no login: ${current.painter.uid}")
+							internalTimers.remove(current)
+
+							continue
+						}
 					}
 
-					front.resetTimer()
+					current.resetTimer()
 				}
 			}
 		}
 	}
 
 	fun add(painter: Painter, delay: Long) {
-		internalTimers.add(Timer(painter, requestQueue, delay))
+		internalTimers.add(Timer(painter, requestQueue, this, delay))
 	}
 }

@@ -5,21 +5,21 @@ interface PhotoProvider {
 	fun next()
 }
 
-class DefaultPhotoProvider(val photo: PaintBoard) : PhotoProvider {
+class DefaultPhotoProvider(val photo: Board) : PhotoProvider {
 	private var offset = Pos(0, 0)
 	private val currentColor: Int?
 		get() {
-			return photo.board[offset]
+			return photo[offset]
 		}
 
 	private fun nextPos() {
 		offset = Pos(offset.x + 1, offset.y)
 
-		if (photo.board.height == offset.x) {
+		if (photo.height == offset.x) {
 			offset = Pos(0, offset.y + 1)
 		}
 
-		if (photo.board.width == offset.y) {
+		if (photo.width == offset.y) {
 			offset = Pos(0, 0)
 		}
 	}
@@ -28,7 +28,6 @@ class DefaultPhotoProvider(val photo: PaintBoard) : PhotoProvider {
 		return offset to currentColor
 	}
 
-	@Synchronized
 	override fun next() {
 		nextPos()
 	}

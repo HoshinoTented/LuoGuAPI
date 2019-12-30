@@ -12,19 +12,6 @@ data class Board(val height: Int, val width: Int) {
 		}
 	}
 
-	val image: BufferedImage
-		get() {
-			val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-
-			board.forEachIndexed { x, line ->
-				line.forEachIndexed { y, color ->
-					image.setRGB(y, x, colors[color ?: return@forEachIndexed].toRGB)
-				}
-			}
-
-			return image
-		}
-
 	operator fun get(pos: Pos): Int? {
 		return board[pos.x][pos.y]
 	}
@@ -34,17 +21,7 @@ data class Board(val height: Int, val width: Int) {
 	}
 }
 
-data class PaintBoard(val board: Board) {
-	override fun equals(other: Any?): Boolean {
-		return this === other
-	}
-
-	override fun hashCode(): Int {
-		return board.hashCode()
-	}
-}
-
-suspend fun paintBoard(): PaintBoard {
+suspend fun paintBoard(): Board {
 	val lines = emptyClient.get<String>("$baseUrl/paintBoard/board").lines().dropLast(1)
 	val board = Board(400, 800)
 
@@ -55,5 +32,19 @@ suspend fun paintBoard(): PaintBoard {
 		}
 	}
 
-	return PaintBoard(board)
+	return board
 }
+
+
+val Board.image: BufferedImage
+	get() {
+		val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+		board.forEachIndexed { x, line ->
+			line.forEachIndexed inner@{ y, color ->
+				image.setRGB(y, x, colors[color ?: return@inner].toRGB)
+			}
+		}
+
+		return image
+	}
