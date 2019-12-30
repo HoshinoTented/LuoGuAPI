@@ -33,12 +33,12 @@ fun main() {
 		}
 	}
 
-	val manager = PainterManager(PaintBoard(board), Pos(5, 10), boardProvider = ::paintBoard)
+	val manager = PainterManager(DefaultPhotoProvider(PaintBoard(board)), Pos(0, 0), boardProvider = ::paintBoard)
 
 	cookies.keys.forEach {
 		val painter = Painter(cookies[it].toString(), it.toString().toInt())
 
-		manager.add(painter, 500)
+		manager.add(painter, 10050)
 	}
 
 	runBlocking(manager.coroutineContext) {
