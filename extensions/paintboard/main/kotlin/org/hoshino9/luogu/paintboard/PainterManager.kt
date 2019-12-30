@@ -1,11 +1,10 @@
 package org.hoshino9.luogu.paintboard
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.LinkedList
 import java.util.Queue
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 data class Timer(val painter: Painter, val queue: Queue<Timer>, val delay: Long) {
 	private lateinit var timer: Job
@@ -27,7 +26,7 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val delay: Long)
 	}
 }
 
-class PainterManager(val photo: PaintBoard, val begin: Pos, val globalBoard: () -> PaintBoard) {
+class PainterManager(val photo: PaintBoard, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val globalBoard: () -> PaintBoard) : CoroutineScope {
 	private val internalTimer: MutableList<Timer> = LinkedList()
 	private val requestQueue: Queue<Timer> = LinkedList()
 	private var offset: Pos = Pos(0, 0)
@@ -56,37 +55,39 @@ class PainterManager(val photo: PaintBoard, val begin: Pos, val globalBoard: () 
 		}
 	}
 
-	fun paint() {
-		while (true) {
-			if (requestQueue.isNotEmpty()) {
-				if (offset == Pos(0, 0)) println("New round.")
+	fun paint(): Job {
+		return launch {
+			while (isActive) {
+				if (requestQueue.isNotEmpty()) {
+					if (offset == Pos(0, 0)) println("New round.")
 
-				val cur = currentColor
+					val cur = currentColor
 
-				if (cur == null) {
-					println("Skip empty color: $currentPos(offset: $offset).")
-					next()
-					continue
+					if (cur == null) {
+						println("Skip empty color: $currentPos(offset: $offset).")
+						next()
+						continue
+					}
+
+					if (globalBoard().board[currentPos] == cur) {
+						println("Skip same color: $currentPos(offset: $offset).")
+						next()
+						continue
+					}
+
+					val front = requestQueue.remove()
+
+					try {
+						println("${front.painter.uid} is painting: $currentPos(offset: $offset) with color: $cur")
+						front.painter.paint(currentPos, cur)
+						next()
+						println("${front.painter.uid} is painted.")
+					} catch (e: Exception) {
+						e.printStackTrace()
+					}
+
+					front.resetTimer()
 				}
-
-				if (globalBoard().board[currentPos] == cur) {
-					println("Skip same color: $currentPos(offset: $offset).")
-					next()
-					continue
-				}
-
-				val front = requestQueue.remove()
-
-				try {
-					println("${front.painter.uid} is painting: $currentPos(offset: $offset) with color: $cur")
-					front.painter.paint(currentPos, cur)
-					next()
-					println("${front.painter.uid} is painted.")
-				} catch (e: Exception) {
-					e.printStackTrace()
-				}
-
-				front.resetTimer()
 			}
 		}
 	}
