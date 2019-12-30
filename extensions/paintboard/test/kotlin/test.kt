@@ -1,4 +1,3 @@
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.paintboard.*
 import java.io.File
@@ -15,12 +14,8 @@ val photo =
    1   
 """.lines().filter { it.isNotEmpty() }.map {
 			it.map {
-				when (it.toInt() - '0'.toInt()) {
-					1 -> Color.Red
-					2 -> Color.Green
-					3 -> Color.Blue
-
-					else -> null
+				if (it == ' ') null else {
+					it.toInt() - '0'.toInt()
 				}
 			}
 		}
@@ -38,17 +33,16 @@ fun main() {
 		}
 	}
 
-	val manager = PainterManager(PaintBoard(board), Pos(5, 10)) {
-		PaintBoard(Board(100, 100))
-	}
+	val manager = PainterManager(PaintBoard(board), Pos(5, 10), boardProvider = ::paintBoard)
 
 	cookies.keys.forEach {
-		val painter = Painter(it.toString(), cookies[it].toString().toInt())
+		val painter = Painter(cookies[it].toString(), it.toString().toInt())
 
 		manager.add(painter, 500)
 	}
 
 	runBlocking(manager.coroutineContext) {
+		paintBoard()
 		val job = manager.paint()
 
 		job.join()

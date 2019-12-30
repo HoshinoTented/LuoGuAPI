@@ -26,8 +26,8 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val delay: Long)
 	}
 }
 
-class PainterManager(val photo: PaintBoard, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val globalBoard: () -> PaintBoard) : CoroutineScope {
-	private val internalTimer: MutableList<Timer> = LinkedList()
+class PainterManager(val photo: PaintBoard, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: suspend () -> PaintBoard) : CoroutineScope {
+	private val internalTimers: MutableList<Timer> = LinkedList()
 	private val requestQueue: Queue<Timer> = LinkedList()
 	private var offset: Pos = Pos(0, 0)
 
@@ -36,12 +36,12 @@ class PainterManager(val photo: PaintBoard, val begin: Pos, override val corouti
 			return Pos(begin.x + offset.x, begin.y + offset.y)
 		}
 
-	val currentColor: Color?
+	val currentColor: Int?
 		get() {
 			return photo.board[offset]
 		}
 
-	val timer: List<Timer> get() = internalTimer
+	val timers: List<Timer> get() = internalTimers
 
 	fun next() {
 		offset = Pos(offset.x + 1, offset.y)
@@ -50,7 +50,7 @@ class PainterManager(val photo: PaintBoard, val begin: Pos, override val corouti
 			offset = Pos(0, offset.y + 1)
 		}
 
-		if (photo.board.weight == offset.y) {
+		if (photo.board.width == offset.y) {
 			offset = Pos(0, 0)
 		}
 	}
@@ -69,7 +69,7 @@ class PainterManager(val photo: PaintBoard, val begin: Pos, override val corouti
 						continue
 					}
 
-					if (globalBoard().board[currentPos] == cur) {
+					if (boardProvider().board[currentPos] == cur) {
 						println("Skip same color: $currentPos(offset: $offset).")
 						next()
 						continue
@@ -79,11 +79,11 @@ class PainterManager(val photo: PaintBoard, val begin: Pos, override val corouti
 
 					try {
 						println("${front.painter.uid} is painting: $currentPos(offset: $offset) with color: $cur")
-						front.painter.paint(currentPos, cur)
+						val result = front.painter.paint(currentPos, cur)
 						next()
-						println("${front.painter.uid} is painted.")
+						println("${front.painter.uid} is painted: $result")
 					} catch (e: Exception) {
-						e.printStackTrace()
+						println("${front.painter.uid} paint failed: ${e.message}")
 					}
 
 					front.resetTimer()
@@ -93,6 +93,6 @@ class PainterManager(val photo: PaintBoard, val begin: Pos, override val corouti
 	}
 
 	fun add(painter: Painter, delay: Long) {
-		internalTimer.add(Timer(painter, requestQueue, delay))
+		internalTimers.add(Timer(painter, requestQueue, delay))
 	}
 }
