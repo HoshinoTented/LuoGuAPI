@@ -8,6 +8,12 @@ import org.hoshino9.luogu.utils.asParams
 import org.hoshino9.luogu.utils.json
 import org.hoshino9.luogu.utils.referer
 
+/**
+ * 绘画者，最基础的单位
+ *
+ * @param clientId
+ * @param uid
+ */
 data class Painter(val clientId: String, val uid: Int) {
 	private val client by lazy { LuoGu(clientId, uid) }
 

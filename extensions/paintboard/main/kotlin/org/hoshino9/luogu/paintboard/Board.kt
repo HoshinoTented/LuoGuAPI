@@ -5,6 +5,12 @@ import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.utils.emptyClient
 import java.awt.image.BufferedImage
 
+/**
+ * 绘板数据类
+ *
+ * @param height 高度
+ * @param width 宽度
+ */
 data class Board(val height: Int, val width: Int) {
 	val board: Array<Array<Int?>> = Array(height) {
 		Array(width) {
@@ -21,6 +27,9 @@ data class Board(val height: Int, val width: Int) {
 	}
 }
 
+/**
+ * 获取洛谷绘板
+ */
 suspend fun paintBoard(): Board {
 	val lines = emptyClient.get<String>("$baseUrl/paintBoard/board").lines().dropLast(1)
 	val board = Board(400, 800)
@@ -35,7 +44,9 @@ suspend fun paintBoard(): Board {
 	return board
 }
 
-
+/**
+ * 将绘板转化为 BufferedImage
+ */
 val Board.image: BufferedImage
 	get() {
 		val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)

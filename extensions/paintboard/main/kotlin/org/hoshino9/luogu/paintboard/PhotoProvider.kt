@@ -1,10 +1,26 @@
 package org.hoshino9.luogu.paintboard
 
+/**
+ * 图片提供者
+ *
+ * [current] 提供当前绘画的相对坐标和颜色
+ *
+ * [next] 使提供者移动到下一个坐标
+ *
+ * 抽象出 PhotoProvider 可以支持各种绘画策略
+ */
 interface PhotoProvider {
 	fun current(): Pair<Pos, Int?>
 	fun next()
 }
 
+/**
+ * 默认绘画策略：顺序式
+ *
+ * 会沿着垂直方向进行绘画
+ *
+ * @param photo 目标图片
+ */
 class DefaultPhotoProvider(val photo: Board) : PhotoProvider {
 	private var offset = Pos(0, 0)
 	private val currentColor: Int?

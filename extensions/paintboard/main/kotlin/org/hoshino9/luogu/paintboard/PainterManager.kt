@@ -6,7 +6,17 @@ import java.util.Queue
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-data class Timer(val painter: Painter, val queue: Queue<Timer>, val scope: CoroutineScope = GlobalScope, val delay: Long) {
+/**
+ * 计时器
+ *
+ * 每经过 [delay] 毫秒，就会向请求队列 [queue] 中添加计时器
+ *
+ * @param painter 当前计时器对应的绘画者
+ * @param queue 目标请求队列
+ * @param scope 协程域
+ * @param delay 延时，单位为毫秒
+ */
+data class Timer(val painter: Painter, private val queue: Queue<Timer>, val scope: CoroutineScope = GlobalScope, val delay: Long) {
 	private lateinit var timer: Job
 
 	init {
@@ -28,6 +38,14 @@ data class Timer(val painter: Painter, val queue: Queue<Timer>, val scope: Corou
 	}
 }
 
+/**
+ * 绘画者管理器
+ *
+ * @param photoProvider 提供绘画的坐标和颜色
+ * @param begin 开始绘画的坐标
+ * @param coroutineContext 协程上下文
+ * @param boardProvider 提供全局绘板
+ */
 class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: suspend () -> Board) : CoroutineScope {
 	private val internalTimers: MutableList<Timer> = LinkedList()
 	private val internalRequestQueue: Queue<Timer> = LinkedList()
@@ -37,6 +55,11 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 	val timers: List<Timer> get() = internalTimers
 	val requestQueue: Collection<Timer> get() = internalRequestQueue
 
+	/**
+	 * 开始进行绘画
+	 *
+	 * 同一时间，同一 PainterManager 只能有同一个绘画线程
+	 */
 	fun paint() {
 		val job = internalJob
 
