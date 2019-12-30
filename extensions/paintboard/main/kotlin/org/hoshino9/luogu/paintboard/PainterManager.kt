@@ -34,17 +34,18 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 		return launch {
 			while (isActive) {
 				if (requestQueue.isNotEmpty()) {
-					val (pos, color) = photoProvider.current(begin)
+					val (pos, color) = photoProvider.current()
+					val currentPos = Pos(begin.x + pos.x, begin.y + pos.y)
 					val cur = color
 
 					if (cur == null) {
-						println("Skip empty color: $pos")
+						println("Skip empty color: $currentPos(offset: $pos)")
 						photoProvider.next()
 						continue
 					}
 
 					if (boardProvider().board[pos] == cur) {
-						println("Skip same color: $pos")
+						println("Skip same color: $currentPos(offset: $pos)")
 						photoProvider.next()
 						continue
 					}
@@ -52,7 +53,7 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 					val front = requestQueue.remove()
 
 					try {
-						println("${front.painter.uid} is painting: $pos with color: $cur")
+						println("${front.painter.uid} is painting: $currentPos(offset: $pos) with color: $cur")
 						val result = front.painter.paint(pos, cur)
 						photoProvider.next()
 						println("${front.painter.uid} is painted: $result")

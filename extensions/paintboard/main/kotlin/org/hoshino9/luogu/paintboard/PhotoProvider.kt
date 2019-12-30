@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.paintboard
 
 interface PhotoProvider {
-	fun current(begin: Pos): Pair<Pos, Int?>
+	fun current(): Pair<Pos, Int?>
 	fun next()
 }
 
@@ -24,8 +24,8 @@ class DefaultPhotoProvider(val photo: PaintBoard) : PhotoProvider {
 		}
 	}
 
-	override fun current(begin: Pos): Pair<Pos, Int?> {
-		return Pos(begin.x + offset.x, begin.y + offset.y) to currentColor
+	override fun current(): Pair<Pos, Int?> {
+		return offset to currentColor
 	}
 
 	@Synchronized
