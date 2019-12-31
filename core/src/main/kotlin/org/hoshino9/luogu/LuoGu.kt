@@ -40,6 +40,12 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 		}
 	}
 
+	final override val url: String = LuoGuUtils.baseUrl
+
+	init {
+		refresh()
+	}
+
 	val uid: Cookie
 		get() {
 			return runBlocking {
@@ -57,8 +63,6 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 				}
 			}
 		}
-
-	override val url: String = LuoGuUtils.baseUrl
 
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个

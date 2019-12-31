@@ -31,11 +31,11 @@ class DefaultPhotoProvider(val photo: Board) : PhotoProvider {
 	private fun nextPos() {
 		offset = Pos(offset.x + 1, offset.y)
 
-		if (photo.height == offset.x) {
+		if (photo.width == offset.x) {
 			offset = Pos(0, offset.y + 1)
 		}
 
-		if (photo.width == offset.y) {
+		if (photo.height == offset.y) {
 			offset = Pos(0, 0)
 		}
 	}

@@ -36,6 +36,7 @@ dependencies {
 
 	// others
 	compile("org.jsoup", "jsoup", "1.11.3")                // HTML parser
+	compile("ch.qos.logback:logback-classic:1.2.1")
 
 	// testing
 	testCompile(kotlin("test-junit"))

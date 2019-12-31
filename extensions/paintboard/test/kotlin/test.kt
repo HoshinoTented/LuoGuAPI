@@ -1,5 +1,6 @@
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.paintboard.*
 import java.io.File
 import java.util.Properties
@@ -9,58 +10,19 @@ const val paintDelay = 10010L
 
 fun repl(manager: PainterManager) {
 	while (true) {
-		val command = readLine()?.takeIf { it.isNotBlank() }?.split(' ') ?: continue
+		val commands = readLine()?.takeIf { it.isNotBlank() }?.split(' ') ?: return
+		val command = commands.first()
 
-		command.firstOrNull()?.let { cmd ->
-			when (cmd) {
-				"board" -> {
-					val path = command.getOrNull(1)
+		when (command) {
+			"board" -> {
+				println("Downloading...")
 
-					if (path == null) {
-						println("need output path.")
-					} else {
-
-						println("Printing paint board...")
-
-						runBlocking(Dispatchers.IO) {
-							ImageIO.write(paintBoard().image, "png", File(path))
-						}
-					}
+				runBlocking(Dispatchers.IO) {
+					ImageIO.write(manager.boardProvider.board().image, "png", File("test/resources/board.png"))
 				}
-
-				"add" -> {
-					val clientId = command.getOrNull(1)
-					val uid = command.getOrNull(2)?.toIntOrNull()
-
-					if (clientId == null || uid == null) {
-						println("client id or uid can not be null")
-					} else {
-						manager.add(Painter(clientId, uid), paintDelay)
-						println("added $uid")
-					}
-				}
-
-				"stop" -> {
-					manager.job?.cancel()
-
-					println("Stopping...")
-					return
-				}
-
-				"timer" -> {
-					manager.timers.joinToString(prefix = "[", postfix = "]") {
-						it.painter.uid.toString()
-					}.run(::println)
-				}
-
-				"queue" -> {
-					manager.requestQueue.joinToString(prefix = "[", postfix = "]") {
-						it.painter.uid.toString()
-					}.run(::println)
-				}
-
-				else -> println("Unknown command: $cmd")
 			}
+
+			else -> println("Unknown command: $command")
 		}
 	}
 }
@@ -80,10 +42,10 @@ fun main() {
 		}
 	}
 
-	val manager = PainterManager(DefaultPhotoProvider(board), Pos(0, 0), boardProvider = ::paintBoard)
+	val manager = PainterManager(DefaultPhotoProvider(board), Pos(100, 100), boardProvider = WebSocketBoardProvider(logger = null))
 
 	cookies.keys.forEach {
-		val painter = Painter(cookies[it].toString(), it.toString().toInt())
+		val painter = Painter(LuoGu(cookies[it].toString(), it.toString().toInt()).client, it.toString().toInt())
 
 		manager.add(painter, paintDelay)
 	}

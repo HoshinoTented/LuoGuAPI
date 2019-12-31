@@ -7,13 +7,14 @@ import java.awt.image.BufferedImage
 
 /**
  * 绘板数据类
+ * 注意：Board 是竖直方向的
  *
  * @param height 高度
  * @param width 宽度
  */
 data class Board(val height: Int, val width: Int) {
-	val board: Array<Array<Int?>> = Array(height) {
-		Array(width) {
+	val board: Array<Array<Int?>> = Array(width) {
+		Array(height) {
 			null as Int?
 		}
 	}
@@ -28,23 +29,6 @@ data class Board(val height: Int, val width: Int) {
 }
 
 /**
- * 获取洛谷绘板
- */
-suspend fun paintBoard(): Board {
-	val lines = emptyClient.get<String>("$baseUrl/paintBoard/board").lines().dropLast(1)
-	val board = Board(400, 800)
-
-	lines.forEachIndexed { x, line ->
-		line.forEachIndexed { y, color ->
-			val index = color.toString().toInt(32)
-			board.board[y][x] = index
-		}
-	}
-
-	return board
-}
-
-/**
  * 将绘板转化为 BufferedImage
  */
 val Board.image: BufferedImage
@@ -53,7 +37,7 @@ val Board.image: BufferedImage
 
 		board.forEachIndexed { x, line ->
 			line.forEachIndexed inner@{ y, color ->
-				image.setRGB(y, x, colors[color ?: return@inner].toRGB)
+				image.setRGB(x, y, colors[color ?: return@inner].toRGB)
 			}
 		}
 

@@ -29,7 +29,7 @@ data class Timer(val painter: Painter, private val queue: Queue<Timer>, val scop
 
 			queue.add(this@Timer)
 
-			println("${painter.uid} is ready.")
+			println("${painter.id} is ready.")
 		}
 	}
 
@@ -46,7 +46,7 @@ data class Timer(val painter: Painter, private val queue: Queue<Timer>, val scop
  * @param coroutineContext 协程上下文
  * @param boardProvider 提供全局绘板
  */
-class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: suspend () -> Board) : CoroutineScope {
+class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: BoardProvider) : CoroutineScope {
 	private val internalTimers: MutableList<Timer> = LinkedList()
 	private val internalRequestQueue: Queue<Timer> = LinkedList()
 	private var internalJob: Job? = null
@@ -60,13 +60,14 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 	 *
 	 * 同一时间，同一 PainterManager 只能有同一个绘画线程
 	 */
+	@Synchronized
 	fun paint() {
 		val job = internalJob
 
 		if (job != null && job.isActive) throw IllegalStateException("Job is working.")
 
 		internalJob = launch {
-			while (isActive) {
+			loop@ while (isActive) {
 				if (internalRequestQueue.isNotEmpty()) {
 					val (pos, color) = photoProvider.current()
 					val currentPos = Pos(begin.x + pos.x, begin.y + pos.y)
@@ -77,7 +78,7 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 						continue
 					}
 
-					if (boardProvider()[pos] == color) {
+					if (boardProvider.board()[currentPos] == color) {
 						println("Skip same color: $currentPos(offset: $pos)")
 						photoProvider.next()
 						continue
@@ -86,21 +87,23 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 					val current = internalRequestQueue.remove()
 
 					try {
-						println("${current.painter.uid} is painting: $currentPos(offset: $pos) with color: $color")
+						println("${current.painter.id} is painting: $currentPos(offset: $pos) with color: $color")
 
-						val result = current.painter.paint(pos, color)
+						val result = current.painter.paint(currentPos, color)
 
 						photoProvider.next()
 
-						println("${current.painter.uid} is painted: $result")
+						println("${current.painter.id} is painted: $result")
 					} catch (e: Exception) {
-						println("${current.painter.uid} paint failed: ${e.message}")
+						println("${current.painter.id} paint failed: ${e.message}")
 
-						if (e.message == "没有登录") {
-							println("removed no login: ${current.painter.uid}")
-							internalTimers.remove(current)
+						when (e.message) {
+							"没有登录" -> {
+								println("removed no login: ${current.painter.id}")
+								internalTimers.remove(current)
 
-							continue
+								continue@loop
+							}
 						}
 					}
 
