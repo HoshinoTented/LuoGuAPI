@@ -33,7 +33,7 @@ class DefaultBoardProvider(val url: String = "$baseUrl/paintBoard/board") : Boar
 	}
 }
 
-class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val boardUrl: String = "$baseUrl/paintBoard/board", val scope: CoroutineScope = GlobalScope, val logger: PrintStream? = System.out) : BoardProvider {
+class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val boardUrl: String = "$baseUrl/paintBoard/board", val scope: CoroutineScope = GlobalScope) : BoardProvider {
 	companion object {
 		const val message = """{ "type": "join_channel", "channel": "paintboard", "channel_param": "" }"""
 	}
@@ -41,7 +41,8 @@ class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val
 	private val paintBoard: Board = runBlocking(scope.coroutineContext) {
 		DefaultBoardProvider(boardUrl).board()
 	}
-	var job: Job
+
+	val job: Job
 
 	init {
 		job = scope.launch {
@@ -61,7 +62,6 @@ class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val
 								val pos = Pos(x, y)
 
 								paintBoard[pos] = color
-								logger?.println("Update board: $pos with color $color")
 							}
 						}
 					}

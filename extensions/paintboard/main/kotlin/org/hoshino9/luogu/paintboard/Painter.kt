@@ -28,15 +28,9 @@ data class Painter(val client: HttpClient, val id: Int, val url: String = "$base
 				method = HttpMethod.Post
 				referer("paintBoard")
 				body = params.asParams
-			}.receive<String>().let { str ->
-				json(str).let {
-					if (it["status"]?.asInt != 200) {
-						throw IllegalStateException(str)
-					} else str
-				}
-			}
+			}.receive()
 		} catch (e: ClientRequestException) {
-			throw IllegalStateException(e.response.strData())
+			throw IllegalStateException(json(e.response.strData())["data"]?.asString)
 		}
 	}
 }

@@ -1,7 +1,10 @@
+import io.ktor.http.Cookie
+import io.ktor.http.Url
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.paintboard.*
+import org.hoshino9.luogu.utils.specifiedCookieClient
 import java.io.File
 import java.util.Properties
 import javax.imageio.ImageIO
@@ -42,7 +45,7 @@ fun main() {
 		}
 	}
 
-	val manager = PainterManager(DefaultPhotoProvider(board), Pos(100, 100), boardProvider = WebSocketBoardProvider(logger = null))
+	val manager = PainterManager(DefaultPhotoProvider(board), Pos(100, 100), boardProvider = WebSocketBoardProvider())
 
 	cookies.keys.forEach {
 		val painter = Painter(LuoGu(cookies[it].toString(), it.toString().toInt()).client, it.toString().toInt())
