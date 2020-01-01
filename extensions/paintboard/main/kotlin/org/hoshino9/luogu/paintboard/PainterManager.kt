@@ -49,9 +49,10 @@ data class Timer(val painter: Painter, private val queue: Queue<Timer>, val scop
 class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val boardProvider: BoardProvider) : CoroutineScope {
 	private val internalTimers: MutableList<Timer> = LinkedList()
 	private val internalRequestQueue: Queue<Timer> = LinkedList()
-	private var internalJob: Job? = null
 
-	val job: Job? get() = internalJob
+	var job: Job? = null
+		private set
+
 	val timers: List<Timer> get() = internalTimers
 	val requestQueue: Collection<Timer> get() = internalRequestQueue
 
@@ -62,11 +63,11 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 	 */
 	@Synchronized
 	fun paint() {
-		val job = internalJob
+		val job = this.job
 
 		if (job != null && job.isActive) throw IllegalStateException("Job is working.")
 
-		internalJob = launch {
+		this.job = launch {
 			loop@ while (isActive) {
 				if (internalRequestQueue.isNotEmpty()) {
 					val (pos, color) = photoProvider.current()

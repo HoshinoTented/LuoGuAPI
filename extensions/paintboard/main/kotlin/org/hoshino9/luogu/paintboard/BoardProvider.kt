@@ -5,21 +5,26 @@ import io.ktor.client.request.get
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
+import kotlinx.atomicfu.AtomicRef
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import org.hoshino9.luogu.LuoGuUtils
 import org.hoshino9.luogu.LuoGuUtils.baseUrl
 import org.hoshino9.luogu.utils.delegate
 import org.hoshino9.luogu.utils.emptyClient
 import org.hoshino9.luogu.utils.json
 import java.io.PrintStream
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 interface BoardProvider {
 	suspend fun board(): Board
 }
 
-class DefaultBoardProvider(val url: String = "$baseUrl/paintBoard/board") : BoardProvider {
+object DefaultBoardProvider : BoardProvider {
 	override suspend fun board(): Board {
-		val lines = emptyClient.get<String>(url).lines().dropLast(1)
+		val lines = emptyClient.use { it.get<String>(boardApi).lines().dropLast(1) }
 		val board = Board(400, 800)
 
 		lines.forEachIndexed { x, line ->
@@ -33,20 +38,18 @@ class DefaultBoardProvider(val url: String = "$baseUrl/paintBoard/board") : Boar
 	}
 }
 
-class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val boardUrl: String = "$baseUrl/paintBoard/board", val scope: CoroutineScope = GlobalScope) : BoardProvider {
+class WebSocketBoardProvider(override val coroutineContext: CoroutineContext = EmptyCoroutineContext) : BoardProvider, CoroutineScope {
 	companion object {
 		const val message = """{ "type": "join_channel", "channel": "paintboard", "channel_param": "" }"""
 	}
 
-	private val paintBoard: Board = runBlocking(scope.coroutineContext) {
-		DefaultBoardProvider(boardUrl).board()
-	}
+	private var paintBoard: AtomicRef<Board?> = atomic(null)
 
 	val job: Job
 
 	init {
-		job = scope.launch {
-			emptyClient.ws(wsUrl) {
+		job = launch {
+			emptyClient.ws(boardWsApi) {
 				send(message)
 
 				for (frame in incoming) {
@@ -61,8 +64,12 @@ class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val
 
 								val pos = Pos(x, y)
 
-								paintBoard[pos] = color
+								paintBoard.value?.set(pos, color)
+							} else if (type == "result") {
+								paintBoard.value = DefaultBoardProvider.board()
 							}
+
+							Unit
 						}
 					}
 				}
@@ -71,6 +78,9 @@ class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val
 	}
 
 	override suspend fun board(): Board {
-		return paintBoard
+		while (paintBoard.value == null) {
+		}
+
+		return paintBoard.value !!
 	}
 }

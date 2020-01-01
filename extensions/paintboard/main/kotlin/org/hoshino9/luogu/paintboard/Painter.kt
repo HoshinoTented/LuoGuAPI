@@ -15,7 +15,7 @@ import org.hoshino9.luogu.utils.*
 /**
  * 绘画者，最基础的单位
  */
-data class Painter(val client: HttpClient, val id: Int, val url: String = "$baseUrl/paintBoard/paint") {
+data class Painter(val client: HttpClient, val id: Int) {
 	suspend fun paint(pos: Pos, color: Int): String {
 		val params = JsonObject().apply {
 			addProperty("x", pos.x)
@@ -24,7 +24,7 @@ data class Painter(val client: HttpClient, val id: Int, val url: String = "$base
 		}
 
 		try {
-			return client.request<HttpResponse>(url) {
+			return client.request<HttpResponse>(paintApi) {
 				method = HttpMethod.Post
 				referer("paintBoard")
 				body = params.asParams
