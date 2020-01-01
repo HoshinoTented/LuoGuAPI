@@ -23,9 +23,9 @@ import org.jsoup.Jsoup
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
+class LuoGu(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	companion object {
-		@JvmName("newInstance")
+		@JvmName("fromCookie")
 		operator fun invoke(clientId: String, uid: Int): LuoGu {
 			val url = Url(baseUrl)
 
@@ -40,7 +40,7 @@ open class LuoGu @JvmOverloads constructor(client: HttpClient = defaultClient) :
 		}
 	}
 
-	final override val url: String = LuoGuUtils.baseUrl
+	override val url: String = baseUrl
 
 	init {
 		refresh()

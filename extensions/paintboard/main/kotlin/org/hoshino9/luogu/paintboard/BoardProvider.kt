@@ -52,9 +52,9 @@ class WebSocketBoardProvider(val wsUrl: String = "wss://ws.luogu.com.cn/ws", val
 				for (frame in incoming) {
 					if (frame is Frame.Text) {
 						json(frame.readText()).delegate.let {
-							val _ws_type: String by it
+							val type: String by it
 
-							if (_ws_type == "server_broadcast") {
+							if (type == "paintboard_update") {
 								val x: Int by it
 								val y: Int by it
 								val color: Int by it
