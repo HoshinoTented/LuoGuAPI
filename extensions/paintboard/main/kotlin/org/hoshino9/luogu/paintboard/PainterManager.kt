@@ -16,7 +16,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * @param scope 协程域
  * @param delay 延时，单位为毫秒
  */
-data class Timer(val painter: Painter, private val queue: Queue<Timer>, val scope: CoroutineScope = GlobalScope, val delay: Long) {
+data class Timer(val painter: Painter, private val queue: Queue<Timer>, override val coroutineContext: CoroutineContext = EmptyCoroutineContext, val delay: Long) : CoroutineScope {
 	private lateinit var timer: Job
 
 	init {
@@ -24,7 +24,7 @@ data class Timer(val painter: Painter, private val queue: Queue<Timer>, val scop
 	}
 
 	fun resetTimer() {
-		timer = scope.launch {
+		timer = launch {
 			delay(this@Timer.delay)
 
 			queue.add(this@Timer)
@@ -91,11 +91,10 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 						println("${current.painter.id} is painting: $currentPos(offset: $pos) with color: $color")
 
 						val result = current.painter.paint(currentPos, color)
-
 						photoProvider.next()
 
 						println("${current.painter.id} is painted: $result")
-					} catch (e: Exception) {
+					} catch (e: IllegalStateException) {
 						println("${current.painter.id} paint failed: ${e.message}")
 
 						when (e.message) {
@@ -115,6 +114,6 @@ class PainterManager(val photoProvider: PhotoProvider, val begin: Pos, override 
 	}
 
 	fun add(painter: Painter, delay: Long) {
-		internalTimers.add(Timer(painter, internalRequestQueue, this, delay))
+		internalTimers.add(Timer(painter, internalRequestQueue, coroutineContext, delay))
 	}
 }

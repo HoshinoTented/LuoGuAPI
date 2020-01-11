@@ -8,38 +8,39 @@ import kotlin.reflect.KProperty
 
 class JsonDelegate(val original: JsonObject, val context: JsonDeserializationContext? = null) {
 	/**
-	 * @throws NoSuchElementException will throw a exception when the element is not exists
+	 * @throws NoSuchElementException will be thrown when the element is not exists
 	 */
 	operator fun <T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		val obj: JsonElement = original[property.name] ?: throw NoSuchElementException(property.name)
-		val type = property.returnType.classifier as KClass<*>
+		val returnType = property.returnType
+		val type = returnType.classifier as KClass<*>
 
-		try {
-			return (if (obj is JsonNull) null else when (type) {
-				JsonObject::class -> obj.asJsonObject
-				JsonArray::class -> obj.asJsonArray
-				JsonPrimitive::class -> obj.asJsonPrimitive
-
-				String::class -> obj.asString
-				Boolean::class -> obj.asBoolean
-				Char::class -> obj.asCharacter
-
-				Byte::class -> obj.asByte
-				Short::class -> obj.asShort
-				Int::class -> obj.asInt
-				Long::class -> obj.asLong
-				Float::class -> obj.asFloat
-				Double::class -> obj.asDouble
-
-				BigInteger::class -> obj.asBigInteger
-				BigDecimal::class -> obj.asBigDecimal
-
-				else -> (context ?: throw IllegalArgumentException("Can not cast ${property.name} to $type"))
-						.deserialize(obj, type.java)
-			}) as T
-		} catch (e: TypeCastException) {
-			throw TypeCastException("${property.name}(null) cannot be cast to non-null type $type")
+		if (obj.isJsonNull) {
+			if (returnType.isMarkedNullable) return null as T else throw TypeCastException("${property.name}(null) cannot be cast to non-null type $type")
 		}
+
+		return when (type) {
+			JsonObject::class -> obj.asJsonObject
+			JsonArray::class -> obj.asJsonArray
+			JsonPrimitive::class -> obj.asJsonPrimitive
+
+			String::class -> obj.asString
+			Boolean::class -> obj.asBoolean
+			Char::class -> obj.asCharacter
+
+			Byte::class -> obj.asByte
+			Short::class -> obj.asShort
+			Int::class -> obj.asInt
+			Long::class -> obj.asLong
+			Float::class -> obj.asFloat
+			Double::class -> obj.asDouble
+
+			BigInteger::class -> obj.asBigInteger
+			BigDecimal::class -> obj.asBigDecimal
+
+			else -> (context ?: throw IllegalArgumentException("Can not cast ${property.name} to $type"))
+					.deserialize(obj, type.java)
+		} as T
 	}
 }
 

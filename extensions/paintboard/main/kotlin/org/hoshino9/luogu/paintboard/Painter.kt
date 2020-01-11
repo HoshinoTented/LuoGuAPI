@@ -24,8 +24,7 @@ data class Painter(val client: HttpClient, val id: Int) {
 		}
 
 		try {
-			return client.request<HttpResponse>(paintApi) {
-				method = HttpMethod.Post
+			return client.post<HttpResponse>(paintApi) {
 				referer("paintBoard")
 				body = params.asParams
 			}.receive()

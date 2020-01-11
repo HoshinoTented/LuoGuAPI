@@ -3,10 +3,11 @@ package org.hoshino9.luogu.record
 import io.ktor.client.features.websocket.ws
 import io.ktor.http.cio.websocket.*
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.LuoGuUtils
 
 abstract class AbstractRecord : Record {
 	override suspend fun listen(client: LuoGu, listener: suspend WebSocketSession.() -> Unit) {
-		client.client.ws("wss://ws.luogu.com.cn/ws") {
+		client.client.ws(LuoGuUtils.wsUrl) {
 			send(Record.message(rid))
 			listener()
 		}

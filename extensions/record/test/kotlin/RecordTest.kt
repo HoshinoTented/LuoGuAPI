@@ -26,18 +26,15 @@ class RecordTest : BaseTest() {
 			val job = launch {
 				try {
 					// luogu.postSolution(Solution("P1001", Solution.Language.Haskell.ordinal, "main = putStrLn \"Hello world!\""))
-					Record("28862889")
-							.listen(luogu) {
-								while (true) {
-									val frame = incoming.receive()
+					Record("28862889").listen(luogu) {
+						for (frame in incoming) {
+							if (frame is Frame.Text) {
+								val text = frame.readText()
 
-									if (frame is Frame.Text) {
-										val text = frame.readText()
+								if ("heartbeat" in text) break
 
-										if ("heartbeat" in text) break
-
-										println(text)
-									}
+								println(text)
+							}
 						}
 					}
 				} catch (e: ClientRequestException) {
