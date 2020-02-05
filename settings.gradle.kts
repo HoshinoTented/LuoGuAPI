@@ -1,6 +1,6 @@
 rootProject.name = "luoguapi"
 
-include(":extensions", ":core")
+include(":extensions", ":core", ":demo")
 
 val plugins = listOf(
 		"contest"
@@ -13,7 +13,15 @@ val plugins = listOf(
 	":extensions:$it"
 }.toTypedArray()
 
+val demos = listOf(
+		"core",
+		"submit"
+).map {
+	":demo:$it-demo"
+}.toTypedArray()
+
 include(*plugins)
+include(*demos)
 
 pluginManagement {
 	repositories {
