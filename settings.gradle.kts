@@ -15,7 +15,8 @@ val plugins = listOf(
 
 val demos = listOf(
 		"core",
-		"submit"
+		"submit",
+		"problem"
 ).map {
 	":demo:$it-demo"
 }.toTypedArray()
