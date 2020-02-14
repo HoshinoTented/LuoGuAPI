@@ -7,7 +7,7 @@ plugins {
 	id("com.github.johnrengelman.shadow") version "5.2.0" apply false
 	java
 	`maven-publish`
-	id("com.jfrog.bintray") version "1.7.3"
+	id("com.jfrog.bintray") version "1.8.4"
 }
 
 
@@ -23,10 +23,13 @@ allprojects {
 		plugin("maven")
 		plugin("kotlin")
 		plugin("com.github.johnrengelman.shadow")
+		plugin("java")
+		plugin("maven-publish")
+		plugin("com.jfrog.bintray")
 	}
 
 	group = "org.hoshino9"
-	version = "0.0.8"
+	version = "0.0.9"
 
 	repositories {
 		if (isCI) jcenter() else maven("http://maven.aliyun.com/nexus/content/groups/public/")
@@ -40,25 +43,22 @@ allprojects {
 	artifacts {
 		add("archives", sourcesJar)
 	}
-}
-
-subprojects {
-	apply {
-		plugin("maven")
-		plugin("java")
-		plugin("maven-publish")
-		plugin("com.jfrog.bintray")
-	}
 
 	bintray {
-		user = "ice1000"
-		key = findProperty("key").toString()
-		setConfigurations("archives")
+		val bintray_key: String? by rootProject.extra
+
+		user = "hoshinotented"
+		key = bintray_key
+		publish = true
+
+		setPublications("maven")
+
 		pkg.apply {
 			name = rootProject.name
-			repo = "ice1000"
+			repo = "hoshino9"
 			githubRepo = "HoshinoTented/LuoGuAPI"
 			publicDownloadNumbers = true
+			setLicenses("MIT")
 			vcsUrl = "https://github.com/HoshinoTented/LuoGuAPI.git"
 			version.apply {
 				vcsTag = "${project.version}"

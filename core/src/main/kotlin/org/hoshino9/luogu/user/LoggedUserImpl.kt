@@ -63,3 +63,6 @@ suspend fun LuoGu.doFollow(userId: Int, isFollow: Boolean = true) {
 		}.receive<String>()
 	}
 }
+
+suspend fun LuoGu.follow(userId: Int) = doFollow(userId, true)
+suspend fun LuoGu.unfollow(userId: Int) = doFollow(userId, false)

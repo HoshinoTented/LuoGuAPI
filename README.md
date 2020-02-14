@@ -1,13 +1,7 @@
 [![Join the chat at https://gitter.im/LuoGuAPI/Lobby](https://badges.gitter.im/LuoGuAPI/Lobby.svg)](https://gitter.im/LuoGuAPI/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![](https://jitpack.io/v/HoshinoTented/LuoGuAPI/month.svg)][jitpack]
 [![Jitpack](https://jitpack.io/v/HoshinoTented/LuoGuAPI.svg)][jitpack]
-[![](https://img.shields.io/bintray/v/ice1000/ice1000/LuoGuAPI.svg)](https://bintray.com/ice1000/ice1000/LuoGuAPI)
-
-# Note
-[#52](https://github.com/HoshinoTented/LuoGuAPI/issues/52)  
-本项目不再添加新功能，仅维护现有功能，直到洛谷开放api，就 archive 此项目
-
-如果洛谷表明短时间内不会开放api，则此项目将继续添加新功能
+[![](https://img.shields.io/bintray/v/hoshinotented/hoshino9/luoguapi.svg)](https://bintray.com/hoshinotented/hoshino9/luoguapi)
 
 # LuoGuAPI
 [**你谷**](https://www.luogu.org) 的api
@@ -24,12 +18,24 @@ AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/l66p8yqgxg
 
 # Usage
 
-First, add `jcenter` to your maven repository list.
+First, add `https://dl.bintray.com/hoshinotented/hoshino9` to your maven repository list.
+
+Like this:
+
+```groovy
+repositories {
+    maven { url = 'https://dl.bintray.com/hoshinotented/hoshino9' }
+}
+```
 
 ## Gradle
 
 ```groovy
-compile 'org.hoshino9:[submodule name]:0.0.2'
+compile 'org.hoshino9:[submodule name]:[version]'
+```
+
+```kotlin
+compile("org.hoshino9:luoguapi-[module name]:[version]")
 ```
 
 ## Maven
@@ -38,7 +44,7 @@ compile 'org.hoshino9:[submodule name]:0.0.2'
 <dependency>
   <groupId>org.hoshino9</groupId>
   <artifactId>[submodule name]</artifactId>
-  <version>0.0.2</version>
+  <version>[versioon]</version>
   <type>pom</type>
 </dependency>
 ```

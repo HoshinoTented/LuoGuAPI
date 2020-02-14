@@ -8,7 +8,6 @@ allprojects {
 			src.configure {
 				withConvention(KotlinSourceSet::class) {
 					kotlin.srcDir("$name/kotlin")
-
 				}
 
 				resources.srcDir("$name/resources")
