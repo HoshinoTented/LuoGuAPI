@@ -5,10 +5,10 @@ import java.util.Properties
 
 suspend fun main() {
 	val properties = Properties().apply {
-		load(ClassLoader.getSystemResourceAsStream("user.properties"))
+		load(File(rootPath).resolve("user.properties").inputStream())
 	}
 
-	val username: String by properties
+	val account: String by properties
 	val password: String by properties
 
 	val lg = LuoGu()
@@ -22,7 +22,7 @@ suspend fun main() {
 
 	val code = readLine() !!
 
-	lg.login(username, password, code)
+	lg.login(account, password, code)
 
 	println("Cookies: ${lg.clientId.value}")
 }

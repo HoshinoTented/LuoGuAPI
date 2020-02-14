@@ -10,9 +10,9 @@ import java.util.Properties
 
 abstract class BaseTest {
 	companion object {
-		val resRoot = Paths.get(rootPath, "core", "src", "main", "resources")
-		val verifyPath by lazy { resRoot.resolve("verify.png") }
-		val configPath by lazy { resRoot.resolve("user.properties") }
+		val root = Paths.get(rootPath)
+		val verifyPath by lazy { root.resolve("verify.png") }
+		val configPath by lazy { root.resolve("user.properties") }
 
 		/**
 		 * 请将测试的工作目录设置为项目的根目录

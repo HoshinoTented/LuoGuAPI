@@ -31,7 +31,7 @@ repositories {
 ## Gradle
 
 ```groovy
-compile 'org.hoshino9:[submodule name]:[version]'
+compile 'org.hoshino9:luoguapi-[submodule name]:[version]'
 ```
 
 ```kotlin

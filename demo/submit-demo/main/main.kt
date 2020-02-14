@@ -6,10 +6,11 @@ import org.hoshino9.luogu.problem.ProblemPage
 import org.hoshino9.luogu.record.Record
 import org.hoshino9.luogu.record.Solution
 import org.hoshino9.luogu.record.postSolution
+import org.hoshino9.luogu.test.BaseTest
 import kotlin.system.exitProcess
 
 suspend fun main() {
-	val lg = LuoGu("a3fada2e56585c60211d6d5ee926f551ab7d861f", "124166".toInt())
+	val lg = object : BaseTest() {}.luogu
 	val problem = ProblemPage("P1001", lg.client).problem
 
 	println(problem)
