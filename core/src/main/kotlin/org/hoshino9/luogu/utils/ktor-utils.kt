@@ -85,7 +85,7 @@ suspend inline fun HttpClient.apiGet(url: String, block: HttpRequestBuilder.() -
 suspend inline fun LuoGu.apiPost(url: String, block: HttpRequestBuilder.() -> Unit = {}): HttpResponse {
 	return client.request("$baseUrl/$url") {
 		method = HttpMethod.Post
-		headers.append("x-csrf-token", csrfToken)
+		headers.append("x-csrf-token", csrfToken())
 		block()
 	}
 }

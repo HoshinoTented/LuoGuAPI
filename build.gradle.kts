@@ -29,7 +29,7 @@ allprojects {
 	}
 
 	group = "org.hoshino9"
-	version = "0.1.0"
+	version = "0.0.9"
 
 	repositories {
 		if (isCI) jcenter() else maven("http://maven.aliyun.com/nexus/content/groups/public/")

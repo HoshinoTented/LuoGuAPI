@@ -23,7 +23,7 @@ import org.jsoup.Jsoup
  * **你谷**客户端类
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class LuoGu(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
+class LuoGu constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	companion object {
 		@JvmName("fromCookie")
 		operator fun invoke(clientId: String, uid: Int): LuoGu {
@@ -43,7 +43,9 @@ class LuoGu(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	override val url: String = baseUrl
 
 	init {
-		refresh()
+		runBlocking {
+			refresh()
+		}
 	}
 
 	val uid: Cookie
@@ -67,12 +69,9 @@ class LuoGu(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	/**
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
-	val csrfToken: String
-		get() {
-			return runBlocking {
-				LuoGuUtils.csrfTokenFromPage(Jsoup.parse(client.get(url)))
-			}
-		}
+	suspend fun csrfToken(): String {
+		return LuoGuUtils.csrfTokenFromPage(Jsoup.parse(client.get(url)))
+	}
 
 	/**
 	 * 是否已登录
