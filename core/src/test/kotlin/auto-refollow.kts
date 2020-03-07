@@ -7,7 +7,7 @@ val luogu = LuoGu("your client id", "your uid".toInt())
 val currentUser = luogu.currentUser
 
 tailrec suspend fun refollow(page: Int) {
-	val list = currentUser.followers(page).list
+	val list = currentUser.followers(page).result
 	if (list.isEmpty()) return
 
 	list.forEach {

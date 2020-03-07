@@ -128,7 +128,6 @@ open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLu
 
 	val passedProblems: List<ProblemID> get() = problemList("passedProblems")
 	val submittedProblems: List<ProblemID> get() = problemList("submittedProblems")
-
-	fun followers(page: Int = 1): FollowList = FollowList(uid, page, FollowList.Type.Followers, client)
-	fun followings(page: Int = 1): FollowList = FollowList(uid, page, FollowList.Type.Followings, client)
+	suspend fun followers(page: Int = 1): FollowList = FollowList(uid, page, FollowList.Type.Followers, client)
+	suspend fun followings(page: Int = 1): FollowList = FollowList(uid, page, FollowList.Type.Followings, client)
 }

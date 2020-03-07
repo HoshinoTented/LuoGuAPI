@@ -41,24 +41,38 @@ data class FollowListUserImpl(override val blogAddress: String?, override val fo
 	}
 }
 
-class FollowList(val uid: Int, val page: Int, val type: Type, val client: HttpClient = emptyClient) {
+@JsonAdapter(FollowListImpl.Serializer::class)
+interface FollowList {
+	companion object;
+
 	enum class Type {
 		Followings,
 		Followers
 	}
 
-	private val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=$uid&page=$page"
-	private val data: JsonObject = runBlocking { json(client.get(url)) }
-	private val delegate = data.delegate
-	private val users: JsonObject by delegate
-	private val usersDelegate = users.delegate
-	private val result: JsonArray by usersDelegate
+	val result: List<FollowListUser>
+	val count: Int
+}
 
-	val count: Int by usersDelegate
-	val list: List<FollowListUser>
-		get() {
-			return result.map {
+data class FollowListImpl(override val result: List<FollowListUser>, override val count: Int) : FollowList {
+	companion object Serializer : Deserializable<FollowList>(FollowList::class), JsonDeserializer<FollowList> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext?): FollowList {
+			val users = json.asJsonObject
+			val usersDlgt = users.delegate
+			val count: Int by usersDlgt
+			val result: JsonArray by usersDlgt
+			val list = result.map {
 				FollowListUserImpl(it)
 			}
+
+			return FollowListImpl(list, count)
 		}
+	}
+}
+
+suspend operator fun FollowList.Companion.invoke(uid: Int, page: Int, type: FollowList.Type, client: HttpClient = emptyClient): FollowList {
+	val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=$uid&page=$page"
+	val data = json(client.get(url)).getAsJsonObject("users")
+
+	return FollowListImpl(data)
 }
