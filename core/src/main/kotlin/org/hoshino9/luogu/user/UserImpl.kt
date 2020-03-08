@@ -16,6 +16,7 @@ typealias UID = Int
 
 @JsonAdapter(BaseUserImpl.Serializer::class)
 interface BaseUser {
+	companion object;
 	/**
 	 * 用户 id
 	 */
@@ -75,6 +76,7 @@ data class BaseUserImpl(override val uid: Int, override val name: String, overri
 
 @JsonAdapter(UserImpl.Serializer::class)
 interface User : BaseUser {
+	companion object;
 	val ranking: Int?
 	val introduction: String
 }

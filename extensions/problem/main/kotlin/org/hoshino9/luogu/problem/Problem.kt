@@ -12,6 +12,7 @@ import org.hoshino9.luogu.utils.*
 
 @JsonAdapter(BaseProblemImpl.Serializer::class)
 interface BaseProblem {
+	companion object;
 	/**
 	 * 难度
 	 */
@@ -88,6 +89,7 @@ data class BaseProblemImpl(override val difficulty: Difficulty, override val pid
 
 @JsonAdapter(ProblemImpl.Serializer::class)
 interface Problem : BaseProblem {
+	companion object;
 	/**
 	 * 测试点限制
 	 */

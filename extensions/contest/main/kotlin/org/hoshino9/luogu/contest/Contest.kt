@@ -40,6 +40,8 @@ sealed class Host {
 
 @JsonAdapter(BaseContestImpl.Serializer::class)
 interface BaseContest {
+	companion object;
+
 	/**
 	 * 比赛 ID
 	 */
@@ -104,6 +106,8 @@ data class BaseContestImpl(override val id: Int, override val name: String, over
 
 @JsonAdapter(ContestImpl.Serializer::class)
 interface Contest : BaseContest {
+	companion object;
+
 	/**
 	 * 比赛介绍
 	 */

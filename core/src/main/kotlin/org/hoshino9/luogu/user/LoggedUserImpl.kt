@@ -11,11 +11,13 @@ import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
 interface BaseLoggedUser : BaseUser {
+	companion object;
 
 }
 
 @JsonAdapter(LoggedUserImpl.Serializer::class)
 interface LoggedUser : BaseLoggedUser, User {
+	companion object;
 
 }
 

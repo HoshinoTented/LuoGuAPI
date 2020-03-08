@@ -9,11 +9,13 @@ import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
 
 interface IBaseLoggedBaseProblem : BaseProblem {
+	companion object;
 	val accepted: Boolean
 }
 
 @JsonAdapter(LoggedBaseProblemImpl.Serializer::class)
 interface LoggedBaseProblem : IBaseLoggedBaseProblem {
+	companion object;
 	val submitted: Boolean
 }
 
@@ -34,6 +36,7 @@ data class LoggedBaseProblemImpl(override val accepted: Boolean, override val su
 
 @JsonAdapter(LoggedProblemImpl.Serializer::class)
 interface LoggedProblem : IBaseLoggedBaseProblem, Problem {
+	companion object;
 	val score: Int
 	val showScore: Boolean
 }

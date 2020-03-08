@@ -9,6 +9,7 @@ import java.lang.reflect.Type
 
 @JsonAdapter(BaseTeamImpl.Serializer::class)
 interface BaseTeam {
+	companion object;
 	val id: Int
 	val name: String
 }

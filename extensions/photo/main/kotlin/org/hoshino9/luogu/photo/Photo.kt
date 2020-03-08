@@ -11,6 +11,7 @@ import java.lang.reflect.Type
 
 @JsonAdapter(PhotoImpl.Serializer::class)
 interface Photo {
+	companion object;
 	val id: String
 	val size: Int
 	val date: String

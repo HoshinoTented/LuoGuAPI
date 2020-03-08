@@ -14,6 +14,7 @@ import java.lang.reflect.Type
 
 @JsonAdapter(PasteImpl.Serializer::class)
 interface Paste {
+	companion object;
 	val id: String
 	val user: BaseUser
 	val time: Long

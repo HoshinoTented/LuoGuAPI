@@ -9,6 +9,7 @@ val plugins = listOf(
 		, "paste"
 		, "problem"
 		, "record"
+		, "training"
 ).map {
 	":extensions:$it"
 }.toTypedArray()

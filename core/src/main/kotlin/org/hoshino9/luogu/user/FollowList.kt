@@ -10,6 +10,7 @@ import java.lang.reflect.Type
 
 @JsonAdapter(FollowListUserImpl.Serializer::class)
 interface FollowListUser : BaseUser {
+	companion object;
 	val blogAddress: String?
 	val followingCount: Int
 	val followerCount: Int
