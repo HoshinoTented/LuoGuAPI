@@ -27,5 +27,6 @@ val createExt = task("createExt") {
 		val name = project.properties["extName"] ?: throw Exception("Please give an extension name")
 
 		file("$name/main/kotlin/org/hoshino9/luogu/$name").mkdirs()
+		file("$name/test/kotlin").mkdirs())
 	}
 }
