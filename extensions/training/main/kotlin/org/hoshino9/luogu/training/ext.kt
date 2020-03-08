@@ -41,13 +41,13 @@ internal fun url(id: Int, mark: Boolean) = "api/training/${if (mark) "mark" else
 /**
  * 收藏题单
  */
-suspend fun LuoGu.markTraining(id: Int) {
-	apiPost(url(id, true)).receive<String>()
+suspend fun LuoGu.markTraining(id: Int): String {
+	return apiPost(url(id, true)).receive()
 }
 
 /**
  * 取消收藏题单
  */
-suspend fun LuoGu.unmarkTraining(id: Int) {
-	apiPost(url(id, false)).receive<String>()
+suspend fun LuoGu.unmarkTraining(id: Int): String {
+	return apiPost(url(id, false)).receive()
 }
