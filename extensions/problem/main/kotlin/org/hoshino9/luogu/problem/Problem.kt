@@ -52,9 +52,14 @@ interface BaseProblem {
 	 * 题目是否需要翻译
 	 */
 	val wantsTranslation: Boolean
+
+	/**
+	 * 题目满分
+	 */
+	val fullScore: Int
 }
 
-data class BaseProblemImpl(override val difficulty: Difficulty, override val pid: String, override val tags: List<LuoGuTag>, override val title: String, override val totalAccepted: Long, override val totalSubmit: Long, override val type: Type, override val wantsTranslation: Boolean) : BaseProblem {
+data class BaseProblemImpl(override val difficulty: Difficulty, override val pid: String, override val tags: List<LuoGuTag>, override val title: String, override val totalAccepted: Long, override val totalSubmit: Long, override val type: Type, override val wantsTranslation: Boolean, override val fullScore: Int) : BaseProblem {
 	companion object Serializer : Deserializable<BaseProblem>(BaseProblem::class), JsonDeserializer<BaseProblem> {
 		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): BaseProblem {
 			fun parseTotal(elem: JsonElement): Long {
@@ -81,8 +86,9 @@ data class BaseProblemImpl(override val difficulty: Difficulty, override val pid
 			val totalAccepted: Long = source["totalAccepted"].run(::parseTotal)
 			val totalSubmit: Long = source["totalSubmit"].run(::parseTotal)
 			val wantsTranslation: Boolean by delegate
+			val fullScore: Int by delegate
 
-			return BaseProblemImpl(difficulty, pid, tags, title, totalAccepted, totalSubmit, type, wantsTranslation)
+			return BaseProblemImpl(difficulty, pid, tags, title, totalAccepted, totalSubmit, type, wantsTranslation, fullScore)
 		}
 	}
 }
