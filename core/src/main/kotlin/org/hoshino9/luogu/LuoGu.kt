@@ -11,8 +11,8 @@ import io.ktor.client.request.get
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import kotlinx.coroutines.runBlocking
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
-import org.hoshino9.luogu.LuoGuUtils.domain
+import org.hoshino9.luogu.baseUrl
+import org.hoshino9.luogu.domain
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUserImpl
 import org.hoshino9.luogu.utils.*
@@ -70,7 +70,7 @@ class LuoGu constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPag
 	 * 一个奇怪的Token, 似乎十分重要, 大部分操作都需要这个
 	 */
 	suspend fun csrfToken(): String {
-		return LuoGuUtils.csrfTokenFromPage(Jsoup.parse(client.get(url)))
+		return csrfTokenFromPage(Jsoup.parse(client.get(url)))
 	}
 
 	/**

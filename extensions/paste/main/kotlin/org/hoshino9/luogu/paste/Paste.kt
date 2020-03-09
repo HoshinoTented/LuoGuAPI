@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.utils.Deserializable

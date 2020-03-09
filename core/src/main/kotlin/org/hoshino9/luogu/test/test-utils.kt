@@ -14,6 +14,7 @@ val Any.information: String
 		return when (this) {
 			is Byte, is Short, is Int, is Long, is Float, is Double, is Boolean, is Unit, is Char, is String -> toString()
 			is Collection<*> -> this.joinToString(prefix = "[", postfix = "]") { it?.information.toString() }
+			is Map<*, *> -> this.toString()
 			is HttpClient, is LuoGu -> toString()
 			else -> {
 				this::class.memberProperties.filter { it.visibility == KVisibility.PUBLIC }.joinToString(prefix = "{", postfix = "}") {

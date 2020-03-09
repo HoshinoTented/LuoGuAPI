@@ -4,7 +4,7 @@ import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 

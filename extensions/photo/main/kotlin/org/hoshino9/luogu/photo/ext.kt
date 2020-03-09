@@ -10,7 +10,7 @@ import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.*
 import java.io.File
 

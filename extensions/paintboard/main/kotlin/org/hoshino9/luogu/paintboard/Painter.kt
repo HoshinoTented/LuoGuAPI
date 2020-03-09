@@ -9,7 +9,7 @@ import io.ktor.client.request.request
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.HttpMethod
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.*
 
 /**

@@ -4,7 +4,7 @@ package org.hoshino9.luogu.user
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.team.BaseTeam
 import org.hoshino9.luogu.utils.*

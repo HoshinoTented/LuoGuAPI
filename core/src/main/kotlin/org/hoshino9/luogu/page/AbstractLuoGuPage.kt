@@ -9,7 +9,7 @@ import org.hoshino9.luogu.utils.apiGet
 import org.hoshino9.luogu.utils.emptyClient
 import org.hoshino9.luogu.utils.json
 
-abstract class AbstractLuoGuPage(open val client: HttpClient = emptyClient) : BaseLuoGuPage() {
+abstract class AbstractLuoGuPage(val client: HttpClient = emptyClient) : BaseLuoGuPage() {
 	val currentData: JsonObject get() = feInjection["currentData"].asJsonObject
 
 	override fun refresh() {

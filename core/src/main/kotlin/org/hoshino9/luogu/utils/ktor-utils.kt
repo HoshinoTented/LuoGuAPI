@@ -20,7 +20,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import java.net.URLEncoder
 
 private fun String.encode(): String {

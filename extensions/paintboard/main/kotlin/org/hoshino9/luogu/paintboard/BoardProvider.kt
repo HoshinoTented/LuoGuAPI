@@ -9,8 +9,7 @@ import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.hoshino9.luogu.LuoGuUtils
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.delegate
 import org.hoshino9.luogu.utils.emptyClient
 import org.hoshino9.luogu.utils.json

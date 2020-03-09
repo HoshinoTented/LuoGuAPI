@@ -2,7 +2,7 @@ package org.hoshino9.luogu.problem
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag

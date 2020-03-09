@@ -12,7 +12,7 @@ import org.hoshino9.luogu.utils.emptyClient
  * 提升 BaseTraining 到 TrainingInfo
  */
 fun BaseTraining.lift(client: HttpClient = emptyClient): TrainingInfo {
-	return if (this is TrainingInfo) this else TrainingInfoPage(id).info
+	return if (this is TrainingInfo) this else TrainingInfoPage(id, client).info
 }
 
 /**

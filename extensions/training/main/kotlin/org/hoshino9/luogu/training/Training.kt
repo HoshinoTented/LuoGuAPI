@@ -1,13 +1,11 @@
 package org.hoshino9.luogu.training
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
+import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.problem.BaseProblem
 import org.hoshino9.luogu.problem.BaseProblemImpl
 import org.hoshino9.luogu.user.BaseUser
+import org.hoshino9.luogu.user.ProblemID
 import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
@@ -65,6 +63,38 @@ data class BaseTrainingImpl(override val createTime: Long, override val deadline
 	}
 }
 
+@JsonAdapter(UserScoreImpl.Serializer::class)
+interface UserScore {
+	companion object;
+
+	/**
+	 * 总分
+	 */
+	val totalScore: Int
+
+	/**
+	 * 各个题目的得分
+	 */
+	val score: Map<ProblemID, Int?>
+}
+
+data class UserScoreImpl(override val totalScore: Int, override val score: Map<ProblemID, Int?>) : UserScore {
+	companion object Serializer : Deserializable<UserScore>(UserScore::class), JsonDeserializer<UserScore> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): UserScore {
+			val delegate = json.asJsonObject.delegate
+			val totalScore: Int by delegate
+			val score: JsonObject by delegate
+			val scoreMap = score.keySet().map {
+				val value = score[it]
+
+				it to if (value.isJsonNull) null else value.asInt
+			}.toMap()
+
+			return UserScoreImpl(totalScore, scoreMap)
+		}
+	}
+}
+
 @JsonAdapter(TrainingInfoImpl.Serializer::class)
 interface TrainingInfo : BaseTraining {
 	companion object;
@@ -84,14 +114,13 @@ interface TrainingInfo : BaseTraining {
 	 */
 	val problems: List<BaseProblem>
 
-// TODO userScore
-//	/**
-//	 * 用户
-//	 */
-//	val userScore: ???
+	/**
+	 * 用户
+	 */
+	val userScore: UserScore?
 }
 
-data class TrainingInfoImpl(override val description: String, override val marked: Boolean, override val problems: List<BaseProblem>, val base: BaseTraining) : TrainingInfo, BaseTraining by base {
+data class TrainingInfoImpl(override val description: String, override val marked: Boolean, override val problems: List<BaseProblem>, override val userScore: UserScore?, val base: BaseTraining) : TrainingInfo, BaseTraining by base {
 	companion object Serializer : Deserializable<TrainingInfo>(TrainingInfo::class), JsonDeserializer<TrainingInfo> {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): TrainingInfo {
 			val training = json.asJsonObject.delegate
@@ -99,12 +128,13 @@ data class TrainingInfoImpl(override val description: String, override val marke
 			val marked: Boolean by training
 			val problems: JsonArray by training
 			val base: BaseTraining = context.deserialize(json, BaseTraining::class.java)
+			val userScore: UserScore? = context.deserialize(training.original["userScore"], UserScore::class.java)
 
 			val processedProblems = problems.map {
 				BaseProblemImpl(it.asJsonObject["problem"].asJsonObject)
 			}
 
-			return TrainingInfoImpl(description, marked, processedProblems, base)
+			return TrainingInfoImpl(description, marked, processedProblems, userScore, base)
 		}
 	}
 }

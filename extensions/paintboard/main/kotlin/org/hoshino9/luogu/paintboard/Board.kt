@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.paintboard
 
 import io.ktor.client.request.get
-import org.hoshino9.luogu.LuoGuUtils.baseUrl
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.emptyClient
 import java.awt.image.BufferedImage
 
