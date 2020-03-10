@@ -6,9 +6,11 @@ import com.google.gson.JsonObject
 import io.ktor.client.call.receive
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.utils.apiPost
-import org.hoshino9.luogu.utils.asParams
-import org.hoshino9.luogu.utils.referer
+import org.hoshino9.luogu.utils.*
+
+fun BaseProblem.lift(client: HttpClient = emptyClient): Problem = run {
+	ProblemPageBuilder(pid, client).build().problem
+}
 
 /**
  * 题目列表
@@ -21,8 +23,8 @@ import org.hoshino9.luogu.utils.referer
  * @see ProblemSearchConfig
  */
 @JvmOverloads
-fun LuoGu.problemList(page: Int = 1, filter: ProblemSearchConfig = ProblemSearchConfig()): ProblemList {
-	return ProblemList(page, filter, client)
+fun LuoGu.problemList(page: Int = 1, filter: ProblemSearchConfig = ProblemSearchConfig()): ProblemListPage {
+	return ProblemListPageBuilder(page, filter, client).build()
 }
 
 internal suspend fun LuoGu.doMark(pid: String, mark: Boolean) {
