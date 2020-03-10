@@ -1,4 +1,5 @@
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.page.maxPageCount
 import org.hoshino9.luogu.problem.BaseProblem
 import org.hoshino9.luogu.problem.problemList
 

@@ -1,6 +1,10 @@
 package org.hoshino9.luogu.page
 
+import kotlin.math.ceil
+
 interface ListPage {
+	companion object;
+
 	/**
 	 * 搜索结果数量
 	 */
@@ -11,3 +15,8 @@ interface ListPage {
 	 */
 	val perPage: Int
 }
+
+val ListPage.maxPageCount
+	get() = run {
+		ceil(count.toDouble() / perPage).toInt()
+	}
