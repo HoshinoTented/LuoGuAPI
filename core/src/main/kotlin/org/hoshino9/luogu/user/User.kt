@@ -82,7 +82,7 @@ interface User : BaseUser {
 }
 
 data class UserImpl(override val ranking: Int?, override val introduction: String, val baseUser: BaseUser) : BaseUser by baseUser, User {
-	companion object Serializer : Deserializable<User>(User::class), JsonDeserializer<User> {
+	companion object Serializer : JsonDeserializable<User>(User::class) {
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): User {
 			val source = json.asJsonObject
 			val delegate = source.delegate

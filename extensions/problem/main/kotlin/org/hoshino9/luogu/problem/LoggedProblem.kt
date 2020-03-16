@@ -3,8 +3,10 @@ package org.hoshino9.luogu.problem
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.utils.Deserializable
+import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
 
@@ -54,5 +56,26 @@ data class LoggedProblemImpl(override val accepted: Boolean, override val score:
 
 			return LoggedProblemImpl(accepted, score, showScore, problem)
 		}
+	}
+}
+
+interface LoggedProblemPage : ProblemPage {
+	override val problem: LoggedProblem
+}
+
+data class LoggedProblemPageImpl(override val problem: LoggedProblem) : LoggedProblemPage {
+	companion object Serializer : Deserializable<LoggedProblemPage>(LoggedProblemPage::class), JsonDeserializer<LoggedProblemPage> {
+		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LoggedProblemPage = run {
+			val data = json.asJsonObject.delegate
+			val problem: JsonObject by data
+
+			LoggedProblemPageImpl(LoggedProblemImpl(problem))
+		}
+	}
+}
+
+class LoggedProblemPageBuilder(pid: String, client: HttpClient) : ProblemPageBuilder(pid, client) {
+	override fun build(): LoggedProblemPage = run {
+		LoggedProblemPageImpl(currentData)
 	}
 }

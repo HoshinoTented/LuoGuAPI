@@ -55,6 +55,8 @@ abstract class Deserializable<T : Any>(private val `class`: KClass<T>) {
 	}
 }
 
+abstract class JsonDeserializable<T : Any>(`class`: KClass<T>) : Deserializable<T>(`class`), JsonDeserializer<T>
+
 val JsonObject.delegate: JsonDelegate get() = delegateWith(null)
 fun JsonObject.delegateWith(context: JsonDeserializationContext?) = JsonDelegate(this, context)
 

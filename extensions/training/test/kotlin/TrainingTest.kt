@@ -1,7 +1,7 @@
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.test.BaseTest
 import org.hoshino9.luogu.test.printAllMember
-import org.hoshino9.luogu.training.TrainingListPage
-import org.hoshino9.luogu.training.lift
+import org.hoshino9.luogu.training.*
 import org.junit.Test
 
 class TrainingTest : BaseTest() {
@@ -13,6 +13,16 @@ class TrainingTest : BaseTest() {
 
 		val training = page.trainings.first().lift(page.client).apply {
 			printAllMember()
+		}
+	}
+
+	@Test
+	fun newTraining() {
+		runBlocking {
+			val id = luogu.newTraining(TrainingForm.PersonalPublic("123", "456"))
+			println(id)
+
+			luogu.editTrainingProblems(id, listOf("P1001", "P1002"))
 		}
 	}
 }

@@ -4,7 +4,7 @@ import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.page.Builder
+import org.hoshino9.luogu.page.PageBuilder
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.BaseUserImpl
@@ -202,7 +202,7 @@ interface ProblemPage {
 }
 
 data class ProblemPageImpl(override val problem: Problem) : ProblemPage {
-	companion object Serializer : Deserializable<ProblemPage>(ProblemPage::class), JsonDeserializer<ProblemPage> {
+	companion object Serializer : JsonDeserializable<ProblemPage>(ProblemPage::class) {
 		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): ProblemPage = run {
 			val data = json.asJsonObject.delegate
 			val problem: JsonObject by data
@@ -212,7 +212,7 @@ data class ProblemPageImpl(override val problem: Problem) : ProblemPage {
 	}
 }
 
-class ProblemPageBuilder(val pid: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client), Builder<ProblemPage> {
+open class ProblemPageBuilder(val pid: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client), PageBuilder<ProblemPage> {
 	override val url: String get() = "$baseUrl/problem/$pid"
 
 	override fun build(): ProblemPage = run {

@@ -115,7 +115,7 @@ interface TrainingInfo : BaseTraining {
 	val problems: List<BaseProblem>
 
 	/**
-	 * 用户
+	 * 用户分数
 	 */
 	val userScore: UserScore?
 }

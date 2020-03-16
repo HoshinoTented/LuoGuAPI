@@ -5,12 +5,10 @@ import org.hoshino9.luogu.problem.problemList
 
 fun main() {
 	val lg = LuoGu()
+	val max = lg.problemList().maxPageCount
 	val seq = sequence {
-		var i = 1
-
-		while (i <= lg.problemList().maxPageCount) {
-			yieldAll(lg.problemList(i).result)
-			i += 1
+		(1..max).forEach {
+			yieldAll(lg.problemList(it).result)
 		}
 	}
 

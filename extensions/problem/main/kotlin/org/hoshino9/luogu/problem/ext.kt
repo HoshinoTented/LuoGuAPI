@@ -9,14 +9,19 @@ import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.utils.*
 
 fun BaseProblem.lift(client: HttpClient = emptyClient): Problem = run {
-	ProblemPageBuilder(pid, client).build().problem
+	if (this is Problem) this
+	else ProblemPageBuilder(pid, client).build().problem
+}
+
+fun BaseProblem.liftToLogged(client: HttpClient = emptyClient): LoggedProblem = run {
+	if (this is LoggedProblem) this
+	else LoggedProblemPageBuilder(pid, client).build().problem
 }
 
 /**
  * 题目列表
  * @param page 页数, 默认为 **1**
  * @param filter 过滤器
- * @throws IllegalStatusCodeException
  * @return 返回题目列表
  *
  * @see Problem

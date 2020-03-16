@@ -26,7 +26,7 @@ fun LuoGu.officialTraining(page: Int = 1): TrainingListPage {
  * 用户题单
  */
 fun LuoGu.publicTraining(page: Int = 1): TrainingListPage {
-	return TrainingListPage(page, TrainingListPage.Type.Public, client)
+	return TrainingListPage(page, TrainingListPage.Type.Select, client)
 }
 
 /**

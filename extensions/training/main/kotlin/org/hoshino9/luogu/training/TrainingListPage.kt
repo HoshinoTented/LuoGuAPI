@@ -10,12 +10,12 @@ import org.hoshino9.luogu.utils.emptyClient
 class TrainingListPage(val page: Int = 1, val type: Type, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
 	enum class Type {
 		Official,
-		Public
+		Select,
 	}
 
 	override val url: String = "$baseUrl/training/list?type=${type.name.toLowerCase()}&page=$page"
 
-	val delegate = currentData["trainings"].asJsonObject.delegate
+	private val delegate = currentData["trainings"].asJsonObject.delegate
 	val count: Int by delegate
 	private val result: JsonArray by delegate
 

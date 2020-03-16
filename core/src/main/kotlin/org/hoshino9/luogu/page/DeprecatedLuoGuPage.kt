@@ -12,6 +12,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URLDecoder
 
+/**
+ * 过时洛谷页面抽象类，在非必要情况下不应该使用。
+ * 提供了 [refresh] 的默认实现。
+ */
 @Deprecated("Deprecated", ReplaceWith("AbstractLuoGuPage"))
 abstract class DeprecatedLuoGuPage(open val client: HttpClient = emptyClient) : BaseLuoGuPage() {
 	companion object {

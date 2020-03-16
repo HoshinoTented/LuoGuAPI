@@ -19,8 +19,14 @@ import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
 
 /**
- * # LuoGU
- * **你谷**客户端类
+ * # LuoGu
+ * **你谷**客户端类，目前仍然是 *过时页面*，等待洛谷官方更新。
+ *
+ * 洛谷代表了一个客户端，所有获取数据的函数都应该是 LuoGu 的扩展函数。
+ *
+ * ## 登陆
+ *
+ * [verifyCode] 用于获取验证码（验证码不仅仅用于登录）， [login] 则用于登录，需要验证码。
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class LuoGu constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {

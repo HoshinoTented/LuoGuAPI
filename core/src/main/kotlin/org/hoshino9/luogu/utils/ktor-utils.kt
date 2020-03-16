@@ -5,7 +5,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
-import io.ktor.client.features.feature
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.websocket.WebSockets
@@ -16,25 +15,13 @@ import io.ktor.content.TextContent
 import io.ktor.http.*
 import io.ktor.util.toByteArray
 import kotlinx.coroutines.runBlocking
-import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.baseUrl
-import java.net.URLEncoder
-
-private fun String.encode(): String {
-	return URLEncoder.encode(this, "UTF-8")
-}
 
 val JsonObject.asParams: TextContent
 	get() {
 		return TextContent(toString(), ContentType.Application.Json)
-	}
-
-val Iterable<Pair<String, String>>.asParams: TextContent
-	get() {
-		return TextContent(joinToString(separator = "&") { "${it.first.encode()}=${it.second.encode()}" }, ContentType.Application.FormUrlEncoded)
 	}
 
 fun HttpClientConfig<*>.emptyClientConfig() {
