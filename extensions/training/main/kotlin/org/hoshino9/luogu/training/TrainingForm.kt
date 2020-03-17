@@ -18,7 +18,13 @@ sealed class TrainingForm(val title: String, val description: String, val type: 
 		/**
 		 * @param deadline **秒级** 时间戳
 		 */
-		class GroupHomework(title: String, description: String, teamID: Int, val deadline: Long) : GroupForm(title, description, 4, teamID)
+		class GroupHomework(title: String, description: String, teamID: Int, val deadline: Long) : GroupForm(title, description, 4, teamID) {
+			override fun asJson(): JsonObject {
+				val sup = super.asJson()
+				sup.getAsJsonObject("settings").addProperty("deadline", deadline)
+				return sup
+			}
+		}
 
 		override fun asJson(): JsonObject {
 			return super.asJson().apply {
@@ -39,12 +45,20 @@ sealed class TrainingForm(val title: String, val description: String, val type: 
 	}
 }
 
-internal suspend fun LuoGu.modifyTraining(mode: String, form: TrainingForm): Int = run {
-	apiPost("api/training/$mode") {
+suspend fun LuoGu.newTraining(form: TrainingForm): Int = run {
+	apiPost("api/training/new") {
 		this.body = form.asJson().asParams
 		referer("")
 	}.receive<String>()
-			.apply(::println)
+			.run(::json)
+			.get("id").asInt
+}
+
+suspend fun LuoGu.editTraining(id: Int, form: TrainingForm): Int = run {
+	apiPost("api/training/editProblems/$id") {
+		this.body = form.asJson().asParams
+		referer("")
+	}.receive<String>()
 			.run(::json)
 			.get("id").asInt
 }
@@ -54,9 +68,6 @@ suspend fun LuoGu.deleteTraining(id: Int) {
 		referer("")
 	}.receive<String>()
 }
-
-suspend fun LuoGu.newTraining(form: TrainingForm): Int = modifyTraining("new", form)
-suspend fun LuoGu.editTraining(form: TrainingForm): Int = modifyTraining("edit", form)
 
 suspend fun LuoGu.editTrainingProblems(id: Int, problems: List<ProblemID>) {
 	apiPost("api/training/editProblems/$id") {
