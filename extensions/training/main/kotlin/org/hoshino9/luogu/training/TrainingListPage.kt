@@ -5,10 +5,10 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonElement
 import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.request.get
-import javafx.util.Builder
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.page.ListPage
+import org.hoshino9.luogu.page.PageBuilder
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
@@ -35,7 +35,7 @@ data class TrainingListPageImpl(override val result: List<BaseTraining>, overrid
 }
 
 class TrainingListPageBuilder(val page: Int = 1, val type: Type, client: HttpClient = emptyClient)
-	: AbstractLuoGuPage(client), Builder<TrainingListPage> {
+	: AbstractLuoGuPage(client), PageBuilder<TrainingListPage> {
 	enum class Type {
 		Official,
 		Select,
