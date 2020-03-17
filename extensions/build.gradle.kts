@@ -17,8 +17,8 @@ allprojects {
 
 	dependencies {
 		compileOnly(project(":core"))
-		testCompile(project(":core"))
-		testCompile(kotlin("test-junit"))
+		testApi(project(":core"))
+		testApi(kotlin("test-junit"))
 	}
 }
 

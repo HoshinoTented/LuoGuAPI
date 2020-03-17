@@ -29,7 +29,7 @@ allprojects {
 	}
 
 	group = "org.hoshino9"
-	version = "0.0.9"
+	version = "0.0.10"
 
 	repositories {
 		if (isCI) jcenter() else maven("http://maven.aliyun.com/nexus/content/groups/public/")
@@ -44,44 +44,46 @@ allprojects {
 		add("archives", sourcesJar)
 	}
 
-	bintray {
-		val bintray_key: String? by rootProject.extra
+	if (project.name.endsWith("demo").not()) {
+		bintray {
+			val bintray_key: String? by rootProject.extra
 
-		user = "hoshinotented"
-		key = bintray_key
-		publish = true
+			user = "hoshinotented"
+			key = bintray_key
+			publish = true
 
-		setPublications("maven")
+			setPublications("maven")
 
-		pkg.apply {
-			name = rootProject.name
-			repo = "hoshino9"
-			githubRepo = "HoshinoTented/LuoGuAPI"
-			publicDownloadNumbers = true
-			setLicenses("MIT")
-			vcsUrl = "https://github.com/HoshinoTented/LuoGuAPI.git"
-			version.apply {
-				vcsTag = "${project.version}"
-				name = vcsTag
-				websiteUrl = "https://github.com/HoshinoTented/LuoGuAPI/releases/tag/$vcsTag"
+			pkg.apply {
+				name = rootProject.name
+				repo = "hoshino9"
+				githubRepo = "HoshinoTented/LuoGuAPI"
+				publicDownloadNumbers = true
+				setLicenses("MIT")
+				vcsUrl = "https://github.com/HoshinoTented/LuoGuAPI.git"
+				version.apply {
+					vcsTag = "${project.version}"
+					name = vcsTag
+					websiteUrl = "https://github.com/HoshinoTented/LuoGuAPI/releases/tag/$vcsTag"
+				}
 			}
 		}
-	}
 
-	publishing {
-		(publications) {
-			create<MavenPublication>("maven") {
-				from(components["java"])
-				groupId = project.group.toString()
-				artifactId = "${rootProject.name}-${project.name}"
-				version = project.version.toString()
-				artifact(tasks["sourcesJar"])
-				pom.withXml {
-					val root = asNode()
-					root.appendNode("description", "API of LuoGu website")
-					root.appendNode("name", project.name)
-					root.appendNode("url", "https://github.com/HoshinoTented/LuoGuAPI")
-					root.children().last()
+		publishing {
+			(publications) {
+				create<MavenPublication>("maven") {
+					from(components["java"])
+					groupId = project.group.toString()
+					artifactId = "${rootProject.name}-${project.name}"
+					version = project.version.toString()
+					artifact(tasks["sourcesJar"])
+					pom.withXml {
+						val root = asNode()
+						root.appendNode("description", "API of LuoGu website")
+						root.appendNode("name", project.name)
+						root.appendNode("url", "https://github.com/HoshinoTented/LuoGuAPI")
+						root.children().last()
+					}
 				}
 			}
 		}
