@@ -45,7 +45,7 @@ interface BaseTraining {
 	val title: String
 
 	/**
-	 * 题单类型（官方或其他）
+	 * 题单类型
 	 */
 	val type: Int
 

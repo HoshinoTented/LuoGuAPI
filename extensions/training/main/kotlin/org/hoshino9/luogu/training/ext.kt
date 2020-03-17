@@ -3,10 +3,11 @@
 package org.hoshino9.luogu.training
 
 import io.ktor.client.call.receive
+import io.ktor.client.request.get
 import org.hoshino9.luogu.LuoGu
-import org.hoshino9.luogu.utils.HttpClient
-import org.hoshino9.luogu.utils.apiPost
-import org.hoshino9.luogu.utils.emptyClient
+import org.hoshino9.luogu.baseUrl
+import org.hoshino9.luogu.user.UserPage
+import org.hoshino9.luogu.utils.*
 
 /**
  * 提升 BaseTraining 到 TrainingInfo
@@ -19,14 +20,14 @@ fun BaseTraining.lift(client: HttpClient = emptyClient): TrainingInfo {
  * 官方题单
  */
 fun LuoGu.officialTraining(page: Int = 1): TrainingListPage {
-	return TrainingListPage(page, TrainingListPage.Type.Official, client)
+	return TrainingListPageBuilder(page, TrainingListPageBuilder.Type.Official, client).build()
 }
 
 /**
  * 用户题单
  */
 fun LuoGu.publicTraining(page: Int = 1): TrainingListPage {
-	return TrainingListPage(page, TrainingListPage.Type.Select, client)
+	return TrainingListPageBuilder(page, TrainingListPageBuilder.Type.Select, client).build()
 }
 
 /**
@@ -50,4 +51,11 @@ suspend fun LuoGu.markTraining(id: Int): String {
  */
 suspend fun LuoGu.unmarkTraining(id: Int): String {
 	return apiPost(url(id, false)).receive()
+}
+
+suspend fun UserPage.trainingList(page: Int = 1): TrainingListPage {
+	val url = "$baseUrl/fe/api/user/createdTrainings?page=$page"
+	val data = json(client.get(url))
+
+	return TrainingListPageImpl(data)
 }
