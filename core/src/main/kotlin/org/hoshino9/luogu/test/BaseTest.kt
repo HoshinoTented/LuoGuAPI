@@ -1,6 +1,8 @@
 package org.hoshino9.luogu.test
 
+import com.google.gson.JsonObject
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.user.LoggedUser
 import org.hoshino9.luogu.user.currentUser
 import rootPath
@@ -26,6 +28,8 @@ abstract class BaseTest {
 
 	lateinit var luogu: LuoGu
 	lateinit var user: LoggedUser
+
+	val client: LuoGuClient? get() = if (::luogu.isInitialized) LuoGuClient(luogu.clientId.value, luogu.uid.value.toInt()) else null
 
 	init {
 		loadCookie()

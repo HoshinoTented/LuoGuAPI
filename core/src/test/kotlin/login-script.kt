@@ -1,5 +1,6 @@
 import io.ktor.client.features.cookies.cookies
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.test.BaseTest
 import org.hoshino9.luogu.test.BaseTest.Companion.config
 import org.hoshino9.luogu.test.BaseTest.Companion.verifyPath
@@ -12,22 +13,6 @@ suspend fun main() {
 	LuoGuTest.run {
 		login()
 		println("logged in: ${user.uid}")
-
-		val unlockType = luogu.needUnlock
-
-		if (unlockType != null) {
-			println("need unlock")
-			val code = Scanner(System.`in`).nextLine()
-
-			when (unlockType) {
-				"2fa" -> {
-					luogu.unlock(code)
-				}
-			}
-
-			println("unlocked")
-		}
-
 		saveCookie()
 		println("save cookie")
 	}

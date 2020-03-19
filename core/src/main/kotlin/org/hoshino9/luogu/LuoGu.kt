@@ -8,8 +8,14 @@ import io.ktor.client.call.receive
 import io.ktor.client.features.ClientRequestException
 import io.ktor.client.features.cookies.cookies
 import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.request
+import io.ktor.client.response.HttpResponse
+import io.ktor.client.response.readBytes
 import io.ktor.http.Cookie
+import io.ktor.http.HttpMethod
 import io.ktor.http.Url
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.domain
@@ -17,6 +23,100 @@ import org.hoshino9.luogu.page.DeprecatedLuoGuPage
 import org.hoshino9.luogu.user.LoggedUserImpl
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
+
+interface LuoGuClient {
+	companion object {
+		operator fun invoke(): LuoGuClient {
+			return Impl(defaultClient)
+		}
+
+		operator fun invoke(clientId: String, uid: Int): LuoGuClient {
+			val url = Url(baseUrl)
+
+			return Impl(specifiedCookieClient(
+					listOf(
+							url to Cookie("_uid", uid.toString(), domain = domain),
+							url to Cookie("__client_id", clientId, domain = domain)
+					)
+			))
+		}
+
+		class Impl(client: HttpClient) : LuoGuClient, DeprecatedLuoGuPage(client) {
+			init {
+				refresh()
+			}
+
+			override val url: String = baseUrl
+
+			private suspend fun csrfToken(): String = csrfTokenFromPage(page())
+
+			private suspend fun HttpResponse.assert(): ByteArray {
+				return if (status.isSuccess()) {
+					readBytes()
+				} else throw IllegalStatusCodeException(status.value, strData())
+			}
+
+			override suspend fun get(url: String): ByteArray {
+				val resp = client.request<HttpResponse>(url) {
+					header("x-luogu-type", "content-only")
+				}
+
+				return resp.assert()
+			}
+
+			override suspend fun post(url: String, body: JsonObject): ByteArray {
+				val resp = client.request<HttpResponse>(url) {
+					this.body = body.asParams
+					method = HttpMethod.Post
+					header("referer", baseUrl)
+					header("x-csrf-token", csrfToken())
+				}
+
+				return resp.assert()
+			}
+
+			override val cookieUid: String?
+				get() = runBlocking {
+					client.cookies(baseUrl).firstOrNull { it.name == "_uid" }?.value
+				}
+
+			override val cookieClientId: String?
+				get() = runBlocking {
+					client.cookies(baseUrl).firstOrNull { it.name == "__client_id" }?.value
+				}
+
+			override suspend fun verifyCode(): ByteArray {
+				return get("$baseUrl/api/verify/captcha")
+			}
+
+			override suspend fun login(form: LoginForm) {
+				val body = Deserializable.gson.toJsonTree(form).asJsonObject
+
+				post("$baseUrl/api/auth/userPassLogin", body)
+				refresh()
+			}
+
+			override suspend fun logout(): Boolean {
+				get("$baseUrl/api/auth/logout?uid=${cookieUid}")
+				refresh()
+
+				return true
+			}
+		}
+	}
+
+	data class LoginForm(val username: String, val password: String, val verifyCode: String)
+
+	val cookieUid: String?
+	val cookieClientId: String?
+
+	suspend fun verifyCode(): ByteArray
+	suspend fun login(form: LoginForm)
+	suspend fun logout(): Boolean
+
+	suspend fun get(url: String): ByteArray
+	suspend fun post(url: String, body: JsonObject): ByteArray
+}
 
 /**
  * # LuoGu
@@ -28,6 +128,7 @@ import org.jsoup.Jsoup
  *
  * [verifyCode] 用于获取验证码（验证码不仅仅用于登录）， [login] 则用于登录，需要验证码。
  */
+@Deprecated("Bad design", ReplaceWith("LuoGuClient"))
 @Suppress("MemberVisibilityCanBePrivate")
 class LuoGu constructor(client: HttpClient = defaultClient) : DeprecatedLuoGuPage(client) {
 	companion object {

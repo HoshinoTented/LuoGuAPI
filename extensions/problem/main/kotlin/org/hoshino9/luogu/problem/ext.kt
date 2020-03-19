@@ -39,7 +39,7 @@ internal suspend fun LuoGu.doMark(pid: String, mark: Boolean) {
 		body = JsonObject().apply {
 			addProperty("pid", pid)
 		}.asParams
-	}.receive<String>().run(::println)
+	}.receive<String>()
 }
 
 /**

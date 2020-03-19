@@ -89,13 +89,4 @@ suspend fun HttpResponse.strData(): String {
 	return String(byteData())
 }
 
-
-/**
- * 断言 Response 是否成功
- *
- * @throws IllegalStatusCodeException 断言失败时抛出
- */
-suspend fun HttpResponse.assertJson() {
-	if (this.status.isSuccess().not())
-		throw IllegalStatusCodeException(this.status.value, json(strData()))
-}
+val ByteArray.asString: String get() = String(this)

@@ -42,7 +42,7 @@ data class LoggedUserImpl(val user: User) : User by user, LoggedUser {
 	}
 }
 
-open class LoggedUserPage(uid: Int, val luogu: LuoGu) : UserPage(uid, luogu.client) {
+open class LoggedUserPage(uid: Int, client: HttpClient) : UserPage(uid, client) {
 	override val user: LoggedUser by lazy {
 		LoggedUserImpl(userObj)
 	}
