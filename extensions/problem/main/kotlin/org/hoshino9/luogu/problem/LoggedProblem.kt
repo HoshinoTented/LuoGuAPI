@@ -5,9 +5,9 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.page.currentData
 import org.hoshino9.luogu.utils.Deserializable
-import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.delegate
 import java.lang.reflect.Type
 
@@ -75,7 +75,7 @@ data class LoggedProblemPageImpl(override val problem: LoggedProblem) : LoggedPr
 	}
 }
 
-class LoggedProblemPageBuilder(pid: String, client: HttpClient) : ProblemPageBuilder(pid, client) {
+class LoggedProblemPageBuilder(pid: String, client: LuoGuClient) : ProblemPageBuilder(pid, client) {
 	override fun build(): LoggedProblemPage = run {
 		LoggedProblemPageImpl(currentData)
 	}

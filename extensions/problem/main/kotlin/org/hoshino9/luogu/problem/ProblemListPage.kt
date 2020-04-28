@@ -35,15 +35,7 @@ data class ProblemListPageImpl(override val result: List<BaseProblem>, override 
 	}
 }
 
-class ProblemListPageBuilder(val page: Int, val filter: ProblemSearchConfig, client: HttpClient = emptyClient) : AbstractLuoGuPage(client), PageBuilder<ProblemListPage> {
-	override val url: String get() = "$baseUrl/problem/list?page=$page&$filter"
-
-	override fun build(): ProblemListPage = run {
-		ProblemListPageImpl(currentData)
-	}
-}
-
-class NewProblemListPageBuilder(val page: Int, val filter: ProblemSearchConfig, client: LuoGuClient) : AbstractLuoGuClientPage(client), PageBuilder<ProblemListPage> {
+class ProblemListPageBuilder(val page: Int, val filter: ProblemSearchConfig, client: LuoGuClient) : AbstractLuoGuClientPage(client), PageBuilder<ProblemListPage> {
 	override val url: String
 		get() = "$baseUrl/problem/list?page=$page&$filter"
 

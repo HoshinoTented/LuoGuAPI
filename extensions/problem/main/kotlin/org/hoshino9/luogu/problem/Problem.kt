@@ -217,15 +217,7 @@ data class ProblemPageImpl(override val problem: Problem) : ProblemPage {
 	}
 }
 
-open class ProblemPageBuilder(val pid: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client), PageBuilder<ProblemPage> {
-	override val url: String get() = "$baseUrl/problem/$pid"
-
-	override fun build(): ProblemPage = run {
-		ProblemPageImpl(currentData)
-	}
-}
-
-open class NewProblemPageBuilder(val pid: String, client: LuoGuClient) : AbstractLuoGuClientPage(client), PageBuilder<ProblemPage> {
+open class ProblemPageBuilder(val pid: String, client: LuoGuClient) : AbstractLuoGuClientPage(client), PageBuilder<ProblemPage> {
 	override val url: String get() = "$baseUrl/problem/$pid"
 
 	override fun build(): ProblemPage = run {
