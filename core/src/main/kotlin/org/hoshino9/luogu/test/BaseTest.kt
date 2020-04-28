@@ -29,7 +29,7 @@ abstract class BaseTest {
 	lateinit var luogu: LuoGu
 	lateinit var user: LoggedUser
 
-	val client: LuoGuClient? get() = if (::luogu.isInitialized) LuoGuClient(luogu.clientId.value, luogu.uid.value.toInt()) else null
+	lateinit var client: LuoGuClient
 
 	init {
 		loadCookie()
@@ -41,7 +41,8 @@ abstract class BaseTest {
 
 		if (id != null && uid != null) {
 			luogu = LuoGu(id, uid.toInt())
-			user = luogu.currentUser.user
+			client = LuoGuClient(id, uid.toInt())
+			user = client.currentUser !!.user
 		} else throw IllegalStateException("No logged in")
 	}
 

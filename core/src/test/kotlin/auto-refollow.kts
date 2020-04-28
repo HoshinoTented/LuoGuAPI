@@ -1,10 +1,11 @@
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.user.currentUser
 import org.hoshino9.luogu.user.doFollow
 
-val luogu = LuoGu("your client id", "your uid".toInt())
-val currentUser = luogu.currentUser
+val luogu = LuoGuClient("your client id", "your uid".toInt())
+val currentUser = luogu.currentUser ?: throw IllegalStateException("No login")
 
 tailrec suspend fun refollow(page: Int) {
 	val list = currentUser.followers(page).result

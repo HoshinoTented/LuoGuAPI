@@ -18,3 +18,5 @@ interface LuoGuPage {
 
 	fun refresh()
 }
+
+val LuoGuPage.currentData: JsonObject get() = feInjection["currentData"].asJsonObject

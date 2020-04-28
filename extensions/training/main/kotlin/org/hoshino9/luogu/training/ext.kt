@@ -55,7 +55,7 @@ suspend fun LuoGu.unmarkTraining(id: Int): String {
 
 suspend fun UserPage.trainingList(page: Int = 1): TrainingListPage {
 	val url = "$baseUrl/fe/api/user/createdTrainings?page=$page"
-	val data = json(client.get(url))
+	val data = json(String(client.get(url)))
 
 	return TrainingListPageImpl(data)
 }

@@ -4,6 +4,7 @@ import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.request.get
 import kotlinx.coroutines.runBlocking
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
@@ -71,9 +72,9 @@ data class FollowListImpl(override val result: List<FollowListUser>, override va
 	}
 }
 
-suspend operator fun FollowList.Companion.invoke(uid: Int, page: Int, type: FollowList.Type, client: HttpClient = emptyClient): FollowList {
+suspend operator fun FollowList.Companion.invoke(uid: Int, page: Int, type: FollowList.Type, client: LuoGuClient): FollowList {
 	val url = "$baseUrl/fe/api/user/${type.name.toLowerCase()}?user=$uid&page=$page"
-	val data = json(client.get(url)).getAsJsonObject("users")
+	val data = json(String(client.get(url))).getAsJsonObject("users")
 
 	return FollowListImpl(data)
 }

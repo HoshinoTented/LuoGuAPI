@@ -9,12 +9,10 @@ class UserTest : BaseTest() {
 	@Test
 	fun user() {
 		runBlocking {
-			if (luogu.isLogged) {
-				luogu.currentUser.run {
-					printAllMember()
-					followers().printAllMember()
-					followings().printAllMember()
-				}
+			client.currentUser?.run {
+				printAllMember()
+				followers().printAllMember()
+				followings().printAllMember()
 			}
 		}
 	}

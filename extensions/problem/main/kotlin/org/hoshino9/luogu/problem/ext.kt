@@ -6,6 +6,7 @@ import com.google.gson.JsonObject
 import io.ktor.client.call.receive
 import org.hoshino9.luogu.IllegalStatusCodeException
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.utils.*
 
 fun BaseProblem.lift(client: HttpClient = emptyClient): Problem = run {
@@ -30,6 +31,10 @@ fun BaseProblem.liftToLogged(client: HttpClient = emptyClient): LoggedProblem = 
 @JvmOverloads
 fun LuoGu.problemList(page: Int = 1, filter: ProblemSearchConfig = ProblemSearchConfig()): ProblemListPage {
 	return ProblemListPageBuilder(page, filter, client).build()
+}
+
+fun LuoGuClient.problemList(page: Int = 1, filter: ProblemSearchConfig = ProblemSearchConfig()): ProblemListPage {
+	return NewProblemListPageBuilder(page, filter, this).build()
 }
 
 internal suspend fun LuoGu.doMark(pid: String, mark: Boolean) {

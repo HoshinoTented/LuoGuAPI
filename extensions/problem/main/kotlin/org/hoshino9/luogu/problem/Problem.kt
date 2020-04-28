@@ -2,14 +2,19 @@ package org.hoshino9.luogu.problem
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.baseUrl
+import org.hoshino9.luogu.page.AbstractLuoGuClientPage
 import org.hoshino9.luogu.page.AbstractLuoGuPage
 import org.hoshino9.luogu.page.PageBuilder
+import org.hoshino9.luogu.page.currentData
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.BaseUserImpl
 import org.hoshino9.luogu.user.BaseUser
 import org.hoshino9.luogu.utils.*
+
+typealias Tag = Int
 
 @JsonAdapter(BaseProblemImpl.Serializer::class)
 interface BaseProblem {
@@ -17,7 +22,7 @@ interface BaseProblem {
 	/**
 	 * 难度
 	 */
-	val difficulty: Difficulty
+	val difficulty: Tag
 
 	/**
 	 * 题目 id
@@ -27,7 +32,7 @@ interface BaseProblem {
 	/**
 	 * 题目标签
 	 */
-	val tags: List<LuoGuTag>
+	val tags: List<Tag>
 
 	/**
 	 * 题目标题
@@ -60,7 +65,7 @@ interface BaseProblem {
 	val fullScore: Int
 }
 
-data class BaseProblemImpl(override val difficulty: Difficulty, override val pid: String, override val tags: List<LuoGuTag>, override val title: String, override val totalAccepted: Long, override val totalSubmit: Long, override val type: Type, override val wantsTranslation: Boolean, override val fullScore: Int) : BaseProblem {
+data class BaseProblemImpl(override val difficulty: Tag, override val pid: String, override val tags: List<Tag>, override val title: String, override val totalAccepted: Long, override val totalSubmit: Long, override val type: Type, override val wantsTranslation: Boolean, override val fullScore: Int) : BaseProblem {
 	companion object Serializer : Deserializable<BaseProblem>(BaseProblem::class), JsonDeserializer<BaseProblem> {
 		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): BaseProblem {
 			fun parseTotal(elem: JsonElement): Long {
@@ -77,10 +82,10 @@ data class BaseProblemImpl(override val difficulty: Difficulty, override val pid
 			val delegate = source.delegate
 
 			val pid: String by delegate
-			val difficulty: Difficulty = Difficulty.values()[source["difficulty"].asInt]
+			val difficulty: Tag by delegate
 			val title: String by delegate
-			val tags: List<LuoGuTag> = source["tags"].asJsonArray.map {
-				IdLuoGuTag(it.asInt)
+			val tags: List<Tag> = source["tags"].asJsonArray.map {
+				it.asInt
 			}
 
 			val type: Type = Type.values().first { it.id == source["type"].asString }
@@ -213,6 +218,14 @@ data class ProblemPageImpl(override val problem: Problem) : ProblemPage {
 }
 
 open class ProblemPageBuilder(val pid: String, client: HttpClient = emptyClient) : AbstractLuoGuPage(client), PageBuilder<ProblemPage> {
+	override val url: String get() = "$baseUrl/problem/$pid"
+
+	override fun build(): ProblemPage = run {
+		ProblemPageImpl(currentData)
+	}
+}
+
+open class NewProblemPageBuilder(val pid: String, client: LuoGuClient) : AbstractLuoGuClientPage(client), PageBuilder<ProblemPage> {
 	override val url: String get() = "$baseUrl/problem/$pid"
 
 	override fun build(): ProblemPage = run {

@@ -7,6 +7,8 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
 import io.ktor.client.call.receive
 import org.hoshino9.luogu.LuoGu
+import org.hoshino9.luogu.LuoGuClient
+import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.utils.*
 import java.lang.reflect.Type
 
@@ -42,7 +44,7 @@ data class LoggedUserImpl(val user: User) : User by user, LoggedUser {
 	}
 }
 
-open class LoggedUserPage(uid: Int, client: HttpClient) : UserPage(uid, client) {
+open class LoggedUserPage(uid: Int, client: LuoGuClient) : UserPage(uid, client) {
 	override val user: LoggedUser by lazy {
 		LoggedUserImpl(userObj)
 	}
@@ -66,5 +68,17 @@ suspend fun LuoGu.doFollow(userId: Int, isFollow: Boolean = true) {
 	}
 }
 
+suspend fun LuoGuClient.doFollow(userId: Int, isFollow: Boolean = true) {
+	val params = JsonObject().apply {
+		addProperty("uid", userId)
+		addProperty("relationship", if (isFollow) 1 else 0)
+	}
+
+	post("$baseUrl/fe/api/user/updateRelationShip", params)
+}
+
 suspend fun LuoGu.follow(userId: Int) = doFollow(userId, true)
 suspend fun LuoGu.unfollow(userId: Int) = doFollow(userId, false)
+
+suspend fun LuoGuClient.follow(userId: Int) = doFollow(userId, true)
+suspend fun LuoGuClient.unfollow(userId: Int) = doFollow(userId, false)

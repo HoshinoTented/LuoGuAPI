@@ -42,11 +42,11 @@ interface LuoGuClient {
 		}
 
 		class Impl(client: HttpClient) : LuoGuClient, DeprecatedLuoGuPage(client) {
+			override val url: String = baseUrl
+
 			init {
 				refresh()
 			}
-
-			override val url: String = baseUrl
 
 			private suspend fun csrfToken(): String = csrfTokenFromPage(page())
 

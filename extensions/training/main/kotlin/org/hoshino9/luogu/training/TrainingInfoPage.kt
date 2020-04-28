@@ -3,6 +3,7 @@ package org.hoshino9.luogu.training
 import com.google.gson.JsonObject
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.page.currentData
 import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.delegate
 import org.hoshino9.luogu.utils.emptyClient

@@ -4,8 +4,11 @@ package org.hoshino9.luogu.user
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.baseUrl
+import org.hoshino9.luogu.page.AbstractLuoGuClientPage
 import org.hoshino9.luogu.page.AbstractLuoGuPage
+import org.hoshino9.luogu.page.currentData
 import org.hoshino9.luogu.team.BaseTeam
 import org.hoshino9.luogu.utils.*
 import org.hoshino9.luogu.utils.Deserializable.Companion.gson
@@ -104,7 +107,7 @@ data class UserImpl(override val ranking: Int?, override val introduction: Strin
 	}
 }
 
-open class UserPage(val uid: Int, client: HttpClient = emptyClient) : AbstractLuoGuPage(client) {
+open class UserPage(val uid: Int, client: LuoGuClient) : AbstractLuoGuClientPage(client) {
 	data class Team(val team: BaseTeam, val permission: Int)
 
 	override val url: String get() = "$baseUrl/user/$uid"

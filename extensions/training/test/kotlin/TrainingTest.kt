@@ -32,7 +32,7 @@ class TrainingTest : BaseTest() {
 	@Test
 	fun userTrainingList() {
 		runBlocking {
-			LoggedUserPage(luogu.uid.value.toInt(), luogu.client).trainingList().printAllMember()
+			LoggedUserPage(luogu.uid.value.toInt(), client).trainingList().printAllMember()
 		}
 	}
 }

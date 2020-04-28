@@ -2,6 +2,7 @@ package org.hoshino9.luogu.problem
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.page.*
 import org.hoshino9.luogu.utils.Deserializable
@@ -39,5 +40,14 @@ class ProblemListPageBuilder(val page: Int, val filter: ProblemSearchConfig, cli
 
 	override fun build(): ProblemListPage = run {
 		ProblemListPageImpl(currentData)
+	}
+}
+
+class NewProblemListPageBuilder(val page: Int, val filter: ProblemSearchConfig, client: LuoGuClient) : AbstractLuoGuClientPage(client), PageBuilder<ProblemListPage> {
+	override val url: String
+		get() = "$baseUrl/problem/list?page=$page&$filter"
+
+	override fun build(): ProblemListPage {
+		return ProblemListPageImpl(currentData)
 	}
 }

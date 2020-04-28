@@ -8,11 +8,13 @@ class ProblemTest : BaseTest() {
 	@Test
 	fun problemList() {
 		luogu.problemList().printAllMember()
+		client !!.problemList().printAllMember()
 	}
 
 	@Test
 	fun problemInfo() {
 		ProblemPageBuilder("P1000").build().problem.printAllMember()
+		NewProblemPageBuilder("P1000", client !!).build().problem.printAllMember()
 	}
 
 //	@Test

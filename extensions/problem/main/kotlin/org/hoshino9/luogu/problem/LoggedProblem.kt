@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.annotations.JsonAdapter
+import org.hoshino9.luogu.page.currentData
 import org.hoshino9.luogu.utils.Deserializable
 import org.hoshino9.luogu.utils.HttpClient
 import org.hoshino9.luogu.utils.delegate
