@@ -29,7 +29,7 @@ trait LuoGuClientPage extends LuoGuPage {
   }
 
   override def refresh(): Unit = {
-    val content = content()
+    val content = this.content()
     _currentData = Some(JsonParser.parseString(content).getAsJsonObject.getAsJsonObject("currentData"))
   }
 }
