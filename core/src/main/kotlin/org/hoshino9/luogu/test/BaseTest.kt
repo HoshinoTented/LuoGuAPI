@@ -43,7 +43,8 @@ abstract class BaseTest {
 			luogu = LuoGu(id, uid.toInt())
 			client = LuoGuClient(id, uid.toInt())
 			user = client.currentUser !!.user
-		} else throw IllegalStateException("No logged in")
+		}// else throw IllegalStateException("No logged in")
+		System.err.println("No logged in.")
 	}
 
 	fun saveCookie() {

@@ -19,8 +19,6 @@ suspend fun main() {
 }
 
 suspend fun LuoGuTest.login() {
-	luogu = LuoGu()
-
 	Files.newOutputStream(verifyPath.also { path ->
 		path.toFile().let {
 			if (it.exists().not()) {
@@ -32,5 +30,5 @@ suspend fun LuoGuTest.login() {
 
 	println("Please input verify code")
 	val verifyCode: String = Scanner(System.`in`).next()
-	luogu.login(config.getProperty("account"), config.getProperty("password"), verifyCode)
+	client.login(LuoGuClient.LoginForm(config.getProperty("account"), config.getProperty("password"), verifyCode))
 }

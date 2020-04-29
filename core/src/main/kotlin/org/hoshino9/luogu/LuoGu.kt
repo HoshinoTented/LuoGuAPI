@@ -27,7 +27,7 @@ import org.jsoup.Jsoup
 interface LuoGuClient {
 	companion object {
 		operator fun invoke(): LuoGuClient {
-			return Impl(defaultClient)
+			return Impl(defaultClient).apply { refresh() }
 		}
 
 		operator fun invoke(clientId: String, uid: Int): LuoGuClient {
@@ -38,15 +38,11 @@ interface LuoGuClient {
 							url to Cookie("_uid", uid.toString(), domain = domain),
 							url to Cookie("__client_id", clientId, domain = domain)
 					)
-			))
+			)).apply { refresh() }
 		}
 
-		class Impl(client: HttpClient) : LuoGuClient, DeprecatedLuoGuPage(client) {
+		private class Impl(client: HttpClient) : LuoGuClient, DeprecatedLuoGuPage(client) {
 			override val url: String = baseUrl
-
-			init {
-				refresh()
-			}
 
 			private suspend fun csrfToken(): String = csrfTokenFromPage(page())
 
@@ -68,7 +64,7 @@ interface LuoGuClient {
 				val resp = client.request<HttpResponse>(url) {
 					this.body = body.asParams
 					method = HttpMethod.Post
-					header("referer", baseUrl)
+					header("referer", "$baseUrl/")
 					header("x-csrf-token", csrfToken())
 				}
 
@@ -105,7 +101,7 @@ interface LuoGuClient {
 		}
 	}
 
-	data class LoginForm(val username: String, val password: String, val verifyCode: String)
+	data class LoginForm(val username: String, val password: String, val captcha: String)
 
 	val cookieUid: String?
 	val cookieClientId: String?
