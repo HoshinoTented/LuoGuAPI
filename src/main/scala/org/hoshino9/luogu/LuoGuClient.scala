@@ -79,8 +79,8 @@ object LuoGuClient {
     override def client: LuoGuClient = this
 
     override def refresh(): Unit = {
-      val content = content()
-      val reg = """window\._feInjection = JSON\.parse\(decodeURIComponent\("(.+?)"\)\);""".r()
+      val content = this.content()
+	    val reg = """window\._feInjection = JSON\.parse\(decodeURIComponent\("(.+?)"\)\);""".r()
       val feInjection = reg.findAllIn(content).group(1)
       val obj = JsonParser.parseString(URLDecoder.decode(feInjection, "UTF-8")).getAsJsonObject.getAsJsonObject("currentData")
       this._currentData = Some(obj)
