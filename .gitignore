@@ -6,3 +6,18 @@
 
 # output
 build/
+out/
+
+# test resources
+verify.png
+user.properties
+luogu-*
+
+# wiki
+wiki
+
+# generate
+gen/
+
+# paintboard
+cookies.properties

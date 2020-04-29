@@ -1,21 +1,22 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-	kotlin("jvm") version "1.2.71"
+	scala
 }
 
-group = "org.hoshino9"
-version = "0.0.1"
+group = "org.example"
+version = "1.0-SNAPSHOT"
 
 repositories {
+	maven("https://maven.aliyun.com/repository/public")
 	jcenter()
 }
 
 dependencies {
-	compile(kotlin("stdlib-jdk8"))
-	compile("org.apache.httpcomponents:httpclient:jar:4.5.6")
-}
+	implementation("org.scala-lang:scala-library:2.13.1")
+	implementation("org.scala-lang:scala-reflect:2.13.1")
+	implementation("org.typelevel:cats-effect_2.13:2.1.3")
+	implementation("com.squareup.okhttp3:okhttp:4.6.0")
+	implementation("com.google.code.gson:gson:2.8.6")
 
-tasks.withType<KotlinCompile> {
-	kotlinOptions.jvmTarget = "1.8"
+	testImplementation("org.scalatest:scalatest_2.11:3.0.0")
+	testImplementation("junit:junit:4.12")
 }
