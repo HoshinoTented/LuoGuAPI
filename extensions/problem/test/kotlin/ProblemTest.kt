@@ -14,6 +14,11 @@ class ProblemTest : BaseTest() {
 		ProblemPageBuilder("P1000", client).build().problem.printAllMember()
 	}
 
+	@Test
+	fun solutions() {
+		SolutionPageBuilder("P1000", client).build().printAllMember()
+	}
+
 //	@Test
 //	fun mark() {
 //		runBlocking {

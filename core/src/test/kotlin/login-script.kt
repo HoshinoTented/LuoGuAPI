@@ -4,6 +4,7 @@ import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.test.BaseTest
 import org.hoshino9.luogu.test.BaseTest.Companion.config
 import org.hoshino9.luogu.test.BaseTest.Companion.verifyPath
+import org.hoshino9.luogu.user.currentUser
 import java.nio.file.Files
 import java.util.Scanner
 
@@ -26,9 +27,10 @@ suspend fun LuoGuTest.login() {
 				it.createNewFile()
 			}
 		}
-	}).write(luogu.verifyCode())
+	}).write(client.verifyCode())
 
 	println("Please input verify code")
 	val verifyCode: String = Scanner(System.`in`).next()
 	client.login(LuoGuClient.LoginForm(config.getProperty("account"), config.getProperty("password"), verifyCode))
+	user = client.currentUser !!.user
 }

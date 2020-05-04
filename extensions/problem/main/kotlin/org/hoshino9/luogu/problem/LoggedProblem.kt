@@ -69,6 +69,7 @@ data class LoggedProblemPageImpl(override val problem: LoggedProblem) : LoggedPr
 		override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LoggedProblemPage = run {
 			val data = json.asJsonObject.delegate
 			val problem: JsonObject by data
+			val solutions: SolutionListPage by data
 
 			LoggedProblemPageImpl(LoggedProblemImpl(problem))
 		}

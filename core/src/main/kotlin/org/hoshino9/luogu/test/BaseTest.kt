@@ -1,6 +1,7 @@
 package org.hoshino9.luogu.test
 
 import com.google.gson.JsonObject
+import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.LuoGu
 import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.user.LoggedUser
@@ -32,10 +33,12 @@ abstract class BaseTest {
 	lateinit var client: LuoGuClient
 
 	init {
-		loadCookie()
+		runBlocking {
+			loadCookie()
+		}
 	}
 
-	fun loadCookie() {
+	suspend fun loadCookie() {
 		val id: String? = config.getProperty("__client_id")
 		val uid: String? = config.getProperty("_uid")
 
@@ -43,13 +46,17 @@ abstract class BaseTest {
 			luogu = LuoGu(id, uid.toInt())
 			client = LuoGuClient(id, uid.toInt())
 			user = client.currentUser !!.user
-		}// else throw IllegalStateException("No logged in")
-		System.err.println("No logged in.")
+		} else {
+			System.err.println("No logged in.")
+
+			luogu = LuoGu()
+			client = LuoGuClient()
+		}
 	}
 
 	fun saveCookie() {
-		config.setProperty("__client_id", luogu.clientId.value)
-		config.setProperty("_uid", luogu.uid.value)
+		config.setProperty("__client_id", client.cookieClientId)
+		config.setProperty("_uid", client.cookieUid)
 		config.store(Files.newOutputStream(configPath), null)
 	}
 }

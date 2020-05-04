@@ -24,12 +24,4 @@ abstract class AbstractLuoGuPage(val client: HttpClient = emptyClient) : BaseLuo
 	}
 }
 
-abstract class AbstractLuoGuClientPage(val client: LuoGuClient) : BaseLuoGuPage() {
-	override fun refresh() {
-		runBlocking {
-			_feInjection.update {
-				json(String(client.get(url)))
-			}
-		}
-	}
-}
+abstract class AbstractLuoGuClientPage(override val client: LuoGuClient) : BaseMutablePage()

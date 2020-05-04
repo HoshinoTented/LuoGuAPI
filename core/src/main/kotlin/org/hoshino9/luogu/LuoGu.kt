@@ -16,21 +16,25 @@ import io.ktor.http.Cookie
 import io.ktor.http.HttpMethod
 import io.ktor.http.Url
 import io.ktor.http.isSuccess
+import kotlinx.atomicfu.update
 import kotlinx.coroutines.runBlocking
 import org.hoshino9.luogu.baseUrl
 import org.hoshino9.luogu.domain
+import org.hoshino9.luogu.page.BaseMutablePage
 import org.hoshino9.luogu.page.DeprecatedLuoGuPage
+import org.hoshino9.luogu.page.MutablePage
 import org.hoshino9.luogu.user.LoggedUserImpl
 import org.hoshino9.luogu.utils.*
 import org.jsoup.Jsoup
+import java.net.URLDecoder
 
 interface LuoGuClient {
 	companion object {
-		operator fun invoke(): LuoGuClient {
+		suspend operator fun invoke(): LuoGuClient {
 			return Impl(defaultClient).apply { refresh() }
 		}
 
-		operator fun invoke(clientId: String, uid: Int): LuoGuClient {
+		suspend operator fun invoke(clientId: String, uid: Int): LuoGuClient {
 			val url = Url(baseUrl)
 
 			return Impl(specifiedCookieClient(
@@ -41,10 +45,13 @@ interface LuoGuClient {
 			)).apply { refresh() }
 		}
 
-		private class Impl(client: HttpClient) : LuoGuClient, DeprecatedLuoGuPage(client) {
-			override val url: String = baseUrl
+		private class Impl(val clientInternal: HttpClient) : LuoGuClient, BaseMutablePage() {
+			override val client: LuoGuClient get() = this
+			override val url: String get() = baseUrl
 
-			private suspend fun csrfToken(): String = csrfTokenFromPage(page())
+			private suspend fun csrfToken(): String {
+				return csrfTokenFromPage(Jsoup.parse(String(client.get(baseUrl))))
+			}
 
 			private suspend fun HttpResponse.assert(): ByteArray {
 				return if (status.isSuccess()) {
@@ -53,7 +60,7 @@ interface LuoGuClient {
 			}
 
 			override suspend fun get(url: String): ByteArray {
-				val resp = client.request<HttpResponse>(url) {
+				val resp = clientInternal.request<HttpResponse>(url) {
 					header("x-luogu-type", "content-only")
 				}
 
@@ -61,7 +68,7 @@ interface LuoGuClient {
 			}
 
 			override suspend fun post(url: String, body: JsonObject): ByteArray {
-				val resp = client.request<HttpResponse>(url) {
+				val resp = clientInternal.request<HttpResponse>(url) {
 					this.body = body.asParams
 					method = HttpMethod.Post
 					header("referer", "$baseUrl/")
@@ -73,12 +80,12 @@ interface LuoGuClient {
 
 			override val cookieUid: String?
 				get() = runBlocking {
-					client.cookies(baseUrl).firstOrNull { it.name == "_uid" }?.value
+					clientInternal.cookies(baseUrl).firstOrNull { it.name == "_uid" }?.value
 				}
 
 			override val cookieClientId: String?
 				get() = runBlocking {
-					client.cookies(baseUrl).firstOrNull { it.name == "__client_id" }?.value
+					clientInternal.cookies(baseUrl).firstOrNull { it.name == "__client_id" }?.value
 				}
 
 			override suspend fun verifyCode(): ByteArray {
@@ -97,6 +104,13 @@ interface LuoGuClient {
 				refresh()
 
 				return true
+			}
+
+			override suspend fun load(): JsonObject {
+				val regex = Regex("""window\._feInjection = JSON\.parse\(decodeURIComponent\("(.+?)"\)\);""")
+				val page = String(client.get(url))
+
+				return json(URLDecoder.decode(regex.find(page) !!.groupValues[1], "UTF-8"))
 			}
 		}
 	}

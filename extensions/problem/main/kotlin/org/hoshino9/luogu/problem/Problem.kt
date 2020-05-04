@@ -4,10 +4,7 @@ import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.baseUrl
-import org.hoshino9.luogu.page.AbstractLuoGuClientPage
-import org.hoshino9.luogu.page.AbstractLuoGuPage
-import org.hoshino9.luogu.page.PageBuilder
-import org.hoshino9.luogu.page.currentData
+import org.hoshino9.luogu.page.*
 import org.hoshino9.luogu.tag.IdLuoGuTag
 import org.hoshino9.luogu.tag.LuoGuTag
 import org.hoshino9.luogu.user.BaseUserImpl
@@ -209,10 +206,10 @@ interface ProblemPage {
 data class ProblemPageImpl(override val problem: Problem) : ProblemPage {
 	companion object Serializer : JsonDeserializable<ProblemPage>(ProblemPage::class) {
 		override fun deserialize(json: JsonElement, typeOfT: java.lang.reflect.Type, context: JsonDeserializationContext): ProblemPage = run {
-			val data = json.asJsonObject.delegate
-			val problem: JsonObject by data
+			val data = json.asJsonObject.delegateWith(context)
+			val problem: Problem by data
 
-			ProblemPageImpl(ProblemImpl(problem))
+			ProblemPageImpl(problem)
 		}
 	}
 }
