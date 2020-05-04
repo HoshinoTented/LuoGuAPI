@@ -24,7 +24,7 @@ trait LuoGuClientPage extends LuoGuPage {
   override def currentData: JsonObject = {
     _currentData match {
       case Some(data) => data
-      case None => throw new IllegalStateException("currentData == None")
+      case None => throw new NullPointerException("currentData == None")
     }
   }
 
