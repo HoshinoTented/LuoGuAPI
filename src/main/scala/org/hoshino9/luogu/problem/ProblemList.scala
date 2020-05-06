@@ -2,8 +2,8 @@ package org.hoshino9.luogu.problem
 
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.{Gson, JsonObject}
-import org.hoshino9.luogu.json.Redirect
-import org.hoshino9.luogu.{JavaList, LuoGuClient, baseUrl}
+import org.hoshino9.luogu.json.{JavaList, Redirect}
+import org.hoshino9.luogu.{LuoGuClient, baseUrl}
 import org.hoshino9.luogu.page.{ListPage, LuoGuClientPage}
 
 @JsonAdapter(classOf[ProblemList.Redirection])

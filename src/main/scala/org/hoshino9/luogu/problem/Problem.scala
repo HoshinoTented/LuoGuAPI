@@ -1,7 +1,7 @@
 package org.hoshino9.luogu.problem
 
 import com.google.gson.annotations.{JsonAdapter, SerializedName}
-import org.hoshino9.luogu.JavaList
+import org.hoshino9.luogu.json.JavaList
 import org.hoshino9.luogu.json.Redirect
 
 @JsonAdapter(classOf[Problem.Redirection])

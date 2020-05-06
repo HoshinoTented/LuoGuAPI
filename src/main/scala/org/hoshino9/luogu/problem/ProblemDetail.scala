@@ -3,10 +3,10 @@ package org.hoshino9.luogu.problem
 import com.google.gson.{Gson, JsonObject}
 import com.google.gson.annotations.{JsonAdapter, SerializedName}
 import org.hoshino9.luogu.page.LuoGuClientPage
-import org.hoshino9.luogu.{JavaList, LuoGuClient}
+import org.hoshino9.luogu.LuoGuClient
 import org.hoshino9.luogu.user.User
 import org.hoshino9.luogu.baseUrl
-import org.hoshino9.luogu.json.Redirect
+import org.hoshino9.luogu.json.{JavaList, Redirect}
 import org.hoshino9.luogu.problem.ProblemDetail.Limits
 
 @JsonAdapter(classOf[ProblemDetail.Redirection])

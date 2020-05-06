@@ -7,6 +7,7 @@ import com.google.gson.{JsonDeserializationContext, JsonDeserializer, JsonElemen
 import scala.reflect.ClassTag
 
 package object json {
+	type JavaList[T] = java.util.List[T]
 
 	abstract class Redirect[From, To <: From](implicit val tag: ClassTag[To]) extends JsonDeserializer[From] {
 		override def deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): From = {
