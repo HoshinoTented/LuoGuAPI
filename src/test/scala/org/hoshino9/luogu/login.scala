@@ -1,26 +1,36 @@
 package org.hoshino9.luogu
 
-import java.io.{File, FileOutputStream}
+import java.io.FileOutputStream
+import java.util.Properties
+
+import org.hoshino9.luogu.test.TestBase
 
 import scala.io.StdIn
+import scala.reflect.io.File
 import scala.util.Using
 
-object login {
-  def main(args: Array[String]): Unit = {
-    val client = LuoGuClient()
-    val verifyCode = client.verifyCode()
+object login extends TestBase {
+	def main(args: Array[String]): Unit = {
+		val verifyCode = client.verifyCode()
 
-    val file = new File("verifyCode.png")
-    Using(new FileOutputStream(file)) { out =>
-      out.write(verifyCode)
-    }
+		val file = File("verify.png")
+		Using(file.outputStream()) { out =>
+			out.write(verifyCode)
+		}
 
-    println("Please input: <account> <password> <verifyCode>")
+		println("Please input: <account> <password> <verifyCode>")
 
-    val input = StdIn.readLine()
-    val Array(account, password, vc) = input.split(" ")
-    client.login(account, password, vc)
+		val input = StdIn.readLine()
+		val Array(account, password, vc) = input.split(" ")
+		client.login(account, password, vc)
 
-    println(client.uid)
-  }
+		println(client.uid)
+
+		val Some(clientId) = client.clientId
+		val Some(uid) = client.uid
+
+		config.setProperty("__client_id", clientId)
+		config.setProperty("_uid", uid)
+		saveConfig()
+	}
 }

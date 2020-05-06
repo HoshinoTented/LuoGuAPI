@@ -6,7 +6,7 @@ import org.junit.Test
 class BaseTest {
   @Test
   def testGetting(): Unit = {
-    val client = LuoGuClient().asInstanceOf[LuoGuClient.Impl]
+    val client = LuoGuClient()
     println(client.get("https://www.luogu.com.cn/api/verify/captcha"))
     println(client.clientId)
     println(client.currentData)

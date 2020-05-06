@@ -4,32 +4,51 @@ import cats.effect.IO
 import com.google.gson.{JsonObject, JsonParser}
 import org.hoshino9.luogu.LuoGuClient
 
-trait LuoGuPage {
-  def currentData: JsonObject
+trait LuoGuPageOps {
+	def currentData: JsonObject
 
-  def refresh(): Unit
+	def load(): JsonObject
+
+	protected def refresh(): Unit
+}
+
+trait MutableLuoGuPageOps extends LuoGuPageOps {
+	override def refresh(): Unit
+}
+
+trait LuoGuPage extends LuoGuPageOps {
+	protected var _currentData: Option[JsonObject] = None
+
+	override protected def refresh(): Unit = {
+		_currentData = Some(load().getAsJsonObject("currentData"))
+	}
+
+	override def currentData: JsonObject = {
+		_currentData match {
+			case Some(data) => data
+			case None => {
+				refresh()
+				currentData
+			}
+		}
+	}
+}
+
+trait MutableLuoGuPage extends LuoGuPage with MutableLuoGuPageOps {
+	override def refresh(): Unit = super.refresh()
 }
 
 trait LuoGuClientPage extends LuoGuPage {
-  protected var _currentData: Option[JsonObject] = None
+	val url: String
+	val client: LuoGuClient
 
-  def url: String
+	def content: String = {
+		client.get(url).body().string
+	}
 
-  def client: LuoGuClient
-
-  def content(): String = {
-    client.get(url).body().string()
-  }
-
-  override def currentData: JsonObject = {
-    _currentData match {
-      case Some(data) => data
-      case None => throw new NullPointerException("currentData == None")
-    }
-  }
-
-  override def refresh(): Unit = {
-    val content = this.content()
-    _currentData = Some(JsonParser.parseString(content).getAsJsonObject.getAsJsonObject("currentData"))
-  }
+	override def load(): JsonObject = {
+		JsonParser.parseString(content).getAsJsonObject
+	}
 }
+
+trait MutableLuoGuClientPage extends LuoGuClientPage with MutableLuoGuPage
