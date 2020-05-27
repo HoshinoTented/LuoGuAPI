@@ -7,6 +7,6 @@ import org.junit.Test
 class SolutionTest extends TestBase {
 	@Test
 	def testSolutionList(): Unit = {
-		println(client.solutionList("P1000").result)
+		println(client.solutions("P1000").result)
 	}
 }

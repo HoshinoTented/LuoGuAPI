@@ -7,12 +7,12 @@ class ProblemTest {
 	@Test
 	def testList(): Unit = {
 		val client = LuoGuClient()
-		println(client.problemList())
+		println(client.problems())
 	}
 
 	@Test
 	def testDetail(): Unit = {
 		implicit val client: LuoGuClient = LuoGuClient()
-		println(client.problemList().result.get(0).lift)
+		println(client.problems().result.get(0).lift)
 	}
 }

@@ -12,7 +12,6 @@ trait ProblemList extends ListPage {
 }
 
 object ProblemList {
-
 	private[problem] class Redirection extends Redirect[ProblemList, Default]
 
 	case class Default(override val count: Int,
@@ -26,7 +25,7 @@ object ProblemList {
 	}
 
 	implicit class RichLuoGuClient(val client: LuoGuClient) extends AnyVal {
-		def problemList(page: Int = 1): ProblemList = {
+		def problems(page: Int = 1): ProblemList = {
 			val problemPage = new ProblemListPage(page, client)
 
 			new Gson().fromJson(problemPage.problems, classOf[ProblemList])

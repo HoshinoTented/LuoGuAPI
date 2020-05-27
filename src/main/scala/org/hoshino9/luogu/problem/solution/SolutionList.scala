@@ -3,8 +3,8 @@ package org.hoshino9.luogu.problem.solution
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.{Gson, JsonObject}
 import org.hoshino9.luogu.baseUrl
-import org.hoshino9.luogu.{JavaList, LuoGuClient}
-import org.hoshino9.luogu.json.Redirect
+import org.hoshino9.luogu.LuoGuClient
+import org.hoshino9.luogu.json.{Redirect, JavaList}
 import org.hoshino9.luogu.page.{ListPage, LuoGuClientPage}
 import org.hoshino9.luogu.problem.ProblemID
 
@@ -28,7 +28,7 @@ object SolutionList {
 	}
 
 	implicit class RichLuoGuClient(val client: LuoGuClient) {
-		def solutionList(pid: ProblemID, page: Int = 1): SolutionList = {
+		def solutions(pid: ProblemID, page: Int = 1): SolutionList = {
 			val solutionPage = new SolutionListPage(pid, page, client)
 
 			new Gson().fromJson(solutionPage.solutions, classOf[SolutionList])
