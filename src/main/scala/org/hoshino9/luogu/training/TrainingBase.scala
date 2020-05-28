@@ -1,13 +1,11 @@
 package org.hoshino9.luogu.training
 
-import com.google.gson.annotations.{JsonAdapter, SerializedName}
-import org.hoshino9.luogu.json.Redirect
 import org.hoshino9.luogu.user.User
+import play.api.libs.json.{Json, Reads}
 
-@JsonAdapter(classOf[TrainingBase.Redirection])
 trait TrainingBase {
 	val createTime: Long
-	val deadline: Option[Integer]
+	val deadline: Option[Int]
 	val id: Int
 	val markCount: Int
 	val problemCount: Int
@@ -17,22 +15,18 @@ trait TrainingBase {
 }
 
 object TrainingBase {
-
-	private[luogu] class Redirection extends Redirect[TrainingBase, Default]
+	implicit val reads: Reads[TrainingBase] = Reads {
+		Json.reads[Default].reads
+	}
 
 	case class Default(createTime: Long,
-	                   @SerializedName("deadline")
-	                   private[luogu] val _deadline: Integer,
+	                   deadline: Option[Int],
 	                   id: Int,
 	                   markCount: Int,
 	                   problemCount: Int,
 	                   provider: User,
 	                   title: String,
-	                   @SerializedName("type")
 	                   `type`: Int) extends TrainingBase {
-		override lazy val deadline: Option[Integer] = {
-			Option(_deadline)
-		}
 	}
 
 }

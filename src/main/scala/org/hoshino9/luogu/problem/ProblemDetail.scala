@@ -1,17 +1,12 @@
 package org.hoshino9.luogu.problem
 
-import com.google.gson.{Gson, JsonObject}
-import com.google.gson.annotations.{JsonAdapter, SerializedName}
+import org.hoshino9.luogu.{LuoGuClient, baseUrl}
 import org.hoshino9.luogu.page.LuoGuClientPage
-import org.hoshino9.luogu.LuoGuClient
-import org.hoshino9.luogu.user.User
-import org.hoshino9.luogu.baseUrl
-import org.hoshino9.luogu.json.{JavaList, Redirect}
 import org.hoshino9.luogu.problem.ProblemDetail.Limits
+import org.hoshino9.luogu.user.User
+import play.api.libs.json.{JsObject, JsResult, Json, Reads}
 
-@JsonAdapter(classOf[ProblemDetail.Redirection])
 trait ProblemDetail extends Problem {
-	val accepted: Boolean
 	val background: String
 	val canEdit: Boolean
 	val description: String
@@ -20,18 +15,23 @@ trait ProblemDetail extends Problem {
 	val outputFormat: String
 	val limits: Limits
 	val provider: User
-	val samples: JavaList[AnyRef]
+	//	val samples: Seq[AnyRef]
 	val stdCode: String
 }
 
 object ProblemDetail {
 
-	private[problem] class Redirection extends Redirect[ProblemDetail, Default]
+	case class Limits(memory: Seq[Int], time: Seq[Int])
 
-	case class Limits(memory: JavaList[Int], time: JavaList[Int])
+	object Limits {
+		implicit val reads: Reads[Limits] = Json.reads[Limits]
+	}
 
-	case class Default(accepted: Boolean,
-	                   background: String,
+	implicit val reads: Reads[ProblemDetail] = Reads {
+		Json.reads[Default].reads
+	}
+
+	case class Default(background: String,
 	                   canEdit: Boolean,
 	                   description: String,
 	                   difficulty: Int,
@@ -42,27 +42,26 @@ object ProblemDetail {
 	                   limits: Limits,
 	                   pid: ProblemID,
 	                   provider: User,
-	                   samples: JavaList[AnyRef],
+	                   //	                   samples: Seq[AnyRef],
 	                   stdCode: String,
-	                   tags: JavaList[ProblemTag],
+	                   tags: Seq[ProblemTag],
 	                   title: String,
 	                   totalAccepted: Int,
 	                   totalSubmit: Int,
-	                   @SerializedName("type")
 	                   `type`: ProblemType,
 	                   wantsTranslation: Boolean) extends ProblemDetail
 
 	private class ProblemDetailPage(val pid: ProblemID, override val client: LuoGuClient) extends LuoGuClientPage {
 		override val url: String = s"$baseUrl/problem/$pid"
 
-		def problem: JsonObject = currentData.getAsJsonObject("problem")
+		def problem: JsObject = currentData("problem").as[JsObject]
 	}
 
 	implicit class RichLuoGuClient(val client: LuoGuClient) {
-		def problem(id: ProblemID): ProblemDetail = {
+		def problem(id: ProblemID): JsResult[ProblemDetail] = {
 			val page = new ProblemDetailPage(id, client)
 
-			new Gson().fromJson(page.problem, classOf[ProblemDetail.Default])
+			Json.fromJson(page.problem)
 		}
 	}
 

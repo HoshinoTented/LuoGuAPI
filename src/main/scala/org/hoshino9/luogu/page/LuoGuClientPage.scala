@@ -1,7 +1,6 @@
 package org.hoshino9.luogu.page
-
-import com.google.gson.{JsonObject, JsonParser}
 import org.hoshino9.luogu.LuoGuClient
+import play.api.libs.json.{JsObject, Json}
 
 trait LuoGuClientPage extends LuoGuPage {
 	val url: String
@@ -11,7 +10,7 @@ trait LuoGuClientPage extends LuoGuPage {
 		client.get(url).body().string
 	}
 
-	override def load(): JsonObject = {
-		JsonParser.parseString(content).getAsJsonObject
+	override def load(): JsObject = {
+		Json.parse(content).asInstanceOf[JsObject]
 	}
 }

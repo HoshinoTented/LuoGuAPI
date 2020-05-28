@@ -1,11 +1,9 @@
 package org.hoshino9.luogu.user
 
-import com.google.gson.annotations.JsonAdapter
-import org.hoshino9.luogu.json.Redirect
+import play.api.libs.json.{Json, Reads}
 
-@JsonAdapter(classOf[User.Redirection])
 trait User {
-	val badge: String
+	val badge: Option[String]
 	val ccfLevel: Int
 	val color: String
 	val isAdmin: Boolean
@@ -16,10 +14,11 @@ trait User {
 }
 
 object User {
+	implicit val reads: Reads[User] = Reads {
+		Json.reads[Default].reads
+	}
 
-	private[user] class Redirection extends Redirect[User, Default]
-
-	case class Default(badge: String,
+	case class Default(badge: Option[String],
 	                   ccfLevel: Int,
 	                   color: String,
 	                   isAdmin: Boolean,

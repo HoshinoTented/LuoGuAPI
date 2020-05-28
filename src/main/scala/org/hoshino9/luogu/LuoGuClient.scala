@@ -2,10 +2,9 @@ package org.hoshino9.luogu
 
 import java.net.URLDecoder
 
-import cats.effect.IO
-import com.google.gson.{JsonObject, JsonParser}
-import okhttp3.{MediaType, OkHttpClient, Request, RequestBody, Response}
-import org.hoshino9.luogu.page.{LuoGuClientPage, MutableLuoGuClientPage}
+import okhttp3._
+import org.hoshino9.luogu.page.MutableLuoGuClientPage
+import play.api.libs.json.{JsObject, Json}
 
 trait LuoGuClient extends MutableLuoGuClientPage {
 	def clientId: Option[String]
@@ -18,7 +17,7 @@ trait LuoGuClient extends MutableLuoGuClientPage {
 
 	def get(url: String): Response
 
-	def post(url: String, parameter: JsonObject): Response
+	def post(url: String, parameter: JsObject): Response
 }
 
 object LuoGuClient {
@@ -54,21 +53,21 @@ object LuoGuClient {
 							.build()
 
 			request(req)
-    }
+		}
 
-    override def post(url: String, parameter: JsonObject): Response = {
-      val reqBody = RequestBody.create(parameter.toString, MediaType.parse("application/json"))
+		override def post(url: String, parameter: JsObject): Response = {
+			val reqBody = RequestBody.create(Json.stringify(parameter), MediaType.parse("application/json"))
 
-      val token = csrftoken()
-	    val req = new Request.Builder()
-					    .url(url)
-					    .post(reqBody)
-					    .addHeader("x-csrf-token", token)
-					    .addHeader("referer", baseUrl + "/")
-					    .build()
+			val token = csrftoken()
+			val req = new Request.Builder()
+							.url(url)
+							.post(reqBody)
+							.addHeader("x-csrf-token", token)
+							.addHeader("referer", baseUrl + "/")
+							.build()
 
-	    request(req)
-    }
+			request(req)
+		}
 
 		override def clientId: Option[String] = cookieJarInternal.clientId
 
@@ -78,11 +77,11 @@ object LuoGuClient {
 
 		override val client: LuoGuClient = this
 
-		override def load(): JsonObject = {
+		override def load(): JsObject = {
 			val content = this.content
 			val reg = """window\._feInjection = JSON\.parse\(decodeURIComponent\("(.+?)"\)\);""".r()
 			val feInjection = reg.findAllIn(content).group(1)
-			JsonParser.parseString(URLDecoder.decode(feInjection, "UTF-8")).getAsJsonObject
+			Json.parse(URLDecoder.decode(feInjection, "UTF-8")).as[JsObject]
 		}
 
 		override def verifyCode(): Array[Byte] = {
@@ -90,10 +89,11 @@ object LuoGuClient {
 		}
 
 		override def login(account: String, password: String, verifyCode: String): Unit = {
-			val obj = new JsonObject
-			obj.addProperty("username", account)
-			obj.addProperty("password", password)
-			obj.addProperty("captcha", verifyCode)
+			val obj = Json.obj(
+				"username" -> account,
+				"password" -> password,
+				"captcha" -> verifyCode
+			)
 
 			post(s"$baseUrl/api/auth/userPassLogin", obj)
 		}

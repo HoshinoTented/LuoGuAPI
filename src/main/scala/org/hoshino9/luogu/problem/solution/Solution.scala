@@ -1,11 +1,8 @@
 package org.hoshino9.luogu.problem.solution
 
-import com.google.gson.annotations.{JsonAdapter, SerializedName}
-import org.hoshino9.luogu.LuoGuClient
-import org.hoshino9.luogu.json.Redirect
 import org.hoshino9.luogu.user.User
+import play.api.libs.json.{Json, Reads}
 
-@JsonAdapter(classOf[Solution.Redirection])
 trait Solution {
 	val author: User
 	val commentCount: Int
@@ -18,13 +15,13 @@ trait Solution {
 	val status: Int
 	val thumbUp: Int
 	val title: String
-	@SerializedName("type")
-	val postType: PostType
+	val `type`: PostType
 }
 
 object Solution {
-
-	private[solution] class Redirection extends Redirect[Solution, Default]
+	implicit val reads: Reads[Solution] = Reads {
+		Json.reads[Default].reads
+	}
 
 	case class Default(author: User,
 	                   commentCount: Int,
@@ -37,7 +34,6 @@ object Solution {
 	                   status: Int,
 	                   thumbUp: Int,
 	                   title: String,
-	                   @SerializedName("type")
-	                   postType: PostType) extends Solution
+	                   `type`: PostType) extends Solution
 
 }

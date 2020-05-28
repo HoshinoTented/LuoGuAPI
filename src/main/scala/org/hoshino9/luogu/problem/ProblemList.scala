@@ -1,34 +1,33 @@
 package org.hoshino9.luogu.problem
 
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.{Gson, JsonObject}
-import org.hoshino9.luogu.json.{JavaList, Redirect}
-import org.hoshino9.luogu.{LuoGuClient, baseUrl}
 import org.hoshino9.luogu.page.{ListPage, LuoGuClientPage}
+import org.hoshino9.luogu.{LuoGuClient, baseUrl}
+import play.api.libs.json.{JsObject, JsResult, Json, Reads}
 
-@JsonAdapter(classOf[ProblemList.Redirection])
 trait ProblemList extends ListPage {
-	val result: JavaList[Problem]
+	val result: Seq[Problem]
 }
 
 object ProblemList {
-	private[problem] class Redirection extends Redirect[ProblemList, Default]
+	implicit val reads: Reads[ProblemList] = Reads {
+		Json.reads[Default].reads
+	}
 
 	case class Default(override val count: Int,
 	                   override val perPage: Int,
-	                   result: JavaList[Problem]) extends ProblemList
+	                   result: Seq[Problem]) extends ProblemList
 
 	private class ProblemListPage(val page: Int, override val client: LuoGuClient) extends LuoGuClientPage {
 		override val url: String = s"$baseUrl/problem/list?page=$page"
 
-		def problems: JsonObject = currentData.getAsJsonObject("problems")
+		def problems: JsObject = currentData("problems").as[JsObject]
 	}
 
 	implicit class RichLuoGuClient(val client: LuoGuClient) extends AnyVal {
-		def problems(page: Int = 1): ProblemList = {
+		def problems(page: Int = 1): JsResult[ProblemList] = {
 			val problemPage = new ProblemListPage(page, client)
 
-			new Gson().fromJson(problemPage.problems, classOf[ProblemList])
+			Json.fromJson(problemPage.problems)
 		}
 	}
 

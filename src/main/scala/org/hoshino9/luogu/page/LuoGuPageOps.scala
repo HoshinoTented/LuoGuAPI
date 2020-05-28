@@ -1,11 +1,11 @@
 package org.hoshino9.luogu.page
 
-import com.google.gson.JsonObject
+import play.api.libs.json.JsObject
 
 trait LuoGuPageOps {
-	def currentData: JsonObject
+	def currentData: JsObject
 
-	def load(): JsonObject
+	def load(): JsObject
 
 	protected def refresh(): Unit
 }

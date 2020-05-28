@@ -1,21 +1,18 @@
 package org.hoshino9.luogu.problem
 
-import com.google.gson.annotations.{JsonAdapter, SerializedName}
-import org.hoshino9.luogu.json.Redirect
+import play.api.libs.json.{Json, Reads}
 
-@JsonAdapter(classOf[ProblemBase.Redirection])
 trait ProblemBase {
 	val difficulty: Difficulty
 	val pid: ProblemID
 	val title: String
-
-	@SerializedName("type")
 	val `type`: ProblemType
 }
 
 object ProblemBase {
-
-	private[problem] class Redirection extends Redirect[ProblemBase, Default]
+	implicit val reads: Reads[ProblemBase] = Reads {
+		Json.reads[Default].reads
+	}
 
 	case class Default(difficulty: Difficulty,
 	                   pid: ProblemID,

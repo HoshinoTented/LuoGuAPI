@@ -1,5 +1,7 @@
 package org.hoshino9.luogu
 
+import play.api.libs.json.JsResult
+
 package object problem {
 	type Difficulty = Int
 	type ProblemID = String
@@ -7,7 +9,7 @@ package object problem {
 	type ProblemTag = Int
 
 	implicit class RichProblem(val problem: Problem) {
-		def lift(implicit client: LuoGuClient): ProblemDetail = {
+		def lift(implicit client: LuoGuClient): JsResult[ProblemDetail] = {
 			import ProblemDetail._
 
 			client.problem(problem.pid)

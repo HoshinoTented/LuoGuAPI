@@ -1,14 +1,11 @@
 package org.hoshino9.luogu.problem
 
-import com.google.gson.annotations.{JsonAdapter, SerializedName}
-import org.hoshino9.luogu.json.JavaList
-import org.hoshino9.luogu.json.Redirect
+import play.api.libs.json.{Json, Reads}
 
-@JsonAdapter(classOf[Problem.Redirection])
 trait Problem extends ProblemBase {
 	val fullScore: Int
 
-	val tags: JavaList[ProblemTag]
+	val tags: Seq[ProblemTag]
 
 	val totalAccepted: Int
 
@@ -18,13 +15,14 @@ trait Problem extends ProblemBase {
 }
 
 object Problem {
-
-	private[problem] class Redirection extends Redirect[Problem, Default]
+	implicit val reader: Reads[Problem] = Reads {
+		Json.reads[Default].reads
+	}
 
 	case class Default(difficulty: Difficulty,
 	                   fullScore: Int,
 	                   pid: ProblemID,
-	                   tags: JavaList[ProblemTag],
+	                   tags: Seq[ProblemTag],
 	                   title: String,
 	                   totalAccepted: Int,
 	                   totalSubmit: Int,
