@@ -49,7 +49,7 @@ object ProblemDetail {
 	                   totalAccepted: Int,
 	                   totalSubmit: Int,
 	                   @SerializedName("type")
-	                   problemType: ProblemType,
+	                   `type`: ProblemType,
 	                   wantsTranslation: Boolean) extends ProblemDetail
 
 	private class ProblemDetailPage(val pid: ProblemID, override val client: LuoGuClient) extends LuoGuClientPage {

@@ -15,6 +15,7 @@ dependencies {
 	implementation("org.scala-lang:scala-reflect:2.13.1")
 	implementation("org.typelevel:cats-effect_2.13:2.1.3")
 	implementation("com.squareup.okhttp3:okhttp:4.6.0")
+	implementation("com.typesafe.play", "play-json", "2.9.0")
 	implementation("com.google.code.gson:gson:2.8.6")
 
 	testImplementation("org.scalatest:scalatest_2.11:3.0.0")

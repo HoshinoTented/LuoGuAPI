@@ -10,7 +10,7 @@ trait ProblemBase {
 	val title: String
 
 	@SerializedName("type")
-	val problemType: ProblemType
+	val `type`: ProblemType
 }
 
 object ProblemBase {
@@ -20,6 +20,6 @@ object ProblemBase {
 	case class Default(difficulty: Difficulty,
 	                   pid: ProblemID,
 	                   title: String,
-	                   problemType: ProblemType) extends ProblemBase
+	                   `type`: ProblemType) extends ProblemBase
 
 }

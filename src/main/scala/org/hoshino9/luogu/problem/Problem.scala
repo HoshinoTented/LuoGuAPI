@@ -28,8 +28,7 @@ object Problem {
 	                   title: String,
 	                   totalAccepted: Int,
 	                   totalSubmit: Int,
-	                   @SerializedName("type")
-	                   problemType: ProblemType,
+	                   `type`: ProblemType,
 	                   wantsTranslation: Boolean) extends Problem
 
 }

@@ -19,7 +19,7 @@ object Training {
 
 	private[luogu] class Redirection extends Redirect[Training, Default]
 
-	class ProblemWrapper(val problem: Problem)
+	case class ProblemWrapper(problem: Problem)
 
 	implicit def unwrap(wrapper: ProblemWrapper): Problem = wrapper.problem
 
