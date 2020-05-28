@@ -13,9 +13,7 @@ trait TrainingBase {
 	val problemCount: Int
 	val provider: User
 	val title: String
-
-	@SerializedName("type")
-	val trainingType: Int
+	val `type`: Int
 }
 
 object TrainingBase {
@@ -31,7 +29,7 @@ object TrainingBase {
 	                   provider: User,
 	                   title: String,
 	                   @SerializedName("type")
-	                   trainingType: Int) extends TrainingBase {
+	                   `type`: Int) extends TrainingBase {
 		override lazy val deadline: Option[Integer] = {
 			Option(_deadline)
 		}

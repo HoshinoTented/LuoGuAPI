@@ -6,8 +6,14 @@ import org.junit.Test
 
 class TrainingTest {
 	@Test
-	def testTraining(): Unit = {
+	def testTrainings(): Unit = {
 		val client = LuoGuClient()
 		println(client.trainings().result)
+	}
+
+	@Test
+	def testTraining(): Unit = {
+		implicit val client = LuoGuClient()
+		println(client.trainings().result.get(0).lift)
 	}
 }
