@@ -6,7 +6,7 @@ import org.hoshino9.luogu.training.TrainingList.TrainingType.Type
 import play.api.libs.json.{JsObject, JsResult, Json, Reads}
 
 trait TrainingList extends ListPage {
-	val result: Seq[TrainingBase]
+	def result: Seq[TrainingBase]
 }
 
 object TrainingList {

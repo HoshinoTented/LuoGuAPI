@@ -8,8 +8,9 @@ import org.hoshino9.luogu.{LuoGuClient, baseUrl}
 import play.api.libs.json.{JsObject, JsResult, Json, Reads}
 
 trait Training extends TrainingBase {
-	val description: String
-	val problems: Seq[ProblemWrapper]
+	def description: String
+
+	def problems: Seq[ProblemWrapper]
 }
 
 object Training {

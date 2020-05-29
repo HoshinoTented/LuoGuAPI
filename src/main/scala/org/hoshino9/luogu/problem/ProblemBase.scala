@@ -3,10 +3,13 @@ package org.hoshino9.luogu.problem
 import play.api.libs.json.{Json, Reads}
 
 trait ProblemBase {
-	val difficulty: Difficulty
-	val pid: ProblemID
-	val title: String
-	val `type`: ProblemType
+	def difficulty: Difficulty
+
+	def pid: ProblemID
+
+	def title: String
+
+	def `type`: ProblemType
 }
 
 object ProblemBase {

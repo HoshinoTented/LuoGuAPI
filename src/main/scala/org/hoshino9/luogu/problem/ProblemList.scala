@@ -5,7 +5,7 @@ import org.hoshino9.luogu.{LuoGuClient, baseUrl}
 import play.api.libs.json.{JsObject, JsResult, Json, Reads}
 
 trait ProblemList extends ListPage {
-	val result: Seq[Problem]
+	def result: Seq[Problem]
 }
 
 object ProblemList {

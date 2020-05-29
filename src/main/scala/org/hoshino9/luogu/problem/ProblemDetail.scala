@@ -7,16 +7,24 @@ import org.hoshino9.luogu.user.User
 import play.api.libs.json.{JsObject, JsResult, Json, Reads}
 
 trait ProblemDetail extends Problem {
-	val background: String
-	val canEdit: Boolean
-	val description: String
-	val hint: String
-	val inputFormat: String
-	val outputFormat: String
-	val limits: Limits
-	val provider: User
+	def background: String
+
+	def canEdit: Boolean
+
+	def description: String
+
+	def hint: String
+
+	def inputFormat: String
+
+	def outputFormat: String
+
+	def limits: Limits
+
+	def provider: User
+
 	//	val samples: Seq[AnyRef]
-	val stdCode: String
+	def stdCode: String
 }
 
 object ProblemDetail {

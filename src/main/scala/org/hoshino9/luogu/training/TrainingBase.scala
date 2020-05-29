@@ -4,14 +4,21 @@ import org.hoshino9.luogu.user.User
 import play.api.libs.json.{Json, Reads}
 
 trait TrainingBase {
-	val createTime: Long
-	val deadline: Option[Int]
-	val id: Int
-	val markCount: Int
-	val problemCount: Int
-	val provider: User
-	val title: String
-	val `type`: Int
+	def createTime: Long
+
+	def deadline: Option[Int]
+
+	def id: Int
+
+	def markCount: Int
+
+	def problemCount: Int
+
+	def provider: User
+
+	def title: String
+
+	def `type`: Int
 }
 
 object TrainingBase {
